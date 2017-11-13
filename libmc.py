@@ -124,10 +124,9 @@ class FA (LTS):
 
         A = self.product(other.power().complement());
 
-        if [ A.trace(f) for f in A.F ]:
-            return False
-        else:
-            return True
+        traces = list(filter(lambda x: x == True, [ A.trace(f) for f in A.F ]))
+
+        return [ not traces, A, traces ]
 
 # prettify states for printing
 def formatState (s):
