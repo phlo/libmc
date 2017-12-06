@@ -7,19 +7,37 @@ from itertools import chain, combinations, product
 __author__  = "Florian Schroegendorfer"
 __email__   = "florian.schroegendorfer@phlo.at"
 __license__ = "GPLv3"
-__version__ = "2017.1"
+__version__ = "2017.2"
 
-# powerset of s
 def powerset (s):
-    return [ list(subset) for subset in chain.from_iterable(
-            combinations(s, r) for r in range(len(s) + 1)) ]
+    """
+    Returns the powerset of s.
+    """
+    return \
+        [
+            list(subset)
+            for subset in chain.from_iterable(
+                combinations(s, r)
+                for r in range(len(s) + 1)
+            )
+        ]
 
-# intersection of lists
 def intersect (l1, l2):
+    """
+    Returns intersection of two lists.
+    """
     return [ x for x in l1 if x in l2 ]
 
-# labelled transition system (p31)
 class LTS:
+    """
+    Labelled Transition System (p31).
+
+    Attributes:
+        S: set of states
+        I: set of initial states I ⊆ S
+        Σ: input alphabet
+        T: transition relation T ⊆ SxΣxS
+    """
 
     def __init__ (self, S, I, Σ, T):
         self.S = S
@@ -27,34 +45,22 @@ class LTS:
         self.Σ = Σ
         self.T = T
 
-    # tries to compute a trace from an initial to the target state (DFS)
-    # returns an empty list iff target is unreachable
-    def trace (self, target):
-        stack = [ (s, [s], []) for s in self.I ]
-        while stack:
-            (node, path, trace) = stack.pop()
-            for t in [ t for t in self.T if t[0] == node and t[2] not in path ]:
-                if t[2] == target:
-                    return trace + [t]
-                else:
-                    stack.append((t[2], path + [t[2]], trace + [t]))
-        return []
+    def toDot (self, highlight = []):
+        """
+        Return LTS as Graphviz dot language string.
 
-# finite automata (p18)
-class FA (LTS):
+        Args:
+            highlight (optional): highlight a given path (list of transitions)
 
-    def __init__ (self, S, I, Σ, T, F):
-        super(FA, self).__init__(S, I, Σ, T)
-        self.F = F
+        Returns:
+            string: .dot file tweaked for dot2tex
+        """
+        return fa2dot(self.S, self.I, self.Σ, self.T, [], highlight)
 
-    def toDot (self, highlight=[]):
-        return fa2dot(self.S, self.I, self.Σ, self.T, self.F, highlight)
-
-    def toLatex (self):
-        return fa2dot2texi(self.S, self.I, self.Σ, self.T, self.F)
-
-    # True iff automaton is complete (p21)
     def isComplete (self):
+        """
+        Completeness (p21): True iff LTS is complete.
+        """
         return len(self.I) > 0 and \
             reduce(lambda x, y: x and y,
                 map(lambda x: len(x) > 0,
@@ -62,10 +68,14 @@ class FA (LTS):
                         [ t for t in self.T if t[0] == s and t[1] == a ]
                         for s in self.S
                         for a in self.Σ
-                    ]))
+                    ]
+                )
+            )
 
-    # True iff automaton is deterministic (p21)
     def isDeterministic (self):
+        """
+        Determinism (p21): True iff LTS is deterministic.
+        """
         return len(self.I) <= 1 and \
             reduce(lambda x, y: x and y,
                 map(lambda x: len(x) <= 1,
@@ -73,10 +83,12 @@ class FA (LTS):
                         [ t for t in self.T if t[0] == s and t[1] == a ]
                         for s in self.S
                         for a in self.Σ
-                    ]))
+                    ]
+                )
+            )
 
-    # create product automaton (p20)
     def product (self, other):
+        """Create product LTS."""
         S = list(product(self.S, other.S))
         I = list(product(self.I, other.I))
         Σ = self.Σ
@@ -87,12 +99,11 @@ class FA (LTS):
                 for t1 in self.T if t1[0] == s[0] and t1[1] == a
                 for t2 in other.T if t2[0] == s[1] and t2[1] == a
             ]
-        F = list(product(self.F, other.F))
 
-        return FA(S, I, Σ, T, F)
+        return LTS(S, I, Σ, T)
 
-    # create power automaton (p22)
     def power (self):
+        """Create power LTS."""
         S = powerset(self.S)
         I = [ self.I ]
         Σ = self.Σ
@@ -102,12 +113,126 @@ class FA (LTS):
                 for a in Σ
                 for s2 in [[ t[2] for t in self.T if t[0] in s1 and t[1] == a ]]
             ]
-        F = [ s for s in S if intersect(self.F, s) ]
 
-        return FA(S, I, Σ, T, F)
+        return LTS(S, I, Σ, T)
 
-    # create complement automaton (p23)
+    def simulates (self, other, τ = []):
+        """
+        Simulation of LTS (p39).
+
+        ∀ s ∊ other.I, ∃ t ∊ self.I [ s ≤ t ]
+
+        Args:
+            other: another LTS
+            τ (optional): set of unobservable internal events
+
+        Returns:
+            bool: True if this LTS simulates the other
+        """
+        R0 = set(product(other.S, self.S))
+
+        return all(
+            any(
+                (s1, s2) in maximumSimulation(other, self, R0, τ)
+                for s2 in self.I
+            )
+            for s1 in other.I
+        )
+
+    def bisimulates (self, other, τ = []):
+        """
+        Bisimulation of LTS (p43).
+
+        ∀ s ∊ self.I, ∃ t ∊ other.I [ s ≈ t ]
+
+        Args:
+            other: another LTS
+            τ (optional): set of unobservable internal events
+
+        Returns:
+            bool: True if this LTS bisimulates the other
+        """
+        R0 = set(product(other.S, self.S))
+
+        return all(
+            any(
+                (s1, s2) in maximumBisimulation(other, self, R0, τ)
+                for s2 in self.I
+            )
+            for s1 in other.I
+        )
+
+    def trace (self, target, sources = None):
+        """
+        Tries to compute all traces to the target state (DFS). If no source
+        states are given, the set of initial states is used.
+
+        Args:
+            target: target state
+            sources: set of initial states
+
+        Returns:
+            list: the trace or an empty list iff target is unreachable
+        """
+        if sources is None: sources = self.I
+
+        stack = [ (s, [s], []) for s in sources ]
+        traces = []
+
+        while stack:
+            (node, path, trace) = stack.pop()
+            for t in [ t for t in self.T if t[0] == node and t[2] not in path ]:
+                if t[2] == target:
+                    traces.append(trace + [t])
+                else:
+                    stack.append((t[2], path + [t[2]], trace + [t]))
+
+        return traces
+
+class FA (LTS):
+    """
+    Finite Automata (p18).
+
+    Attributes:
+        S: set of states
+        I: set of initial states I ⊆ S
+        Σ: input alphabet
+        T: transition relation T ⊆ SxΣxS
+        F: set of final states F ⊆ S
+    """
+
+    def __init__ (self, S, I, Σ, T, F):
+        super(FA, self).__init__(S, I, Σ, T)
+        self.F = F
+
+    def toDot (self, highlight = []):
+        """
+        Return Graphviz dot language string.
+
+        Args:
+            highlight (optional): highlight a given path (list of transitions)
+
+        Returns:
+            string: .dot file tweaked for dot2tex
+        """
+        return fa2dot(self.S, self.I, self.Σ, self.T, self.F, highlight)
+
+    def product (self, other):
+        """Create product automaton (p20)."""
+        lts = super(FA, self).product(other)
+        F = list(product(self.F, other.F))
+
+        return FA(lts.S, lts.I, lts.Σ, lts.T, F)
+
+    def power (self):
+        """Create power automaton (p22)."""
+        lts = super(FA, self).power()
+        F = [ s for s in lts.S if intersect(self.F, s) ]
+
+        return FA(lts.S, lts.I, lts.Σ, lts.T, F)
+
     def complement (self):
+        """Create complement automaton (p23)."""
         S = self.S
         I = self.I
         Σ = self.Σ
@@ -116,61 +241,216 @@ class FA (LTS):
 
         return FA(S, I, Σ, T, F)
 
-    # conformance test (p24):
-    # * L(self) ⊆ L(other)
-    # * iff L(self) ∩ L(other) = 0
-    # * iff self × C(P(other)) contains no reachable final state (implemented)
     def conforms (self, other):
+        """
+        Conformance test (p24).
 
+        * L(self) ⊆ L(other)
+        * iff L(self) ∩ L(other) = 0
+        * iff self × C(P(other)) contains no reachable final state (implemented)
+
+        Args:
+            other: the other FA to conform to
+
+        Returns:
+            bool: True if this FA conforms to the other
+        """
         A = self.product(other.power().complement());
 
         traces = list(filter(lambda x: x == True, [ A.trace(f) for f in A.F ]))
 
-        return [ not traces, A, traces ]
+        return ( not traces, A, traces )
 
-# prettify states for printing
+    def minimize (self):
+        """
+        Minimization of Deterministic Finite Automata (p44).
+        """
+        notFinal = set(self.S) - set(self.F)
+
+        bisimulation = \
+            maximumBisimulation(
+                self,
+                self,
+                set(product(self.F, self.F)) | set(product(notFinal, notFinal))
+            )
+
+        equivalence = \
+            dict(
+                (a, b)
+                for (a, b) in bisimulation
+                if self.S.index(a) > self.S.index(b)
+            )
+
+        return FA(
+            S = [ s for s in self.S if s not in equivalence ],
+            I = [ i for i in self.I if i not in equivalence ],
+            Σ = self.Σ,
+            T = sorted(
+                    {
+                        (
+                            equivalence[s] if s in equivalence else s,
+                            a,
+                            equivalence[t] if t in equivalence else t
+                        )
+                        for (s, a, t) in self.T
+                    }
+                ),
+            F = [ f for f in self.F if f not in equivalence ]
+        )
+
+def maximumSimulation (A1: LTS, A2: LTS, R0: set, τ = []) -> set:
+    """
+    Constructs the maximum simulation relation A1 ≲ A2 (p36).
+
+    To get the *full* maximum simulation between two LTS A1 and A2 build
+    the union of all possible permutations::
+
+        fullSimulationRelation =
+            maximumSimulation(A1, A1, set(product(A1.S, A1.S))) |
+            maximumSimulation(A1, A2, set(product(A1.S, A2.S))) |
+            maximumSimulation(A2, A1, set(product(A2.S, A1.S))) |
+            maximumSimulation(A2, A2, set(product(A2.S, A2.S)))
+
+    Args:
+        A1: a LTS
+        A2: another LTS
+        R0: the starting relation, e.g. A1.SxA2.S
+        τ (optional): set of unobservable internal events
+
+    Returns:
+        set: A1 ≲ A2 ⊆ R0 - the maximum simulation relation
+    """
+    def isReachable(traces, a):
+        """Returns True if a trace of the form τ*a exists."""
+        return any(
+                all(t[1] in τ for t in trace[:-1]) and trace[-1][1] == a
+                for trace in traces
+        )
+
+    # refine simulation relation
+    R1 = \
+        {
+            (s, t)
+            for (s, t) in R0
+            # ∀ a ∈ Σ, s' ∈ S [ s -a> s' ]
+            if all(
+                # ∃ t' ∈ S [ t -a> t' ∧ s' ≲ t' ]
+                any(
+                    # s' ≲ t'
+                    (_s, _t) in R0
+                    # { t' ∈ S | t -a> t' }
+                    for _t in A2.S
+                    if isReachable(A2.trace(_t, [t]), a)
+                )
+                # { (a, s') ∈ ΣxS | s -a> s' }
+                for (a, _s) in
+                {
+                    (a, _s)
+                    for a in set(A1.Σ) - set(τ)
+                    for _s in A1.S
+                    if isReachable(A1.trace(_s, [s]), a)
+                }
+            )
+        }
+
+    # return relation if fixpoint is reached, else recurse
+    return R1 if R1 == R0 else maximumSimulation(A1, A2, R1, τ)
+
+def maximumBisimulation (A1, A2, R0, τ = []):
+    """
+    Constructs the maximum bisimulation relation A1 ≈ A2 (p43).
+
+    Can also be used to minimize a deterministic automaton by constructing
+    the state equivalence relation using::
+
+        maximumSimulation(A, A, (A.FxA.F)∪((A.S\A.F)x(A.S\A.F)))
+
+    To get the *full* maximum bisimulation between two LTS A1 and A2 build
+    the union of all possible permutations::
+
+        fullSimulationRelation =
+            maximumBisimulation(A1, A1, set(product(A1.S, A1.S))) |
+            maximumBisimulation(A1, A2, set(product(A1.S, A2.S))) |
+            maximumBisimulation(A2, A1, set(product(A2.S, A1.S))) |
+            maximumBisimulation(A2, A2, set(product(A2.S, A2.S)))
+
+    Args:
+        A1: a LTS
+        A2: another LTS
+        R0: the starting relation, e.g. A1.SxA2.S
+        τ (optional): set of unobservable internal events
+
+    Returns:
+        set: A1 ≈ A2 ⊆ R0 - the maximum simulation relation
+    """
+    return \
+        maximumSimulation(
+            A2,
+            A1,
+            { (s, t) for (t, s) in maximumSimulation(A1, A2, R0, τ) },
+            τ
+        )
+
 def formatState (s):
+    """Prettify a states string representation for printing."""
     return str(s).replace("'", "").replace("[", "\{").replace("]", "\}")
 
-# returns graphical representation of given automaton (LaTex - pure TikZ)
-def fa2tex (S, I, Σ, T, F):
-    tex = """\
-% requires following LaTex preamble:
-% \\usepackage{pgf}
-% \\usepackage{tikz}
-% \\usetikzlibrary{arrows,automata}
-\\begin{tikzpicture}[shorten >=1pt,node distance=2cm,auto,initial text=]
+def printRelation(relation, A, B):
+    """Pretty print relation table in markdown format."""
+    def format(s, t): return "(" + str(s) + ", " + str(t) + ")"
 
-"""
-    # generate nodes
-    tex += "  % manual positioning required!\n"
-    for s in S:
-        tex += "  {:<26}{:<28}{};\n".format(
-            "\\node[state" + \
-                (",initial" if s in I else ",accepting" if s in F else "") + \
-                "]",
-            "({})".format(s),
-            "{{${}$}}".format(formatState(s)))
+    # determine header column width (bold)
+    headerWidth = max(
+        max(len(str(s)) + 4 for s in A), max(len(str(t)) + 4 for t in B)
+    )
 
-    tex += "\n"
+    # determine content column width
+    colWidth = max(len(format(s, t)) for s in A for t in B)
 
-    # generate paths
-    for t in T:
-        tex += "  {:<10}{:<6}{:<20}{:<14}{:<6}{};\n".format(
-            "\\path[->]",
-            "({})".format(t[0]),
-            "edge",
-            "node",
-            "{{${}$}}".format(t[1]),
-            "({})".format(t[2]))
+    # set column width to the maximum
+    if headerWidth > colWidth:
+        colWidth = headerWidth
 
-    tex += "\\end{tikzpicture}"
-    return tex
+    # print header
+    print("| " + "".ljust(colWidth) + " | " + " | ".join(
+            ("**" + formatState(s) + "**").ljust(colWidth)
+            for s in B
+        ) + " |"
+    )
 
-# returns graphical representation of given automaton (using GraphViz)
-# * generated .dot file tweaked for dot2tex
-# * optional: highlight a given path (list of transitions)
+    # print separator
+    print("| " + " | ".join(
+            "-" * colWidth
+            for i in range(len(B) + 1)
+        ) + " |"
+    )
+
+    # print table
+    for s in A:
+        print(
+            "| " + ("**" + formatState(s) + "**").ljust(colWidth) + " | " +
+            " | ".join(
+                format(s, t).ljust(colWidth)
+                if (s, t) in relation else "".ljust(colWidth)
+                for t in B
+            ) + " |"
+        )
+
 def fa2dot (S, I, Σ, T, F, highlight=[]):
+    """
+    Returns graphical representation of given automaton (using GraphViz).
+
+    Args:
+        S: set of states
+        I: set of initial states I ⊆ S
+        Σ: input alphabet
+        T: transition relation T ⊆ SxΣxS
+        F: set of final states F ⊆ S
+        highlight (optional): highlight a given path (list of transitions)
+
+    Returns:
+        string: .dot file tweaked for dot2tex
+    """
     tex = """\
 digraph FSM {
   node [style="state"]
@@ -197,23 +477,4 @@ digraph FSM {
                 ",style=\"draw=red\"" if t in highlight else "")
 
     tex += "}"
-    return tex
-
-# returns graphical representation of given automaton (LaTex - using dot2texi)
-def fa2dot2texi (S, I, Σ, T, F):
-    tex = """\
-% requires following LaTex preamble:
-% \\usepackage{pgf}
-% \\usepackage{tikz}
-% \\usepackage{dot2texi}
-% \\usetikzlibrary{arrows,shapes,automata}
-
-\\begin{tikzpicture}[>=latex',scale=1]
-  \\begin{dot2tex}[dot,tikz,mathmode,codeonly,styleonly]
-"""
-    tex += re.sub("^", "  ", fa2dot(S, I, Σ, T, F), 0, re.MULTILINE)
-    tex += """
-  \\end{dot2tex}
-\\end{tikzpicture}\
-"""
     return tex
