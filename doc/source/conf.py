@@ -51,8 +51,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'libmc'
-copyright = '2017, Florian Schroegendorfer'
-author = 'Florian Schroegendorfer'
+copyright = '2017, ' + libmc.__author__
+author = libmc.__author__
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -143,7 +143,6 @@ latex_elements = {
     # 'figure_align': 'htbp',
 
     'inputenc': '',
-    'utf8extra': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
@@ -151,7 +150,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'libmc.tex', 'libmc Documentation',
-     'Florian Schroegendorfer', 'manual'),
+    author, 'manual'),
 ]
 
 
@@ -161,7 +160,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     (master_doc, 'libmc', 'libmc Documentation',
-     [author], 1)
+    [author], 1)
 ]
 
 
@@ -172,6 +171,6 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'libmc', 'libmc Documentation',
-     author, 'libmc', 'One line description of project.',
-     'Miscellaneous'),
+    author, 'libmc', 'One line description of project.',
+    'Miscellaneous'),
 ]
