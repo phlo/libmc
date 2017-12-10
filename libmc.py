@@ -1,6 +1,5 @@
 """ Provides collection of tools for KV Model Checking."""
 
-import re
 from functools import reduce
 from itertools import chain, combinations, product
 
@@ -24,7 +23,7 @@ def powerset (s):
 
 def intersect (l1, l2):
     """
-    Returns intersection of two lists.
+    Returns the intersection of two lists.
     """
     return [ x for x in l1 if x in l2 ]
 
@@ -38,7 +37,6 @@ class LTS:
         Σ: input alphabet
         T: transition relation T ⊆ SxΣxS
     """
-
     def __init__ (self, S, I, Σ, T):
         self.S = S
         self.I = I
@@ -50,7 +48,7 @@ class LTS:
         Return LTS as Graphviz dot language string.
 
         Args:
-            highlight (optional): highlight a given path (list of transitions)
+            highlight (list of transitions - optional): highlight a given path
 
         Returns:
             string: .dot file tweaked for dot2tex
@@ -59,7 +57,7 @@ class LTS:
 
     def isComplete (self):
         """
-        Completeness (p21): True iff LTS is complete.
+        Completeness (p21): True if LTS is complete.
         """
         return len(self.I) > 0 and \
             reduce(lambda x, y: x and y,
@@ -74,7 +72,7 @@ class LTS:
 
     def isDeterministic (self):
         """
-        Determinism (p21): True iff LTS is deterministic.
+        Determinism (p21): True if LTS is deterministic.
         """
         return len(self.I) <= 1 and \
             reduce(lambda x, y: x and y,
@@ -108,10 +106,11 @@ class LTS:
         I = [ self.I ]
         Σ = self.Σ
         T = [
-                (s1, a, sorted(list(set(s2))))
+                (s1, a, sorted(set(s2)))
                 for s1 in S
                 for a in Σ
-                for s2 in [[ t[2] for t in self.T if t[0] in s1 and t[1] == a ]]
+                for s2 in
+                [[ _s for (s, _a, _s) in self.T if s in s1 and _a == a ]]
             ]
 
         return LTS(S, I, Σ, T)
@@ -123,7 +122,7 @@ class LTS:
         ∀ s ∊ other.I, ∃ t ∊ self.I [ s ≤ t ]
 
         Args:
-            other: another LTS
+            other (LTS): another LTS
             τ (optional): set of unobservable internal events
 
         Returns:
@@ -146,7 +145,7 @@ class LTS:
         ∀ s ∊ self.I, ∃ t ∊ other.I [ s ≈ t ]
 
         Args:
-            other: another LTS
+            other (LTS): another LTS
             τ (optional): set of unobservable internal events
 
         Returns:
@@ -164,15 +163,16 @@ class LTS:
 
     def trace (self, target, sources = None):
         """
-        Tries to compute all traces to the target state (DFS). If no source
-        states are given, the set of initial states is used.
+        Tries to compute all traces to the target state (DFS).
+
+        If no source states are given, the set of initial states is used.
 
         Args:
             target: target state
-            sources: set of initial states
+            sources (optional): set of initial states
 
         Returns:
-            list: the trace or an empty list iff target is unreachable
+            list: the trace or an empty list if target is unreachable
         """
         if sources is None: sources = self.I
 
@@ -181,7 +181,12 @@ class LTS:
 
         while stack:
             (node, path, trace) = stack.pop()
-            for t in [ t for t in self.T if t[0] == node and t[2] not in path ]:
+            transitions = [
+                t for t in self.T
+                if t[0] == node and t[2] not in path[1:]
+            ]
+
+            for t in transitions:
                 if t[2] == target:
                     traces.append(trace + [t])
                 else:
@@ -200,7 +205,6 @@ class FA (LTS):
         T: transition relation T ⊆ SxΣxS
         F: set of final states F ⊆ S
     """
-
     def __init__ (self, S, I, Σ, T, F):
         super(FA, self).__init__(S, I, Σ, T)
         self.F = F
@@ -210,7 +214,7 @@ class FA (LTS):
         Return Graphviz dot language string.
 
         Args:
-            highlight (optional): highlight a given path (list of transitions)
+            highlight (list of transitions - optional): highlight a given path
 
         Returns:
             string: .dot file tweaked for dot2tex
@@ -241,16 +245,38 @@ class FA (LTS):
 
         return FA(S, I, Σ, T, F)
 
+    def accepts (self, word):
+        """
+        Test acceptance of a given word.
+
+        Args:
+            word (list): the word to check
+
+        Returns:
+            bool: True if the word is accepted by the automaton
+        """
+        def _accepts (state, word):
+            if not word:
+                return True if state in self.F else False
+            else:
+                return any(
+                    _accepts(_s, word[1:])
+                    for (s, a, _s) in self.T
+                    if s == state and a == word[0]
+                )
+
+        return any(_accepts(i, word) for i in self.I)
+
     def conforms (self, other):
         """
         Conformance test (p24).
 
         * L(self) ⊆ L(other)
-        * iff L(self) ∩ L(other) = 0
-        * iff self × C(P(other)) contains no reachable final state (implemented)
+        * L(self) ∩ L(other) = 0
+        * self × C(P(other)) contains no reachable final state (implemented)
 
         Args:
-            other: the other FA to conform to
+            other (FA): the other FA to conform to
 
         Returns:
             bool: True if this FA conforms to the other
@@ -298,7 +324,7 @@ class FA (LTS):
             F = [ f for f in self.F if f not in equivalence ]
         )
 
-def maximumSimulation (A1: LTS, A2: LTS, R0: set, τ = []) -> set:
+def maximumSimulation (A1, A2, R0, τ = []):
     """
     Constructs the maximum simulation relation A1 ≲ A2 (p36).
 
@@ -312,9 +338,9 @@ def maximumSimulation (A1: LTS, A2: LTS, R0: set, τ = []) -> set:
             maximumSimulation(A2, A2, set(product(A2.S, A2.S)))
 
     Args:
-        A1: a LTS
-        A2: another LTS
-        R0: the starting relation, e.g. A1.SxA2.S
+        A1 (LTS): some LTS
+        A2 (LTS): another LTS
+        R0 (set): the starting relation, e.g. A1.SxA2.S
         τ (optional): set of unobservable internal events
 
     Returns:
@@ -353,7 +379,7 @@ def maximumSimulation (A1: LTS, A2: LTS, R0: set, τ = []) -> set:
             )
         }
 
-    # return relation if fixpoint is reached, else recurse
+    # return relation if fixpoint is reached else recurse
     return R1 if R1 == R0 else maximumSimulation(A1, A2, R1, τ)
 
 def maximumBisimulation (A1, A2, R0, τ = []):
@@ -375,9 +401,9 @@ def maximumBisimulation (A1, A2, R0, τ = []):
             maximumBisimulation(A2, A2, set(product(A2.S, A2.S)))
 
     Args:
-        A1: a LTS
-        A2: another LTS
-        R0: the starting relation, e.g. A1.SxA2.S
+        A1 (LTS): some LTS
+        A2 (LTS): another LTS
+        R0 (set): the starting relation, e.g. A1.SxA2.S
         τ (optional): set of unobservable internal events
 
     Returns:
@@ -392,12 +418,17 @@ def maximumBisimulation (A1, A2, R0, τ = []):
         )
 
 def formatState (s):
-    """Prettify a states string representation for printing."""
+    """Prettify a state's string representation for printing."""
     return str(s).replace("'", "").replace("[", "\{").replace("]", "\}")
 
 def printRelation(relation, A, B):
     """Pretty print relation table in markdown format."""
-    def format(s, t): return "(" + str(s) + ", " + str(t) + ")"
+    def formatPair(s, t): return \
+        "(" + \
+        formatState(s) + \
+        ", " + \
+        formatState(t) + \
+        ")"
 
     # determine header column width (bold)
     headerWidth = max(
@@ -405,7 +436,7 @@ def printRelation(relation, A, B):
     )
 
     # determine content column width
-    colWidth = max(len(format(s, t)) for s in A for t in B)
+    colWidth = max(len(formatPair(s, t)) for s in A for t in B)
 
     # set column width to the maximum
     if headerWidth > colWidth:
@@ -430,15 +461,15 @@ def printRelation(relation, A, B):
         print(
             "| " + ("**" + formatState(s) + "**").ljust(colWidth) + " | " +
             " | ".join(
-                format(s, t).ljust(colWidth)
+                formatPair(s, t).ljust(colWidth)
                 if (s, t) in relation else "".ljust(colWidth)
                 for t in B
             ) + " |"
         )
 
-def fa2dot (S, I, Σ, T, F, highlight=[]):
+def fa2dot (S, I, Σ, T, F, highlight = []):
     """
-    Returns graphical representation of given automaton (using GraphViz).
+    Returns graphical representation of given automaton (using Graphviz).
 
     Args:
         S: set of states
@@ -446,7 +477,7 @@ def fa2dot (S, I, Σ, T, F, highlight=[]):
         Σ: input alphabet
         T: transition relation T ⊆ SxΣxS
         F: set of final states F ⊆ S
-        highlight (optional): highlight a given path (list of transitions)
+        highlight (list of transitions - optional): highlight a given path
 
     Returns:
         string: .dot file tweaked for dot2tex
