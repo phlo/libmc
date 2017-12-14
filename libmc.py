@@ -294,35 +294,45 @@ class FA (LTS):
         notFinal = set(self.S) - set(self.F)
 
         bisimulation = \
-            maximumBisimulation(
-                self,
-                self,
-                set(product(self.F, self.F)) | set(product(notFinal, notFinal))
-            )
-
-        equivalence = \
-            dict(
+            {
                 (a, b)
-                for (a, b) in bisimulation
-                if self.S.index(a) > self.S.index(b)
-            )
+                for (a, b) in
+                    maximumBisimulation(
+                        self,
+                        self,
+                        set(product(self.F, self.F)) | \
+                        set(product(notFinal, notFinal))
+                    )
+                if self.S.index(a) < self.S.index(b)
+            }
 
-        return FA(
-            S = [ s for s in self.S if s not in equivalence ],
-            I = [ i for i in self.I if i not in equivalence ],
-            Σ = self.Σ,
-            T = sorted(
-                    {
-                        (
-                            equivalence[s] if s in equivalence else s,
-                            a,
-                            equivalence[t] if t in equivalence else t
-                        )
-                        for (s, a, t) in self.T
-                    }
-                ),
-            F = [ f for f in self.F if f not in equivalence ]
-        )
+        redundantStates = { b for (a, b) in bisimulation }
+
+        S = \
+            [
+                tuple([a] + [ b for (_a, b) in bisimulation if _a == a ])
+                for a in self.S if a not in redundantStates
+            ]
+        I = [ s for s in S if any(i in s for i in self.I) ]
+        T = \
+            [
+                (
+                    s,
+                    a,
+                    t
+                )
+                for s in S
+                for t in S
+                for a in self.Σ
+                if any(
+                    (_s, a, _t) in self.T
+                    for _s in s if _s not in redundantStates
+                    for _t in t if _t
+                )
+            ]
+        F = [ s for s in S if any(f in s for f in self.F) ]
+
+        return FA(S, I, self.Σ, T, F)
 
 def maximumSimulation (A1, A2, R0, τ = []):
     """
