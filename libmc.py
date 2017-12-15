@@ -308,19 +308,13 @@ class FA (LTS):
 
         redundantStates = { b for (a, b) in bisimulation }
 
-        S = \
-            [
-                tuple([a] + [ b for (_a, b) in bisimulation if _a == a ])
-                for a in self.S if a not in redundantStates
+        S = [
+                tuple([s] + [ b for (a, b) in bisimulation if a == s ])
+                for s in self.S if s not in redundantStates
             ]
         I = [ s for s in S if any(i in s for i in self.I) ]
-        T = \
-            [
-                (
-                    s,
-                    a,
-                    t
-                )
+        T = [
+                (s, a, t)
                 for s in S
                 for t in S
                 for a in self.Σ

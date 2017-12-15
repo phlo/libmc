@@ -1,0 +1,7 @@
+libmc module
+============
+
+.. automodule:: libmc
+    :members:
+    :undoc-members:
+    :show-inheritance:

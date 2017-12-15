@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Overview &mdash; libmc 2017.2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="libmc 2017.2 documentation" href="#"/>
+        <link rel="next" title="libmc module" href="libmc.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> libmc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2017.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="libmc.html">libmc API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">libmc</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>Overview</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#completeness-and-determinism" id="id1">Completeness and Determinism</a></li>
+<li><a class="reference internal" href="#product-automata-and-sub-set-construction" id="id2">Product Automata and Sub-Set Construction</a></li>
+<li><a class="reference internal" href="#labelled-transition-systems" id="id3">Labelled Transition Systems</a><ul>
+<li><a class="reference internal" href="#simulation-and-bisimulation" id="id4">Simulation and Bisimulation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#finite-automata" id="id5">Finite Automata</a><ul>
+<li><a class="reference internal" href="#acceptance" id="id6">Acceptance</a></li>
+<li><a class="reference internal" href="#complement" id="id7">Complement</a></li>
+<li><a class="reference internal" href="#conformance" id="id8">Conformance</a></li>
+<li><a class="reference internal" href="#minimization" id="id9">Minimization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-index" id="id10">API Index</a></li>
+</ul>
+</div>
+<hr class="docutils" />
+<p><a class="reference internal" href="libmc.html#module-libmc" title="libmc"><code class="xref py py-mod docutils literal"><span class="pre">libmc</span></code></a> is a python module providing a collection of tools for KV Model Checkin and implements the following concepts presented in the lecture.</p>
+<div class="section" id="completeness-and-determinism">
+<h2><a class="toc-backref" href="#id1">Completeness and Determinism</a><a class="headerlink" href="#completeness-and-determinism" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.LTS.isComplete" title="libmc.LTS.isComplete"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.isComplete</span></code></a>()</td>
+<td>Completeness (p21): True if LTS is complete.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="libmc.html#libmc.LTS.isDeterministic" title="libmc.LTS.isDeterministic"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.isDeterministic</span></code></a>()</td>
+<td>Determinism (p21): True if LTS is deterministic.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="product-automata-and-sub-set-construction">
+<h2><a class="toc-backref" href="#id2">Product Automata and Sub-Set Construction</a><a class="headerlink" href="#product-automata-and-sub-set-construction" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.LTS.product" title="libmc.LTS.product"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.product</span></code></a>(other)</td>
+<td>Create product LTS.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="libmc.html#libmc.LTS.power" title="libmc.LTS.power"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.power</span></code></a>()</td>
+<td>Create power LTS.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="labelled-transition-systems">
+<h2><a class="toc-backref" href="#id3">Labelled Transition Systems</a><a class="headerlink" href="#labelled-transition-systems" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.LTS" title="libmc.LTS"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS</span></code></a>(S,&nbsp;I,&nbsp;Σ,&nbsp;T)</td>
+<td>Labelled Transition System (p31).</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="simulation-and-bisimulation">
+<h3><a class="toc-backref" href="#id4">Simulation and Bisimulation</a><a class="headerlink" href="#simulation-and-bisimulation" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.LTS.simulates" title="libmc.LTS.simulates"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.simulates</span></code></a>(other,&nbsp;τ=[])</td>
+<td>Simulation of LTS (p39).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="libmc.html#libmc.maximumSimulation" title="libmc.maximumSimulation"><code class="xref py py-obj docutils literal"><span class="pre">libmc.maximumSimulation</span></code></a>(A1,&nbsp;A2,&nbsp;R0,&nbsp;τ=[])</td>
+<td>Constructs the maximum simulation relation A1 ≲ A2 (p36).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.LTS.bisimulates" title="libmc.LTS.bisimulates"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.bisimulates</span></code></a>(other,&nbsp;τ=[])</td>
+<td>Bisimulation of LTS (p43).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="libmc.html#libmc.maximumBisimulation" title="libmc.maximumBisimulation"><code class="xref py py-obj docutils literal"><span class="pre">libmc.maximumBisimulation</span></code></a>(A1,&nbsp;A2,&nbsp;R0,&nbsp;τ=[])</td>
+<td>Constructs the maximum bisimulation relation A1 ≈ A2 (p43).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="finite-automata">
+<h2><a class="toc-backref" href="#id5">Finite Automata</a><a class="headerlink" href="#finite-automata" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.FA" title="libmc.FA"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA</span></code></a>(S,&nbsp;I,&nbsp;Σ,&nbsp;T,&nbsp;F)</td>
+<td>Finite Automata (p18).</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="acceptance">
+<h3><a class="toc-backref" href="#id6">Acceptance</a><a class="headerlink" href="#acceptance" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.FA.accepts" title="libmc.FA.accepts"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA.accepts</span></code></a>(word)</td>
+<td>Test acceptance of a given word.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="complement">
+<h3><a class="toc-backref" href="#id7">Complement</a><a class="headerlink" href="#complement" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.FA.complement" title="libmc.FA.complement"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA.complement</span></code></a>()</td>
+<td>Create complement automaton (p23).</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="conformance">
+<h3><a class="toc-backref" href="#id8">Conformance</a><a class="headerlink" href="#conformance" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.FA.conforms" title="libmc.FA.conforms"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA.conforms</span></code></a>(other)</td>
+<td>Conformance test (p24).</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="minimization">
+<h3><a class="toc-backref" href="#id9">Minimization</a><a class="headerlink" href="#minimization" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.FA.minimize" title="libmc.FA.minimize"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA.minimize</span></code></a>()</td>
+<td>Minimization of Deterministic Finite Automata (p44).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="api-index">
+<h2><a class="toc-backref" href="#id10">API Index</a><a class="headerlink" href="#api-index" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a> for a list of module members.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="libmc.html" class="btn btn-neutral float-right" title="libmc module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Florian Schroegendorfer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2017.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

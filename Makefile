@@ -4,8 +4,10 @@ test: test/test.py
 	@python $<
 
 doc: apidoc
-	make -C doc clean
+	rm -rf doc/html
 	make -C doc html
+	mv doc/build/html doc
+	rm -rf doc/build
 
 apidoc:
 	-rm ./doc/source/{modules,libmc}.rst
