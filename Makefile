@@ -1,16 +1,16 @@
 export PYTHONPATH := $(PYTHONPATH):$(pwd)
 
+.PHONY: test
 test: test/test.py
 	@python $<
 
-doc: apidoc
-	rm -rf doc/html
-	make -C doc html
-	mv doc/build/html doc
-	rm -rf doc/build
-
-apidoc:
+doc: libmc.py
+	find doc/ -maxdepth 1 ! -name doc \
+		! -name Makefile \
+		! -name source \
+		-exec rm -rf {} \;
 	-rm ./doc/source/{modules,libmc}.rst
 	cd doc && sphinx-apidoc -o source ../
-
-.PHONY: apidoc doc test
+	make -C doc html
+	mv doc/build/html/* doc
+	rm -rf doc/build
