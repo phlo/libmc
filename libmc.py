@@ -6,7 +6,7 @@ from itertools import chain, combinations, product
 __author__  = "Florian Schroegendorfer"
 __email__   = "florian.schroegendorfer@phlo.at"
 __license__ = "GPLv3"
-__version__ = "2017.2"
+__version__ = "2017.3"
 
 def powerset (s):
     """
@@ -42,6 +42,15 @@ class LTS:
         self.I = I
         self.Σ = Σ
         self.T = T
+
+    def __repr__ (self):
+        return \
+            "LTS(" + \
+            str(self.S) + ", " + \
+            str(self.I) + ", " + \
+            str(self.Σ) + ", " + \
+            str(self.T) + \
+            ")"
 
     def toDot (self, highlight = []):
         """
@@ -85,18 +94,54 @@ class LTS:
                 )
             )
 
-    def product (self, other):
-        """Create product LTS."""
-        S = list(product(self.S, other.S))
-        I = list(product(self.I, other.I))
+    def product (self, other, full=False):
+        """
+        Create product LTS.
+
+        Args:
+            other (LTS): another LTS
+            full (bool - optional): create full product automaton if True, else
+                only reachable states are included (default)
+        """
+        S = set() if not full else list(product(self.S, other.S))
+        I = sorted(product(self.I, other.I))
         Σ = self.Σ
-        T = [
+        T = [] if not full else \
+            [
                 (s, a, (t1[2], t2[2]))
                 for s in S
                 for a in Σ
                 for t1 in self.T if t1[0] == s[0] and t1[1] == a
                 for t2 in other.T if t2[0] == s[1] and t2[1] == a
             ]
+
+        # reachability analysis
+        if not full:
+            transitions = \
+                [
+                    (s, a, (t1[2], t2[2]))
+                    for s in list(product(self.S, other.S))
+                    for a in Σ
+                    for t1 in self.T if t1[0] == s[0] and t1[1] == a
+                    for t2 in other.T if t2[0] == s[1] and t2[1] == a
+                ]
+
+            stack = list(I)
+
+            def enque (successor): stack.append(successor)
+
+            def cache (successor): S.add(successor)
+
+            def cached (successor): return successor in S
+
+            def successors (current):
+                for t in [ t for t in transitions if t[0] == current ]:
+                    T.append(t)
+                    yield t[2]
+
+            dfs(stack, enque, cache, cached, successors)
+
+            S |= set(I)
 
         return LTS(S, I, Σ, T)
 
@@ -161,7 +206,7 @@ class LTS:
             for s1 in other.I
         )
 
-    def trace (self, target, sources = None):
+    def trace (self, target, sources=None):
         """
         Tries to compute all traces to the target state (DFS).
 
@@ -179,18 +224,34 @@ class LTS:
         stack = [ (s, [s], []) for s in sources ]
         traces = []
 
-        while stack:
-            (node, path, trace) = stack.pop()
-            transitions = [
+        # state components used in DFS
+        node = None
+        path = None
+        trace = None
+
+        def enque (successor):
+            stack.append(
+                (successor[2], path + [successor[2]], trace + [successor])
+            )
+
+        def cache (successor): pass
+
+        def cached (successor):
+            if successor[2] == target:
+                traces.append(trace + [successor])
+                return True
+
+            return False
+
+        def successors (current):
+            nonlocal node, path, trace
+            (node, path, trace) = current
+            return [
                 t for t in self.T
                 if t[0] == node and t[2] not in path[1:]
             ]
 
-            for t in transitions:
-                if t[2] == target:
-                    traces.append(trace + [t])
-                else:
-                    stack.append((t[2], path + [t[2]], trace + [t]))
+        dfs(stack, enque, cache, cached, successors)
 
         return traces
 
@@ -209,6 +270,16 @@ class FA (LTS):
         super(FA, self).__init__(S, I, Σ, T)
         self.F = F
 
+    def __repr__ (self):
+        return \
+            "FA(" + \
+            str(self.S) + ", " + \
+            str(self.I) + ", " + \
+            str(self.Σ) + ", " + \
+            str(self.T) + ", " + \
+            str(self.F) + \
+            ")"
+
     def toDot (self, highlight = []):
         """
         Return Graphviz dot language string.
@@ -221,12 +292,37 @@ class FA (LTS):
         """
         return fa2dot(self.S, self.I, self.Σ, self.T, self.F, highlight)
 
-    def product (self, other):
+    def product (self, other, full=False):
         """Create product automaton (p20)."""
-        lts = super(FA, self).product(other)
+        lts = super(FA, self).product(other, full)
         F = list(product(self.F, other.F))
 
         return FA(lts.S, lts.I, lts.Σ, lts.T, F)
+
+################################################################################
+    # TODO remove
+    #  @staticmethod
+    #  def product (*lts):
+        #  assert(all(Σ == lts[0].Σ for Σ in lts[1:]))
+#
+        #  S = list(product(*[ A.S for A in lts ]))
+        #  I = list(product(*[ A.I for A in lts ]))
+        #  Σ = lts[0].Σ
+        #  T = []
+        #  #  T = [
+                #  #  (s, a, (t1[2], t2[2]))
+                #  #  for s in S
+                #  #  for a in Σ
+                #  #  for t1 in self.T if t1[0] == s[0] and t1[1] == a
+                #  #  for t2 in other.T if t2[0] == s[1] and t2[1] == a
+            #  #  ]
+        #  #  T = [
+                #  #  (s, a, xxx)
+                #  #  for s in S
+                #  #  for a in Σ
+                #  #  for
+#
+        #  return LTS(S, I, Σ, T)
 
     def power (self):
         """Create power automaton (p22)."""
@@ -267,7 +363,7 @@ class FA (LTS):
 
         return any(_accepts(i, word) for i in self.I)
 
-    def conforms (self, other):
+    def conforms (self, other, **kwargs):
         """
         Conformance test (p24).
 
@@ -281,7 +377,7 @@ class FA (LTS):
         Returns:
             bool: True if this FA conforms to the other
         """
-        A = self.product(other.power().complement());
+        A = self.product(other.power().complement(), **kwargs);
 
         traces = list(filter(lambda x: x == True, [ A.trace(f) for f in A.F ]))
 
@@ -420,6 +516,126 @@ def maximumBisimulation (A1, A2, R0, τ = []):
             { (s, t) for (t, s) in maximumSimulation(A1, A2, R0, τ) },
             τ
         )
+
+def asynchronousComposition (*lts, partialOrderReduction = None):
+    """
+    Args:
+        *lts:
+        partialOrderReduction (optional): local expansion function
+            ``f: list(index) -> index``
+    """
+    S = set(product(*[ l.I for l in lts]))
+    I = sorted(S)
+    Σ = sorted(set.union(*[ set(l.Σ) for l in lts]))
+    T = set()
+
+    # number of components in the asynchronous composition
+    numComponents = len(lts)
+
+    # global symbols
+    #  Γ = {
+            #  a
+            #  for l in lts
+            #  for a in l.Σ
+            #  if not [ _l for _l in lts if _l != l and a not in _l.Σ ]
+        #  }
+    Γ = set.intersection(*[ set(l.Σ) for l in lts ])
+
+    #  print(Γ)
+
+    # local symbols
+    #  Λ = [
+            #  [
+                #  a
+                #  for a in l.Σ
+                #  if not [ _l for _l in lts if _l != l and a in _l.Σ ]
+            #  ]
+            #  for l in lts
+        #  ]
+    Λ = [ set(l.Σ) - Γ for l in lts ]
+
+    #  print(Λ)
+
+    # initialize dfs stack
+    stack = list(I)
+
+    # on-the-fly generation of reachable states (dfs)
+    def enque (successor): stack.append(successor[2])
+
+    def cache (successor):
+        S.add(successor[2])
+        T.add(successor)
+
+    def cached (successor): return successor in T
+
+    def successors (fromState):
+        # local states
+        local = [
+                    i
+                    for i in range(numComponents)
+                    if all(
+                        a in Λ[i]
+                        for (s, a, t) in lts[i].T
+                        if s == fromState[i]
+                    )
+                ]
+
+        #  print("state = " + str(fromState))
+        #  print("local = " + str(local))
+
+        # list of components to expand
+        expandComponents = \
+            range(numComponents) if not local else \
+            partialOrderReduction(local) if partialOrderReduction else \
+            local
+
+        # dictionary containing successors per symbol and component state
+        _successors = {}
+
+        for i in expandComponents:
+            for (s, a, t) in [ t for t in lts[i].T if t[0] == fromState[i] ]:
+                _successors.setdefault(a, {}).setdefault(i, []).append(t)
+
+        # build expansion
+        expansion = [
+                        (fromState, a, toState)
+                        for a in _successors
+                        for toState in
+                            product(*[
+                                _successors[a].setdefault(i, [fromState[i]])
+                                for i in range(numComponents)
+                            ])
+                    ]
+
+        #  print("successors   = " + str(_successors))
+        #  print("expansion    = " + str(sorted(expansion)))
+
+        return expansion
+
+    dfs(stack, enque, cache, cached, successors)
+
+    return LTS(sorted(S), I, Σ, sorted(T))
+
+def __bfs_dfs_aux__ (stack, enque, deque, cache, cached, successors, op):
+    while stack:
+        current = deque(stack)
+
+        for successor in successors(current):
+            if not cached(successor):
+                cache(successor)
+                enque(successor)
+
+        if op: op(current)
+
+def bfs (stack, enque, cache, cached, successors, op=None):
+    deque = lambda s: s.pop(0)
+
+    __bfs_dfs_aux__(stack, enque, deque, cache, cached, successors, op)
+
+def dfs (stack, enque, cache, cached, successors, op=None):
+    deque = lambda s: s.pop()
+
+    __bfs_dfs_aux__(stack, enque, deque, cache, cached, successors, op)
 
 def formatState (s):
     """Prettify a state's string representation for printing."""

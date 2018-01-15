@@ -6,7 +6,21 @@ from libmc import FA
 from libmc import LTS
 from libmc import maximumSimulation
 from libmc import maximumBisimulation
+from libmc import asynchronousComposition
 from libmc import printRelation
+
+def expect (result, expectation, msg=None):
+    try:
+        assert result == expectation
+    except AssertionError:
+        print("=" * 80)
+        if msg is not None:
+            print(msg)
+            print("=" * 80)
+        print("got:      " + str(result))
+        print("expected: " + str(expectation))
+        print("=" * 80)
+        raise
 
 ################################################################################
 # completeness and determinism
@@ -25,6 +39,9 @@ L = LTS (
         ]
 )
 
+expect(L.isComplete(), True, "LTS.isComplete")
+expect(L.isDeterministic(), True, "LTS.isDeterministic")
+
 assert L.isComplete()
 assert L.isDeterministic()
 
@@ -40,6 +57,9 @@ F = FA (
         ],
     F = [2]
 )
+
+expect(F.isComplete(), True, "FA.isComplete")
+expect(F.isDeterministic(), True, "FA.isDeterministic")
 
 assert F.isComplete()
 assert F.isDeterministic()
@@ -58,6 +78,9 @@ L = LTS (
         ]
 )
 
+expect(L.isComplete(), True, "LTS.isComplete")
+expect(L.isDeterministic(), False, "LTS.isDeterministic")
+
 assert L.isComplete()
 assert not L.isDeterministic()
 
@@ -75,6 +98,9 @@ F = FA (
     F = [2]
 )
 
+expect(F.isComplete(), True, "FA.isComplete")
+expect(F.isDeterministic(), False, "FA.isDeterministic")
+
 assert F.isComplete()
 assert not F.isDeterministic()
 
@@ -85,6 +111,9 @@ L = LTS (
     Σ = ['a', 'b'],
     T = [] # no transition
 )
+
+expect(L.isComplete(), False, "LTS.isComplete")
+expect(L.isDeterministic(), True, "LTS.isDeterministic")
 
 assert not L.isComplete()
 assert L.isDeterministic()
@@ -97,6 +126,9 @@ F = FA (
     F = [2]
 )
 
+expect(F.isComplete(), False, "FA.isComplete")
+expect(F.isDeterministic(), True, "FA.isDeterministic")
+
 assert not F.isComplete()
 assert F.isDeterministic()
 
@@ -108,23 +140,29 @@ L = LTS (
     T = [] # no transition
 )
 
+expect(L.isComplete(), False, "LTS.isComplete")
+expect(L.isDeterministic(), False, "LTS.isDeterministic")
+
 assert not L.isComplete()
 assert not L.isDeterministic()
 
 F = FA (
     S = [1, 2],
-    I = [1],
+    I = [1, 2], # more than one initial state
     Σ = ['a', 'b'],
     T = [
             (1, 'a', 2),
-            (1, 'b', 2)
+            (1, 'b', 2),
             # no transitions for state 2
         ],
     F = [2]
 )
 
+expect(F.isComplete(), False, "FA.isComplete")
+expect(F.isDeterministic(), False, "FA.isDeterministic")
+
 assert not F.isComplete()
-assert F.isDeterministic()
+assert not F.isDeterministic()
 
 ################################################################################
 # product, complement and power automta
@@ -168,7 +206,52 @@ S_EX1 = FA (
 )
 
 # product
-P = I_EX1.product(S_EX1)
+P = I_EX1.product(S_EX1, True)
+
+expect(
+    P.S,
+    [
+        ('1', 'A'), ('1', 'B'), ('1', 'C'), ('1', 'D'),
+        ('2', 'A'), ('2', 'B'), ('2', 'C'), ('2', 'D'),
+        ('3', 'A'), ('3', 'B'), ('3', 'C'), ('3', 'D'),
+        ('4', 'A'), ('4', 'B'), ('4', 'C'), ('4', 'D')
+    ],
+    "FA.product: states"
+)
+expect(P.I, [('1', 'A')], "FA.product: initial states")
+expect(P.Σ, I_EX1.Σ, "FA.product: alphabet")
+expect(
+    P.T,
+    [
+        (('1', 'A'), 'b', ('2', 'A')),
+        (('1', 'A'), 'b', ('2', 'B')),
+        (('1', 'B'), 'b', ('2', 'C')),
+        (('1', 'D'), 'b', ('2', 'A')),
+        (('2', 'A'), 'b', ('3', 'A')),
+        (('2', 'A'), 'b', ('3', 'B')),
+        (('2', 'A'), 'b', ('4', 'A')),
+        (('2', 'A'), 'b', ('4', 'B')),
+        (('2', 'B'), 'b', ('3', 'C')),
+        (('2', 'B'), 'b', ('4', 'C')),
+        (('2', 'D'), 'b', ('3', 'A')),
+        (('2', 'D'), 'b', ('4', 'A')),
+        (('3', 'A'), 'a', ('1', 'C')),
+        (('3', 'A'), 'a', ('1', 'D')),
+        (('3', 'A'), 'b', ('3', 'A')),
+        (('3', 'A'), 'b', ('3', 'B')),
+        (('3', 'B'), 'a', ('1', 'D')),
+        (('3', 'B'), 'b', ('3', 'C')),
+        (('3', 'C'), 'a', ('1', 'C')),
+        (('3', 'C'), 'a', ('1', 'D')),
+        (('3', 'D'), 'b', ('3', 'A')),
+        (('4', 'A'), 'b', ('3', 'A')),
+        (('4', 'A'), 'b', ('3', 'B')),
+        (('4', 'B'), 'b', ('3', 'C')),
+        (('4', 'D'), 'b', ('3', 'A'))
+    ],
+    "FA.product: transitions"
+)
+expect(P.F, [('4', 'B')], "FA.product: final states")
 
 assert P.S == [
     ('1', 'A'), ('1', 'B'), ('1', 'C'), ('1', 'D'),
@@ -209,6 +292,12 @@ assert P.F == [('4', 'B')]
 
 # complement
 C = I_EX1.complement()
+
+expect(C.S, I_EX1.S, "FA.complement: states")
+expect(C.I, I_EX1.I, "FA.complement: initial states")
+expect(C.Σ, I_EX1.Σ, "FA.complement: alphabet")
+expect(C.T, I_EX1.T, "FA.complement: transitions")
+expect(C.F, ['1', '2', '3'], "FA.complement: final states")
 
 assert C.S == I_EX1.S
 assert C.Σ == I_EX1.Σ
@@ -289,7 +378,7 @@ assert P.F == [
 # example presented in assignment 1 - exercise 1
 ################################################################################
 
-[ conforms, ICPS, traces ] = I_EX1.conforms(S_EX1)
+[ conforms, ICPS, traces ] = I_EX1.conforms(S_EX1, full=True)
 
 assert conforms
 assert ICPS.S == [
@@ -797,3 +886,115 @@ assert F.T == \
         (('C', 'E'), 1, ('C', 'E'))
     ]
 assert F.F == [('B', 'F')]
+
+################################################################################
+# asynchronous composition
+################################################################################
+
+# simple example presented in the lecture (p89)
+A = LTS (
+    S = [1, 2, 3, 4],
+    I = [1],
+    Σ = ['a', 'b', 'c', 's'],
+    T = [
+            (1, 'a', 2),
+            (2, 'b', 3),
+            (3, 'c', 4),
+            (4, 's', 1)
+        ]
+    )
+
+B = LTS (
+    S = [5, 6, 7, 8],
+    I = [5],
+    Σ = ['d', 'e', 'f', 's'],
+    T = [
+            (5, 'd', 6),
+            (6, 'e', 7),
+            (7, 'f', 8),
+            (8, 's', 5),
+        ]
+    )
+
+composition = asynchronousComposition(A, B)
+
+expect(
+    composition.S,
+    [
+        (1, 5), (1, 6), (1, 7), (1, 8),
+        (2, 5), (2, 6), (2, 7), (2, 8),
+        (3, 5), (3, 6), (3, 7), (3, 8),
+        (4, 5), (4, 6), (4, 7), (4, 8)
+    ],
+    "asynchronousComposition: states"
+)
+
+assert composition.S == \
+    [
+        (1, 5), (1, 6), (1, 7), (1, 8),
+        (2, 5), (2, 6), (2, 7), (2, 8),
+        (3, 5), (3, 6), (3, 7), (3, 8),
+        (4, 5), (4, 6), (4, 7), (4, 8)
+    ]
+assert composition.I == [(1, 5)]
+assert composition.Σ == ['a', 'b', 'c', 'd', 'e', 'f', 's']
+assert composition.T == \
+    [
+        ((1, 5), 'a', (2, 5)), ((1, 5), 'd', (1, 6)),
+        ((1, 6), 'a', (2, 6)), ((1, 6), 'e', (1, 7)),
+        ((1, 7), 'a', (2, 7)), ((1, 7), 'f', (1, 8)),
+        ((1, 8), 'a', (2, 8)), ((2, 5), 'b', (3, 5)),
+        ((2, 5), 'd', (2, 6)), ((2, 6), 'b', (3, 6)),
+        ((2, 6), 'e', (2, 7)), ((2, 7), 'b', (3, 7)),
+        ((2, 7), 'f', (2, 8)), ((2, 8), 'b', (3, 8)),
+        ((3, 5), 'c', (4, 5)), ((3, 5), 'd', (3, 6)),
+        ((3, 6), 'c', (4, 6)), ((3, 6), 'e', (3, 7)),
+        ((3, 7), 'c', (4, 7)), ((3, 7), 'f', (3, 8)),
+        ((3, 8), 'c', (4, 8)), ((4, 5), 'd', (4, 6)),
+        ((4, 6), 'e', (4, 7)), ((4, 7), 'f', (4, 8)),
+        ((4, 8), 's', (1, 5))
+    ]
+
+composition = asynchronousComposition(A, B, partialOrderReduction = lambda x: [x[-1]])
+
+assert composition.S == [(1, 5), (1, 6), (1, 7), (1, 8), (2, 8), (3, 8), (4, 8)]
+assert composition.I == [(1, 5)]
+assert composition.Σ == ['a', 'b', 'c', 'd', 'e', 'f', 's']
+assert composition.T == \
+    [
+        ((1, 5), 'd', (1, 6)), ((1, 6), 'e', (1, 7)), ((1, 7), 'f', (1, 8)),
+        ((1, 8), 'a', (2, 8)), ((2, 8), 'b', (3, 8)), ((3, 8), 'c', (4, 8)),
+        ((4, 8), 's', (1, 5))
+    ]
+
+# assignment 3 - exercise 1
+A = LTS (
+    S = [1, 2, 3, 4],
+    I = [1],
+    Σ = ['a', 't', 's'],
+    T = [
+            (1, 'a', 2),
+            (2, 't', 3),
+            (3, 'a', 4),
+            (4, 's', 4)
+        ]
+    )
+
+B = LTS (
+    S = [1, 2, 3],
+    I = [1],
+    Σ = ['b', 't', 's'],
+    T = [
+            (1, 'b', 2),
+            (2, 't', 2),
+            (2, 'b', 3),
+            (3, 's', 1),
+        ]
+    )
+
+composition = asynchronousComposition(A, B)
+
+print("S = " + str(composition.S))
+print("I = " + str(composition.I))
+print("Σ = " + str(composition.Σ))
+print("T = " + str(composition.T))
