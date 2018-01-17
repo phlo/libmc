@@ -2,12 +2,7 @@
 
 from itertools import product
 
-from libmc import FA
-from libmc import LTS
-from libmc import maximumSimulation
-from libmc import maximumBisimulation
-from libmc import asynchronousComposition
-from libmc import printRelation
+from libmc import *
 
 def expect (result, expectation, msg=None):
     try:
@@ -1160,3 +1155,93 @@ expect(
     ],
     "partialOrderReduction: transitions"
 )
+
+################################################################################
+# tarjan's algorithm
+################################################################################
+
+# example from lecture slides (p108)
+#
+# SCC
+# * [3, 7, 8]
+# * [6]
+# * [10, 11, 12]
+states = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+edges = \
+    [
+        (1, 3),
+        (1, 4),
+        (2, 4),
+        (2, 5),
+        (2, 6),
+        (3, 7), (7, 8), (8, 3), # scc
+        (4, 8),
+        (4, 9),
+        (5, 9),
+        (5, 10),
+        (6, 6), # scc
+        (8, 12),
+        (9, 8),
+        (9, 10),
+        (10, 6),
+        (10, 12), (12, 11), (11, 10), # scc
+        (11, 6)
+    ]
+
+scc = tarjan(states, edges)
+
+expect(scc, [[3, 7, 8], [6], [10, 11, 12]], "tarjan")
+
+# example from wikipedia
+#
+# SCC
+# * [1, 2, 3]
+# * [4, 5]
+# * [6, 7]
+# * [8]
+states = [1, 2, 3, 4, 5, 6, 7, 8]
+edges = \
+    [
+        (1, 2), (2, 3), (3, 1), # scc
+        (4, 2), (4, 3),
+        (4, 5), (5, 4), # scc
+        (5, 6),
+        (6, 3),
+        (6, 7), (7, 6), # scc
+        (8, 5),
+        (8, 7),
+        (8, 8) # scc
+    ]
+
+scc = tarjan(states, edges)
+
+expect(scc, [[1, 2, 3], [4, 5], [6, 7], [8]], "tarjan")
+
+# assignment 3 - exercise 4
+states = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
+edges = \
+    [
+        ('A', 'B'),
+        ('A', 'E'),
+        ('B', 'D'),
+        ('B', 'F'),
+        ('C', 'F'),
+        ('D', 'A'),
+        ('D', 'H'),
+        ('D', 'I'),
+        ('E', 'D'),
+        ('F', 'G'),
+        ('F', 'J'),
+        ('G', 'C'),
+        ('G', 'K'),
+        ('H', 'E'),
+        ('H', 'H'),
+        ('I', 'E'),
+        ('I', 'J'),
+        ('J', 'G'),
+        ('J', 'K')
+    ]
+
+scc = tarjan(states, edges)
+
+expect(scc, [['A', 'B', 'D', 'E', 'H', 'I'], ['C', 'F', 'G', 'J']], "tarjan")
