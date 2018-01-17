@@ -540,34 +540,13 @@ def asynchronousComposition (*lts, partialOrderReduction = None):
             {
                 a
                 for a in l.Σ
-                #  if not [ _l for _l in lts if _l != l and a in _l.Σ ]
                 if all(a not in _l.Σ for _l in lts if _l != l)
             }
             for l in lts
         ]
-    #  Λ = [ set(l.Σ) - Γ for l in lts ]
-
-    #  print(Λ)
-
-    # global symbols
-    #  Γ = {
-            #  a
-            #  for l in lts
-            #  for a in l.Σ
-            #  #  if not [ _l for _l in lts if _l != l and a not in _l.Σ ]
-            #  if all(a not in _l.Σ for _l in lts if _l != l)
-        #  }
-    #  Γ = set.intersection(*[ set(l.Σ) for l in lts ])
-    Γ = Σ.difference(*Λ)
-
-    #  print(Γ)
 
     # map of symbols to the set of components knowing that symbol
     Ψ = { a: { i for i in components if a in lts[i].Σ } for a in Σ }
-
-    verbose = False
-    if verbose:
-        print("Ψ = " + str(Ψ))
 
     # initialize dfs stack
     stack = list(I)
@@ -582,17 +561,12 @@ def asynchronousComposition (*lts, partialOrderReduction = None):
     def cached (successor): return successor in T
 
     def successors (fromState):
-
         # dictionary containing successors per symbol and component state
         nextStates = {}
 
         for i in components:
             for (s, a, t) in [ t for t in lts[i].T if t[0] == fromState[i] ]:
                 nextStates.setdefault(a, {}).setdefault(i, []).append(t)
-
-        if verbose:
-            print("state = " + str(fromState))
-            print("nextStates = " + str(nextStates))
 
         # perform partial order reduction
         if partialOrderReduction:
@@ -613,24 +587,13 @@ def asynchronousComposition (*lts, partialOrderReduction = None):
                             )
                     ]
 
-            if verbose:
-                print("local = " + str(local))
-
+            # partial expansion
             if local:
                 local = partialOrderReduction(local)
 
-                if verbose:
-                    print("partialOrderReduction = " + str(local))
-
-                # indices of components not being to expanded
-                skippedComponents = { i for i in components if i not in local }
-
-                if verbose:
-                    print("skippedComponents = " + str(skippedComponents))
-
                 # unset successors of skipped components
                 for a in nextStates:
-                    for i in skippedComponents:
+                    for i in { i for i in components if i not in local }:
                         if i in nextStates[a]:
                             del nextStates[a][i]
 
@@ -645,57 +608,6 @@ def asynchronousComposition (*lts, partialOrderReduction = None):
                                 for i in components
                             ])
                     ]
-
-        if verbose:
-            print("expansion  = " + str(sorted(expansion)))
-            print("#" * 80)
-
-        return expansion
-
-        ########################################################################
-        # local states
-        local = [
-                    i
-                    for i in range(numComponents)
-                    if all(
-                        a in Λ[i]
-                        for (s, a, t) in lts[i].T
-                        if s == fromState[i]
-                    )
-                ]
-
-        #  print("state = " + str(fromState))
-        #  print("local = " + str(local))
-
-        # list of components to expand
-        expandComponents = \
-            range(numComponents) if not local else \
-            partialOrderReduction(local) if partialOrderReduction else \
-            local
-        #  expandComponents = range(numComponents)
-        #  if partialOrderReduction and local:
-          #  expandComponents = partialOrderReduction(local)
-
-        # dictionary containing successors per symbol and component state
-        _successors = {}
-
-        for i in expandComponents:
-            for (s, a, t) in [ t for t in lts[i].T if t[0] == fromState[i] ]:
-                _successors.setdefault(a, {}).setdefault(i, []).append(t)
-
-        # build expansion
-        expansion = [
-                        (fromState, a, toState)
-                        for a in _successors
-                        for toState in
-                            product(*[
-                                _successors[a].setdefault(i, [fromState[i]])
-                                for i in range(numComponents)
-                            ])
-                    ]
-
-        #  print("successors   = " + str(_successors))
-        #  print("expansion    = " + str(sorted(expansion)))
 
         return expansion
 
