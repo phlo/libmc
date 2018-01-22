@@ -1,0 +1,1119 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>libmc &mdash; libmc 2017.3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="libmc 2017.3 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> libmc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2017.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../libmc.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">libmc</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>libmc</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for libmc</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Provides collection of tools for KV Model Checking.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">inf</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">combinations</span><span class="p">,</span> <span class="n">product</span>
+
+<span class="n">__author__</span>  <span class="o">=</span> <span class="s2">&quot;Florian Schroegendorfer&quot;</span>
+<span class="n">__email__</span>   <span class="o">=</span> <span class="s2">&quot;florian.schroegendorfer@phlo.at&quot;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s2">&quot;GPLv3&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2017.3&quot;</span>
+
+<div class="viewcode-block" id="powerset"><a class="viewcode-back" href="../libmc.html#libmc.powerset">[docs]</a><span class="k">def</span> <span class="nf">powerset</span> <span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the powerset of s.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> \
+        <span class="p">[</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span>
+                <span class="n">combinations</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">]</span></div>
+
+<div class="viewcode-block" id="intersect"><a class="viewcode-back" href="../libmc.html#libmc.intersect">[docs]</a><span class="k">def</span> <span class="nf">intersect</span> <span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the intersection of two lists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l1</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l2</span> <span class="p">]</span></div>
+
+<div class="viewcode-block" id="LTS"><a class="viewcode-back" href="../libmc.html#libmc.LTS">[docs]</a><span class="k">class</span> <span class="nc">LTS</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Labelled Transition System (p31).</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        S: set of states</span>
+<span class="sd">        I: set of initial states I ⊆ S</span>
+<span class="sd">        Σ: input alphabet</span>
+<span class="sd">        T: transition relation T ⊆ SxΣxS</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Σ</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="o">=</span> <span class="n">S</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">I</span> <span class="o">=</span> <span class="n">I</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span> <span class="o">=</span> <span class="n">Σ</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">T</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> \
+            <span class="s2">&quot;LTS(&quot;</span> <span class="o">+</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Σ</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="s2">&quot;)&quot;</span>
+
+<div class="viewcode-block" id="LTS.toDot"><a class="viewcode-back" href="../libmc.html#libmc.LTS.toDot">[docs]</a>    <span class="k">def</span> <span class="nf">toDot</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">highlight</span> <span class="o">=</span> <span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return LTS as Graphviz dot language string.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            highlight (list of transitions - optional): highlight a given path</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            string: .dot file tweaked for dot2tex</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">fa2dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="p">[],</span> <span class="n">highlight</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LTS.isComplete"><a class="viewcode-back" href="../libmc.html#libmc.LTS.isComplete">[docs]</a>    <span class="k">def</span> <span class="nf">isComplete</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Completeness (p21): True if LTS is complete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> \
+            <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="ow">and</span> <span class="n">y</span><span class="p">,</span>
+                <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="p">[</span>
+                        <span class="p">[</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">a</span> <span class="p">]</span>
+                        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span>
+                        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="LTS.isDeterministic"><a class="viewcode-back" href="../libmc.html#libmc.LTS.isDeterministic">[docs]</a>    <span class="k">def</span> <span class="nf">isDeterministic</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determinism (p21): True if LTS is deterministic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">and</span> \
+            <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="ow">and</span> <span class="n">y</span><span class="p">,</span>
+                <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="p">[</span>
+                        <span class="p">[</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span> <span class="ow">and</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">a</span> <span class="p">]</span>
+                        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span>
+                        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="LTS.product"><a class="viewcode-back" href="../libmc.html#libmc.LTS.product">[docs]</a>    <span class="k">def</span> <span class="nf">product</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create product LTS.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (LTS): another LTS</span>
+<span class="sd">            full (bool - optional): create full product automaton if True, else</span>
+<span class="sd">                only reachable states are included (default)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">full</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">S</span><span class="p">))</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">I</span><span class="p">))</span>
+        <span class="n">Σ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">full</span> <span class="k">else</span> \
+            <span class="p">[</span>
+                <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="n">t1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">t2</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">S</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">Σ</span>
+                <span class="k">for</span> <span class="n">t1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">t1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">t1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">a</span>
+                <span class="k">for</span> <span class="n">t2</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">t2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">t2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">a</span>
+            <span class="p">]</span>
+
+        <span class="c1"># reachability analysis</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">full</span><span class="p">:</span>
+            <span class="n">transitions</span> <span class="o">=</span> \
+                <span class="p">[</span>
+                    <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="n">t1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">t2</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">S</span><span class="p">))</span>
+                    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">Σ</span>
+                    <span class="k">for</span> <span class="n">t1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">t1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">t1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">a</span>
+                    <span class="k">for</span> <span class="n">t2</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">t2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">t2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">a</span>
+                <span class="p">]</span>
+
+            <span class="n">stack</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">cache</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="n">S</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">successor</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">cached</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="k">return</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">S</span>
+
+            <span class="k">def</span> <span class="nf">successors</span> <span class="p">(</span><span class="n">current</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transitions</span> <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">current</span> <span class="p">]:</span>
+                    <span class="n">T</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+                    <span class="k">yield</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="n">dfs</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">)</span>
+
+            <span class="n">S</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">LTS</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Σ</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LTS.power"><a class="viewcode-back" href="../libmc.html#libmc.LTS.power">[docs]</a>    <span class="k">def</span> <span class="nf">power</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create power LTS.&quot;&quot;&quot;</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">powerset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="p">[</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="p">]</span>
+        <span class="n">Σ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">s2</span><span class="p">)))</span>
+                <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">S</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">Σ</span>
+                <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span>
+                <span class="p">[{</span> <span class="n">_s</span> <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">_a</span><span class="p">,</span> <span class="n">_s</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">s1</span> <span class="ow">and</span> <span class="n">_a</span> <span class="o">==</span> <span class="n">a</span> <span class="p">}]</span>
+            <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">LTS</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Σ</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LTS.simulates"><a class="viewcode-back" href="../libmc.html#libmc.LTS.simulates">[docs]</a>    <span class="k">def</span> <span class="nf">simulates</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">τ</span> <span class="o">=</span> <span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simulation of LTS (p39).</span>
+
+<span class="sd">        ∀ s ∊ other.I, ∃ t ∊ self.I [ s ≤ t ]</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (LTS): another LTS</span>
+<span class="sd">            τ (optional): set of unobservable internal events</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if this LTS simulates the other</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">R0</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="nb">any</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">R0</span><span class="p">,</span> <span class="n">τ</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">I</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="LTS.bisimulates"><a class="viewcode-back" href="../libmc.html#libmc.LTS.bisimulates">[docs]</a>    <span class="k">def</span> <span class="nf">bisimulates</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">τ</span> <span class="o">=</span> <span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bisimulation of LTS (p43).</span>
+
+<span class="sd">        ∀ s ∊ self.I, ∃ t ∊ other.I [ s ≈ t ]</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (LTS): another LTS</span>
+<span class="sd">            τ (optional): set of unobservable internal events</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if this LTS bisimulates the other</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">R0</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="nb">any</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">maximumBisimulation</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">R0</span><span class="p">,</span> <span class="n">τ</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">I</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="LTS.trace"><a class="viewcode-back" href="../libmc.html#libmc.LTS.trace">[docs]</a>    <span class="k">def</span> <span class="nf">trace</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tries to compute all traces to the target state (DFS).</span>
+
+<span class="sd">        If no source states are given, the set of initial states is used.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target: target state</span>
+<span class="sd">            sources (optional): set of initial states</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: the trace or an empty list if target is unreachable</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sources</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">sources</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span>
+
+        <span class="n">stack</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="p">[])</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span> <span class="p">]</span>
+        <span class="n">traces</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># state components used in DFS</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">trace</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">def</span> <span class="nf">enqueue</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span>
+            <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">successor</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">path</span> <span class="o">+</span> <span class="p">[</span><span class="n">successor</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="n">trace</span> <span class="o">+</span> <span class="p">[</span><span class="n">successor</span><span class="p">])</span>
+            <span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">cache</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="k">pass</span>
+
+        <span class="k">def</span> <span class="nf">cached</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">successor</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+                <span class="n">traces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trace</span> <span class="o">+</span> <span class="p">[</span><span class="n">successor</span><span class="p">])</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">def</span> <span class="nf">successors</span> <span class="p">(</span><span class="n">current</span><span class="p">):</span>
+            <span class="k">nonlocal</span> <span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">trace</span>
+            <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">trace</span><span class="p">)</span> <span class="o">=</span> <span class="n">current</span>
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+                <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">node</span> <span class="ow">and</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="p">]</span>
+
+        <span class="n">dfs</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span> <span class="n">enqueue</span><span class="o">=</span><span class="n">enqueue</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">traces</span></div></div>
+
+<div class="viewcode-block" id="FA"><a class="viewcode-back" href="../libmc.html#libmc.FA">[docs]</a><span class="k">class</span> <span class="nc">FA</span> <span class="p">(</span><span class="n">LTS</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finite Automata (p18).</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        S: set of states</span>
+<span class="sd">        I: set of initial states I ⊆ S</span>
+<span class="sd">        Σ: input alphabet</span>
+<span class="sd">        T: transition relation T ⊆ SxΣxS</span>
+<span class="sd">        F: set of final states F ⊆ S</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Σ</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">F</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Σ</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">=</span> <span class="n">F</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> \
+            <span class="s2">&quot;FA(&quot;</span> <span class="o">+</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Σ</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="s2">&quot;)&quot;</span>
+
+<div class="viewcode-block" id="FA.toDot"><a class="viewcode-back" href="../libmc.html#libmc.FA.toDot">[docs]</a>    <span class="k">def</span> <span class="nf">toDot</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">highlight</span> <span class="o">=</span> <span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return Graphviz dot language string.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            highlight (list of transitions - optional): highlight a given path</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            string: .dot file tweaked for dot2tex</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">fa2dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="n">highlight</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FA.product"><a class="viewcode-back" href="../libmc.html#libmc.FA.product">[docs]</a>    <span class="k">def</span> <span class="nf">product</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create product automaton (p20).&quot;&quot;&quot;</span>
+        <span class="n">lts</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">FA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">full</span><span class="p">)</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">lts</span><span class="o">.</span><span class="n">S</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">F</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">FA</span><span class="p">(</span><span class="n">lts</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">lts</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="n">lts</span><span class="o">.</span><span class="n">Σ</span><span class="p">,</span> <span class="n">lts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FA.power"><a class="viewcode-back" href="../libmc.html#libmc.FA.power">[docs]</a>    <span class="k">def</span> <span class="nf">power</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create power automaton (p22).&quot;&quot;&quot;</span>
+        <span class="n">lts</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">FA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">power</span><span class="p">()</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="p">[</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">lts</span><span class="o">.</span><span class="n">S</span> <span class="k">if</span> <span class="n">intersect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">FA</span><span class="p">(</span><span class="n">lts</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">lts</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="n">lts</span><span class="o">.</span><span class="n">Σ</span><span class="p">,</span> <span class="n">lts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FA.complement"><a class="viewcode-back" href="../libmc.html#libmc.FA.complement">[docs]</a>    <span class="k">def</span> <span class="nf">complement</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create complement automaton (p23).&quot;&quot;&quot;</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span>
+        <span class="n">Σ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="p">[</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">S</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">FA</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Σ</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FA.accepts"><a class="viewcode-back" href="../libmc.html#libmc.FA.accepts">[docs]</a>    <span class="k">def</span> <span class="nf">accepts</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Test acceptance of a given word.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            word (list): the word to check</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the word is accepted by the automaton</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">_accepts</span> <span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">word</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">word</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="k">else</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+                    <span class="n">_accepts</span><span class="p">(</span><span class="n">_s</span><span class="p">,</span> <span class="n">word</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">_s</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+                    <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="n">state</span> <span class="ow">and</span> <span class="n">a</span> <span class="o">==</span> <span class="n">word</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">_accepts</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">word</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FA.conforms"><a class="viewcode-back" href="../libmc.html#libmc.FA.conforms">[docs]</a>    <span class="k">def</span> <span class="nf">conforms</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Conformance test (p24).</span>
+
+<span class="sd">        * L(self) ⊆ L(other)</span>
+<span class="sd">        * L(self) ∩ L(other) = 0</span>
+<span class="sd">        * self × C(P(other)) contains no reachable final state (implemented)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (FA): the other FA to conform to</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if this FA conforms to the other</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">power</span><span class="p">()</span><span class="o">.</span><span class="n">complement</span><span class="p">(),</span> <span class="n">full</span><span class="p">);</span>
+
+        <span class="n">traces</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="kc">True</span><span class="p">,</span> <span class="p">[</span> <span class="n">A</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">A</span><span class="o">.</span><span class="n">F</span> <span class="p">]))</span>
+
+        <span class="k">return</span> <span class="p">(</span> <span class="ow">not</span> <span class="n">traces</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">traces</span> <span class="p">)</span></div>
+
+<div class="viewcode-block" id="FA.minimize"><a class="viewcode-back" href="../libmc.html#libmc.FA.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Minimization of Deterministic Finite Automata (p44).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">notFinal</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
+
+        <span class="n">bisimulation</span> <span class="o">=</span> \
+            <span class="p">{</span>
+                <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span>
+                    <span class="n">maximumBisimulation</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="p">,</span>
+                        <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">))</span> <span class="o">|</span> \
+                        <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">notFinal</span><span class="p">,</span> <span class="n">notFinal</span><span class="p">))</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+            <span class="p">}</span>
+
+        <span class="n">redundantStates</span> <span class="o">=</span> <span class="p">{</span> <span class="n">b</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="n">bisimulation</span> <span class="p">}</span>
+
+        <span class="n">S</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">tuple</span><span class="p">([</span><span class="n">s</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span> <span class="n">b</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="n">bisimulation</span> <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="n">s</span> <span class="p">])</span>
+                <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">redundantStates</span>
+            <span class="p">]</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="p">[</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">S</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="p">]</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">S</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">S</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">_s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">_t</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+                    <span class="k">for</span> <span class="n">_s</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">if</span> <span class="n">_s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">redundantStates</span>
+                    <span class="k">for</span> <span class="n">_t</span> <span class="ow">in</span> <span class="n">t</span> <span class="k">if</span> <span class="n">_t</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="p">[</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">S</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">f</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">FA</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="maximumSimulation"><a class="viewcode-back" href="../libmc.html#libmc.maximumSimulation">[docs]</a><span class="k">def</span> <span class="nf">maximumSimulation</span> <span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="n">R0</span><span class="p">,</span> <span class="n">τ</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Constructs the maximum simulation relation A1 ≲ A2 (p36).</span>
+
+<span class="sd">    To get the *full* maximum simulation between two LTS A1 and A2 build</span>
+<span class="sd">    the union of all possible permutations::</span>
+
+<span class="sd">        fullSimulationRelation =</span>
+<span class="sd">            maximumSimulation(A1, A1, set(product(A1.S, A1.S))) |</span>
+<span class="sd">            maximumSimulation(A1, A2, set(product(A1.S, A2.S))) |</span>
+<span class="sd">            maximumSimulation(A2, A1, set(product(A2.S, A1.S))) |</span>
+<span class="sd">            maximumSimulation(A2, A2, set(product(A2.S, A2.S)))</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        A1 (LTS): some LTS</span>
+<span class="sd">        A2 (LTS): another LTS</span>
+<span class="sd">        R0 (set): the starting relation, e.g. A1.SxA2.S</span>
+<span class="sd">        τ (optional): set of unobservable internal events</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        set: A1 ≲ A2 ⊆ R0 - the maximum simulation relation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">isReachable</span><span class="p">(</span><span class="n">traces</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if a trace of the form τ*a exists.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="nb">all</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">τ</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trace</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="ow">and</span> <span class="n">trace</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">a</span>
+                <span class="k">for</span> <span class="n">trace</span> <span class="ow">in</span> <span class="n">traces</span>
+        <span class="p">)</span>
+
+    <span class="c1"># refine simulation relation</span>
+    <span class="n">R1</span> <span class="o">=</span> \
+        <span class="p">{</span>
+            <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="n">R0</span>
+            <span class="c1"># ∀ a ∈ Σ, s&#39; ∈ S [ s -a&gt; s&#39; ]</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span>
+                <span class="c1"># ∃ t&#39; ∈ S [ t -a&gt; t&#39; ∧ s&#39; ≲ t&#39; ]</span>
+                <span class="nb">any</span><span class="p">(</span>
+                    <span class="c1"># s&#39; ≲ t&#39;</span>
+                    <span class="p">(</span><span class="n">_s</span><span class="p">,</span> <span class="n">_t</span><span class="p">)</span> <span class="ow">in</span> <span class="n">R0</span>
+                    <span class="c1"># { t&#39; ∈ S | t -a&gt; t&#39; }</span>
+                    <span class="k">for</span> <span class="n">_t</span> <span class="ow">in</span> <span class="n">A2</span><span class="o">.</span><span class="n">S</span>
+                    <span class="k">if</span> <span class="n">isReachable</span><span class="p">(</span><span class="n">A2</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">_t</span><span class="p">,</span> <span class="p">[</span><span class="n">t</span><span class="p">]),</span> <span class="n">a</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="c1"># { (a, s&#39;) ∈ ΣxS | s -a&gt; s&#39; }</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">_s</span><span class="p">)</span> <span class="ow">in</span>
+                <span class="p">{</span>
+                    <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">_s</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">Σ</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">τ</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">_s</span> <span class="ow">in</span> <span class="n">A1</span><span class="o">.</span><span class="n">S</span>
+                    <span class="k">if</span> <span class="n">isReachable</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">_s</span><span class="p">,</span> <span class="p">[</span><span class="n">s</span><span class="p">]),</span> <span class="n">a</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="c1"># return relation if fixpoint is reached else recurse</span>
+    <span class="k">return</span> <span class="n">R1</span> <span class="k">if</span> <span class="n">R1</span> <span class="o">==</span> <span class="n">R0</span> <span class="k">else</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="n">R1</span><span class="p">,</span> <span class="n">τ</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="maximumBisimulation"><a class="viewcode-back" href="../libmc.html#libmc.maximumBisimulation">[docs]</a><span class="k">def</span> <span class="nf">maximumBisimulation</span> <span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="n">R0</span><span class="p">,</span> <span class="n">τ</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Constructs the maximum bisimulation relation A1 ≈ A2 (p43).</span>
+
+<span class="sd">    Can also be used to minimize a deterministic automaton by constructing</span>
+<span class="sd">    the state equivalence relation using::</span>
+
+<span class="sd">        maximumSimulation(A, A, (A.FxA.F)∪((A.S\A.F)x(A.S\A.F)))</span>
+
+<span class="sd">    To get the *full* maximum bisimulation between two LTS A1 and A2 build</span>
+<span class="sd">    the union of all possible permutations::</span>
+
+<span class="sd">        fullSimulationRelation =</span>
+<span class="sd">            maximumBisimulation(A1, A1, set(product(A1.S, A1.S))) |</span>
+<span class="sd">            maximumBisimulation(A1, A2, set(product(A1.S, A2.S))) |</span>
+<span class="sd">            maximumBisimulation(A2, A1, set(product(A2.S, A1.S))) |</span>
+<span class="sd">            maximumBisimulation(A2, A2, set(product(A2.S, A2.S)))</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        A1 (LTS): some LTS</span>
+<span class="sd">        A2 (LTS): another LTS</span>
+<span class="sd">        R0 (set): the starting relation, e.g. A1.SxA2.S</span>
+<span class="sd">        τ (optional): set of unobservable internal events</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        set: A1 ≈ A2 ⊆ R0 - the maximum simulation relation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> \
+        <span class="n">maximumSimulation</span><span class="p">(</span>
+            <span class="n">A2</span><span class="p">,</span>
+            <span class="n">A1</span><span class="p">,</span>
+            <span class="p">{</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="ow">in</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="n">R0</span><span class="p">,</span> <span class="n">τ</span><span class="p">)</span> <span class="p">},</span>
+            <span class="n">τ</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="asynchronousComposition"><a class="viewcode-back" href="../libmc.html#libmc.asynchronousComposition">[docs]</a><span class="k">def</span> <span class="nf">asynchronousComposition</span> <span class="p">(</span><span class="o">*</span><span class="n">lts</span><span class="p">,</span> <span class="n">partialOrderReduction</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Asynchronous composition of LTS through interleaving (p84).</span>
+
+<span class="sd">    * performs on-the-fly generation of reachable states</span>
+<span class="sd">    * Partial Order Reduction can be applied by supplying a function</span>
+<span class="sd">      **partialOrderReduction**, selecting the component to expand</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *lts (variable argument list(LTS)): list of LTS to interleave</span>
+<span class="sd">        partialOrderReduction (optional): function ``f: list(index) -&gt; index``</span>
+<span class="sd">            selecting the local component to expand</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span> <span class="n">l</span><span class="o">.</span><span class="n">I</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lts</span> <span class="p">]))</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="nb">set</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="p">[</span> <span class="nb">set</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">Σ</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lts</span> <span class="p">])</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="c1"># set of component indices</span>
+    <span class="n">components</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lts</span><span class="p">))</span>
+
+    <span class="c1"># local symbols</span>
+    <span class="n">Λ</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="n">a</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">l</span><span class="o">.</span><span class="n">Σ</span>
+                <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_l</span><span class="o">.</span><span class="n">Σ</span> <span class="k">for</span> <span class="n">_l</span> <span class="ow">in</span> <span class="n">lts</span> <span class="k">if</span> <span class="n">_l</span> <span class="o">!=</span> <span class="n">l</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lts</span>
+        <span class="p">]</span>
+
+    <span class="c1"># map of symbols to the set of components knowing that symbol</span>
+    <span class="n">Ψ</span> <span class="o">=</span> <span class="p">{</span> <span class="n">a</span><span class="p">:</span> <span class="p">{</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">lts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">Σ</span> <span class="p">}</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">Σ</span> <span class="p">}</span>
+
+    <span class="c1"># initialize dfs stack</span>
+    <span class="n">stack</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+
+    <span class="c1"># on-the-fly generation of reachable states (dfs)</span>
+    <span class="k">def</span> <span class="nf">enqueue</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">successor</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">cache</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span>
+        <span class="n">S</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">successor</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">successor</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">cached</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="k">return</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">T</span>
+
+    <span class="k">def</span> <span class="nf">successors</span> <span class="p">(</span><span class="n">fromState</span><span class="p">):</span>
+        <span class="c1"># dictionary containing successors per symbol and component state</span>
+        <span class="n">nextStates</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">lts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">fromState</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">]:</span>
+                <span class="n">nextStates</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+        <span class="c1"># perform partial order reduction</span>
+        <span class="k">if</span> <span class="n">partialOrderReduction</span><span class="p">:</span>
+
+            <span class="c1"># index of components with local states</span>
+            <span class="n">local</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">i</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span>
+                        <span class="k">if</span>
+                            <span class="c1"># component i has a successor</span>
+                            <span class="nb">any</span><span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">nextStates</span><span class="p">)</span>
+                            <span class="ow">and</span>
+                            <span class="c1"># all transitions of component i are local</span>
+                            <span class="nb">all</span><span class="p">(</span>
+                                <span class="n">a</span> <span class="ow">in</span> <span class="n">Λ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">nextStates</span>
+                                <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                            <span class="p">)</span>
+                    <span class="p">]</span>
+
+            <span class="c1"># partial expansion</span>
+            <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
+                <span class="n">local</span> <span class="o">=</span> <span class="n">partialOrderReduction</span><span class="p">(</span><span class="n">local</span><span class="p">)</span>
+
+                <span class="c1"># unset successors of skipped components</span>
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">nextStates</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">{</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">local</span> <span class="p">}:</span>
+                        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">]:</span>
+                            <span class="k">del</span> <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># build expansion</span>
+        <span class="n">expansion</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="p">(</span><span class="n">fromState</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">toState</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">nextStates</span>
+                        <span class="k">if</span> <span class="n">Ψ</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">==</span> <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                        <span class="k">for</span> <span class="n">toState</span> <span class="ow">in</span>
+                            <span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span>
+                                <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">[</span><span class="n">fromState</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+                                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span>
+                            <span class="p">])</span>
+                    <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">expansion</span>
+
+    <span class="n">dfs</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span> <span class="n">enqueue</span><span class="o">=</span><span class="n">enqueue</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">LTS</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="n">I</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Σ</span><span class="p">),</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">T</span><span class="p">))</span></div>
+
+<span class="k">def</span> <span class="nf">__bfs_dfs_aux__</span> <span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># parse keyword arguments</span>
+    <span class="n">enqueue</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;enqueue&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">dequeue</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;dequeue&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="s2">&quot;cache&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;cached&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;missing &#39;cached&#39; argument&quot;</span><span class="p">)</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;cache&quot;</span><span class="p">]</span>
+        <span class="n">cached</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;cached&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;cached&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;missing &#39;cache&#39; argument&quot;</span><span class="p">)</span>
+        <span class="n">__cache</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">__cache</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">cached</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">__cache</span>
+
+    <span class="k">if</span> <span class="s2">&quot;quit&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">quit</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;quit&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">quit</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># perform bfs/dfs</span>
+    <span class="k">while</span> <span class="n">stack</span><span class="p">:</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">dequeue</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">successors</span><span class="p">(</span><span class="n">current</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cached</span><span class="p">(</span><span class="n">successor</span><span class="p">):</span>
+                <span class="n">cache</span><span class="p">(</span><span class="n">successor</span><span class="p">)</span>
+                <span class="n">enqueue</span><span class="p">(</span><span class="n">successor</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">quit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">quit</span><span class="p">(</span><span class="n">current</span><span class="p">):</span> <span class="k">return</span>
+
+<div class="viewcode-block" id="bfs"><a class="viewcode-back" href="../libmc.html#libmc.bfs">[docs]</a><span class="k">def</span> <span class="nf">bfs</span> <span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generic breadth-first search.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        while queue:</span>
+<span class="sd">            current = dequeue(queue)</span>
+
+<span class="sd">            for successor in successors(current):</span>
+<span class="sd">                if not cached(successor):</span>
+<span class="sd">                    cache(successor)</span>
+<span class="sd">                    enqueue(successor)</span>
+
+<span class="sd">            if quit is not None and quit(current): return</span>
+
+<span class="sd">    Perform BFS on any given problem by defining:</span>
+
+<span class="sd">    * the search queue&#39;s initial state</span>
+<span class="sd">    * a function returning the successors to a given object</span>
+<span class="sd">    * (optional) a function for enqueuing objects</span>
+<span class="sd">    * (optional) a function for adding objects to the cache</span>
+<span class="sd">    * (optional) a function checking if a given object has been cached already</span>
+<span class="sd">    * (optional) a function for stopping the search</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        queue (list): initial state of the search queue</span>
+<span class="sd">        successors (function): function ``f: object -&gt; list(object)`` returning</span>
+<span class="sd">            the list of successors to a given object</span>
+
+<span class="sd">    Keyword Args:</span>
+<span class="sd">        enqueue (function): a function ``f: object -&gt; None`` adding objects to the</span>
+<span class="sd">            search queue</span>
+<span class="sd">        cache (function): a function ``f: object -&gt; None`` adding a given object</span>
+<span class="sd">            to the cache (requires **cached**)</span>
+<span class="sd">        cached (function): a function ``f: object -&gt; bool`` checking if a given</span>
+<span class="sd">            object has been cached already (requires **cache**)</span>
+<span class="sd">        quit (function): a function ``f: object -&gt; bool`` returning ``True`` if</span>
+<span class="sd">            the search should stop with the given object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;dequeue&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">__bfs_dfs_aux__</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="dfs"><a class="viewcode-back" href="../libmc.html#libmc.dfs">[docs]</a><span class="k">def</span> <span class="nf">dfs</span> <span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generic depth-first search.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        while stack:</span>
+<span class="sd">            current = dequeue(stack)</span>
+
+<span class="sd">            for successor in successors(current):</span>
+<span class="sd">                if not cached(successor):</span>
+<span class="sd">                    cache(successor)</span>
+<span class="sd">                    enqueue(successor)</span>
+
+<span class="sd">            if quit is not None and quit(current): return</span>
+
+<span class="sd">    Perform DFS on any given problem by defining:</span>
+
+<span class="sd">    * the search queue&#39;s initial state</span>
+<span class="sd">    * a function returning the successors to a given object</span>
+<span class="sd">    * (optional) a function for enqueuing objects</span>
+<span class="sd">    * (optional) a function for adding objects to the cache</span>
+<span class="sd">    * (optional) a function checking if a given object has been cached already</span>
+<span class="sd">    * (optional) a function for stopping the search</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        queue (list): initial state of the search queue</span>
+<span class="sd">        successors (function): function ``f: object -&gt; list(object)`` returning</span>
+<span class="sd">            the list of successors to a given object</span>
+
+<span class="sd">    Keyword Args:</span>
+<span class="sd">        enqueue (function): a function ``f: object -&gt; None`` adding objects to</span>
+<span class="sd">            the search queue</span>
+<span class="sd">        cache (function): a function ``f: object -&gt; None`` adding a given object</span>
+<span class="sd">            to the cache (requires **cached**)</span>
+<span class="sd">        cached (function): a function ``f: object -&gt; bool`` checking if a given</span>
+<span class="sd">            object has been cached already (requires **cache**)</span>
+<span class="sd">        quit (function): a function ``f: object -&gt; bool`` returning ``True`` if</span>
+<span class="sd">            the search should stop with the given object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;dequeue&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+    <span class="n">__bfs_dfs_aux__</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="tarjan"><a class="viewcode-back" href="../libmc.html#libmc.tarjan">[docs]</a><span class="k">def</span> <span class="nf">tarjan</span> <span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tarjan&#39;s Algorithm (p110).</span>
+
+<span class="sd">    Find strongly connected components in a directed graph.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        nodes (iterable): set of nodes</span>
+<span class="sd">        edges (iterable): set of edges (pairs of nodes)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: set of strongly connected components (list of nodes)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># depth first search index (DFSI)</span>
+    <span class="n">dfsi</span> <span class="o">=</span> <span class="p">{</span> <span class="n">s</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">nodes</span> <span class="p">}</span>
+
+    <span class="c1"># min. reachable DFSI through back edges (MRDFSI)</span>
+    <span class="n">mrdfsi</span> <span class="o">=</span> <span class="p">{</span> <span class="n">s</span><span class="p">:</span> <span class="n">inf</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">nodes</span> <span class="p">}</span>
+
+    <span class="c1"># auxiliary stack</span>
+    <span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># smallest index of all reachable nodes (SCC index)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># map of strongly connected components: root node -&gt; SCC (list of nodes)</span>
+    <span class="n">scc</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># compute a node&#39;s DFSI and MRDFSI recursively</span>
+    <span class="k">def</span> <span class="nf">tarjan_aux</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">stack</span><span class="p">):</span>
+
+        <span class="c1"># return if the node&#39;s DFSI is already known</span>
+        <span class="k">if</span> <span class="n">dfsi</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="n">i</span>
+
+        <span class="c1"># increment the index</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># set the node&#39;s DFSI and MRDFSI</span>
+        <span class="n">dfsi</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="n">mrdfsi</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+
+        <span class="c1"># push newly reached node on the auxiliary stack</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+        <span class="c1"># find children</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="p">[</span> <span class="n">t</span> <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="n">edges</span> <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="n">node</span> <span class="p">]</span>
+
+        <span class="c1"># compute DFSI and MRDFSI of all child nodes</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">tarjan_aux</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span>
+
+        <span class="c1"># minimize MRDFSI over the MRDFSI of each node and it&#39;s direct children</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+            <span class="n">mrdfsi</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">mrdfsi</span><span class="p">[</span><span class="n">node</span><span class="p">],</span> <span class="n">mrdfsi</span><span class="p">[</span><span class="n">child</span><span class="p">])</span>
+
+        <span class="c1"># return index if it&#39;s not a root node</span>
+        <span class="k">if</span> <span class="n">dfsi</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">!=</span> <span class="n">mrdfsi</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">i</span>
+
+        <span class="c1"># generate the node&#39;s SCC</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="n">child</span> <span class="o">!=</span> <span class="n">node</span><span class="p">:</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+            <span class="n">scc</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+            <span class="n">mrdfsi</span><span class="p">[</span><span class="n">child</span><span class="p">]</span> <span class="o">=</span> <span class="n">inf</span>
+
+        <span class="k">return</span> <span class="n">i</span>
+
+    <span class="c1"># compute each node&#39;s DFSI and MRDFSI</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">tarjan_aux</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span>
+
+    <span class="c1"># return the list of strongly connected components</span>
+    <span class="k">return</span> \
+        <span class="p">[</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">scc</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span>
+            <span class="k">if</span>
+                <span class="n">node</span> <span class="ow">in</span> <span class="n">scc</span>
+                <span class="ow">and</span>
+                <span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">scc</span><span class="p">[</span><span class="n">node</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span>
+                    <span class="ow">or</span>
+                    <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="ow">in</span> <span class="n">edges</span>
+                <span class="p">)</span>
+        <span class="p">]</span></div>
+
+<div class="viewcode-block" id="formatState"><a class="viewcode-back" href="../libmc.html#libmc.formatState">[docs]</a><span class="k">def</span> <span class="nf">formatState</span> <span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Prettify a state&#39;s string representation for printing.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;\{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;\}&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="printRelation"><a class="viewcode-back" href="../libmc.html#libmc.printRelation">[docs]</a><span class="k">def</span> <span class="nf">printRelation</span><span class="p">(</span><span class="n">relation</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pretty print relation table in markdown format.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">formatPair</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span> <span class="k">return</span> \
+        <span class="s2">&quot;(&quot;</span> <span class="o">+</span> \
+        <span class="n">formatState</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> \
+        <span class="s2">&quot;, &quot;</span> <span class="o">+</span> \
+        <span class="n">formatState</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> \
+        <span class="s2">&quot;)&quot;</span>
+
+    <span class="c1"># determine header column width (bold)</span>
+    <span class="n">headerWidth</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+        <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="o">+</span> <span class="mi">4</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">A</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="o">+</span> <span class="mi">4</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">B</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># determine content column width</span>
+    <span class="n">colWidth</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">formatPair</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">A</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">B</span><span class="p">)</span>
+
+    <span class="c1"># set column width to the maximum</span>
+    <span class="k">if</span> <span class="n">headerWidth</span> <span class="o">&gt;</span> <span class="n">colWidth</span><span class="p">:</span>
+        <span class="n">colWidth</span> <span class="o">=</span> <span class="n">headerWidth</span>
+
+    <span class="c1"># print header</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;| &quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">colWidth</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; | &quot;</span> <span class="o">+</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;**&quot;</span> <span class="o">+</span> <span class="n">formatState</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;**&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">colWidth</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">B</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; |&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># print separator</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;| &quot;</span> <span class="o">+</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="n">colWidth</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; |&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># print table</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">A</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;| &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;**&quot;</span> <span class="o">+</span> <span class="n">formatState</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;**&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">colWidth</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; | &quot;</span> <span class="o">+</span>
+            <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">formatPair</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">colWidth</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="n">relation</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">colWidth</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">B</span>
+            <span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; |&quot;</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="fa2dot"><a class="viewcode-back" href="../libmc.html#libmc.fa2dot">[docs]</a><span class="k">def</span> <span class="nf">fa2dot</span> <span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Σ</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">highlight</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns graphical representation of given automaton (using Graphviz).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        S: set of states</span>
+<span class="sd">        I: set of initial states I ⊆ S</span>
+<span class="sd">        Σ: input alphabet</span>
+<span class="sd">        T: transition relation T ⊆ SxΣxS</span>
+<span class="sd">        F: set of final states F ⊆ S</span>
+<span class="sd">        highlight (list of transitions - optional): highlight a given path</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        string: .dot file tweaked for dot2tex</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tex</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">digraph FSM {</span>
+<span class="s2">  node [style=&quot;state&quot;]</span>
+<span class="s2">  edge [lblstyle=&quot;auto&quot;]</span>
+<span class="s2">&quot;&quot;&quot;</span>
+    <span class="c1"># generate states</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">S</span><span class="p">:</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">I</span><span class="p">:</span> <span class="n">style</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;initial&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">F</span><span class="p">:</span> <span class="n">style</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;accepting&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">[</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">highlight</span> <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">s</span> <span class="o">==</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">]:</span>
+            <span class="n">style</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;draw=red&quot;</span><span class="p">)</span>
+
+        <span class="n">tex</span> <span class="o">+=</span> <span class="s2">&quot;  </span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="si">{}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">formatState</span><span class="p">(</span><span class="n">s</span><span class="p">),</span>
+                <span class="s2">&quot; [style=</span><span class="se">\&quot;</span><span class="s2">state,&quot;</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">style</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">]&quot;</span> <span class="k">if</span> <span class="n">style</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># generate transitions</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">T</span><span class="p">:</span>
+        <span class="n">tex</span> <span class="o">+=</span> <span class="s2">&quot;  </span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2"> -&gt; </span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2"> [label=</span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="si">{}</span><span class="s2">];</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">formatState</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="n">formatState</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s2">&quot;,style=</span><span class="se">\&quot;</span><span class="s2">draw=red</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">highlight</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">tex</span> <span class="o">+=</span> <span class="s2">&quot;}&quot;</span>
+    <span class="k">return</span> <span class="n">tex</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Florian Schroegendorfer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2017.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

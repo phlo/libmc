@@ -491,10 +491,16 @@ def maximumBisimulation (A1, A2, R0, τ = []):
             τ
         )
 
-def asynchronousComposition (*lts, partialOrderReduction = None):
+def asynchronousComposition (*lts, partialOrderReduction=None):
     """
+    Asynchronous composition of LTS through interleaving (p84).
+
+    * performs on-the-fly generation of reachable states
+    * Partial Order Reduction can be applied by supplying a function
+      **partialOrderReduction**, selecting the component to expand
+
     Args:
-        *lts: LTS to interleave
+        *lts (variable argument list(LTS)): list of LTS to interleave
         partialOrderReduction (optional): function ``f: list(index) -> index``
             selecting the local component to expand
     """
@@ -621,7 +627,9 @@ def __bfs_dfs_aux__ (stack, successors, **kwargs):
 
 def bfs (queue, successors, **kwargs):
     """
-    Generic breadth-first search::
+    Generic breadth-first search.
+
+    .. code-block:: python
 
         while queue:
             current = dequeue(queue)
@@ -663,7 +671,9 @@ def bfs (queue, successors, **kwargs):
 
 def dfs (stack, successors, **kwargs):
     """
-    Generic depth-first search::
+    Generic depth-first search.
+
+    .. code-block:: python
 
         while stack:
             current = dequeue(stack)
@@ -690,8 +700,8 @@ def dfs (stack, successors, **kwargs):
             the list of successors to a given object
 
     Keyword Args:
-        enqueue (function): a function ``f: object -> None`` adding objects to the
-            search queue
+        enqueue (function): a function ``f: object -> None`` adding objects to
+            the search queue
         cache (function): a function ``f: object -> None`` adding a given object
             to the cache (requires **cached**)
         cached (function): a function ``f: object -> bool`` checking if a given
