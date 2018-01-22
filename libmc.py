@@ -129,8 +129,6 @@ class LTS:
 
             stack = list(I)
 
-            def enque (successor): stack.append(successor)
-
             def cache (successor): S.add(successor)
 
             def cached (successor): return successor in S
@@ -140,7 +138,7 @@ class LTS:
                     T.append(t)
                     yield t[2]
 
-            dfs(stack, enque, cache, cached, successors)
+            dfs(stack, successors, cache=cache, cached=cached)
 
             S |= set(I)
 
@@ -230,7 +228,7 @@ class LTS:
         path = None
         trace = None
 
-        def enque (successor):
+        def enqueue (successor):
             stack.append(
                 (successor[2], path + [successor[2]], trace + [successor])
             )
@@ -252,7 +250,7 @@ class LTS:
                 if t[0] == node and t[2] not in path[1:]
             ]
 
-        dfs(stack, enque, cache, cached, successors)
+        dfs(stack, successors, enqueue=enqueue, cache=cache, cached=cached)
 
         return traces
 
@@ -300,31 +298,6 @@ class FA (LTS):
 
         return FA(lts.S, lts.I, lts.Σ, lts.T, F)
 
-################################################################################
-    # TODO remove
-    #  @staticmethod
-    #  def product (*lts):
-        #  assert(all(Σ == lts[0].Σ for Σ in lts[1:]))
-#
-        #  S = list(product(*[ A.S for A in lts ]))
-        #  I = list(product(*[ A.I for A in lts ]))
-        #  Σ = lts[0].Σ
-        #  T = []
-        #  #  T = [
-                #  #  (s, a, (t1[2], t2[2]))
-                #  #  for s in S
-                #  #  for a in Σ
-                #  #  for t1 in self.T if t1[0] == s[0] and t1[1] == a
-                #  #  for t2 in other.T if t2[0] == s[1] and t2[1] == a
-            #  #  ]
-        #  #  T = [
-                #  #  (s, a, xxx)
-                #  #  for s in S
-                #  #  for a in Σ
-                #  #  for
-#
-        #  return LTS(S, I, Σ, T)
-
     def power (self):
         """Create power automaton (p22)."""
         lts = super(FA, self).power()
@@ -364,7 +337,7 @@ class FA (LTS):
 
         return any(_accepts(i, word) for i in self.I)
 
-    def conforms (self, other, **kwargs):
+    def conforms (self, other, full=False):
         """
         Conformance test (p24).
 
@@ -378,7 +351,7 @@ class FA (LTS):
         Returns:
             bool: True if this FA conforms to the other
         """
-        A = self.product(other.power().complement(), **kwargs);
+        A = self.product(other.power().complement(), full);
 
         traces = list(filter(lambda x: x == True, [ A.trace(f) for f in A.F ]))
 
@@ -521,20 +494,17 @@ def maximumBisimulation (A1, A2, R0, τ = []):
 def asynchronousComposition (*lts, partialOrderReduction = None):
     """
     Args:
-        *lts:
-        partialOrderReduction (optional): local expansion function
-            ``f: list(index) -> index``
+        *lts: LTS to interleave
+        partialOrderReduction (optional): function ``f: list(index) -> index``
+            selecting the local component to expand
     """
-    S = set(product(*[ l.I for l in lts]))
+    S = set(product(*[ l.I for l in lts ]))
     I = sorted(S)
-    Σ = set.union(*[ set(l.Σ) for l in lts])
+    Σ = set.union(*[ set(l.Σ) for l in lts ])
     T = set()
 
-    # number of components in the asynchronous composition
-    numComponents = len(lts)
-
     # set of component indices
-    components = set(range(numComponents))
+    components = range(len(lts))
 
     # local symbols
     Λ = [
@@ -553,7 +523,7 @@ def asynchronousComposition (*lts, partialOrderReduction = None):
     stack = list(I)
 
     # on-the-fly generation of reachable states (dfs)
-    def enque (successor): stack.append(successor[2])
+    def enqueue (successor): stack.append(successor[2])
 
     def cache (successor):
         S.add(successor[2])
@@ -612,38 +582,136 @@ def asynchronousComposition (*lts, partialOrderReduction = None):
 
         return expansion
 
-    dfs(stack, enque, cache, cached, successors)
+    dfs(stack, successors, enqueue=enqueue, cache=cache, cached=cached)
 
     return LTS(sorted(S), I, sorted(Σ), sorted(T))
 
-def __bfs_dfs_aux__ (stack, enque, deque, cache, cached, successors, quit):
+def __bfs_dfs_aux__ (stack, successors, **kwargs):
+    # parse keyword arguments
+    enqueue = kwargs.setdefault("enqueue", lambda x: stack.append(x))
+    dequeue = kwargs["dequeue"]
+
+    if "cache" in kwargs:
+        if "cached" not in kwargs:
+            raise ValueError("missing 'cached' argument")
+        cache = kwargs["cache"]
+        cached = kwargs["cached"]
+    else:
+        if "cached" in kwargs:
+            raise ValueError("missing 'cache' argument")
+        __cache = set()
+        cache = lambda x: __cache.add(x)
+        cached = lambda x: x in __cache
+
+    if "quit" in kwargs:
+        quit = kwargs["quit"]
+    else:
+        quit = None
+
+    # perform bfs/dfs
     while stack:
-        current = deque(stack)
+        current = dequeue(stack)
 
         for successor in successors(current):
             if not cached(successor):
                 cache(successor)
-                enque(successor)
+                enqueue(successor)
 
         if quit is not None and quit(current): return
 
-def bfs (stack, enque, cache, cached, successors, quit=None):
-    deque = lambda s: s.pop(0)
+def bfs (queue, successors, **kwargs):
+    """
+    Generic breadth-first search::
 
-    __bfs_dfs_aux__(stack, enque, deque, cache, cached, successors, quit)
+        while queue:
+            current = dequeue(queue)
 
-def dfs (stack, enque, cache, cached, successors, quit=None):
-    deque = lambda s: s.pop()
+            for successor in successors(current):
+                if not cached(successor):
+                    cache(successor)
+                    enqueue(successor)
 
-    __bfs_dfs_aux__(stack, enque, deque, cache, cached, successors, quit)
+            if quit is not None and quit(current): return
+
+    Perform BFS on any given problem by defining:
+
+    * the search queue's initial state
+    * a function returning the successors to a given object
+    * (optional) a function for enqueuing objects
+    * (optional) a function for adding objects to the cache
+    * (optional) a function checking if a given object has been cached already
+    * (optional) a function for stopping the search
+
+    Args:
+        queue (list): initial state of the search queue
+        successors (function): function ``f: object -> list(object)`` returning
+            the list of successors to a given object
+
+    Keyword Args:
+        enqueue (function): a function ``f: object -> None`` adding objects to the
+            search queue
+        cache (function): a function ``f: object -> None`` adding a given object
+            to the cache (requires **cached**)
+        cached (function): a function ``f: object -> bool`` checking if a given
+            object has been cached already (requires **cache**)
+        quit (function): a function ``f: object -> bool`` returning ``True`` if
+            the search should stop with the given object
+    """
+    kwargs["dequeue"] = lambda s: s.pop(0)
+
+    __bfs_dfs_aux__(queue, successors, **kwargs)
+
+def dfs (stack, successors, **kwargs):
+    """
+    Generic depth-first search::
+
+        while stack:
+            current = dequeue(stack)
+
+            for successor in successors(current):
+                if not cached(successor):
+                    cache(successor)
+                    enqueue(successor)
+
+            if quit is not None and quit(current): return
+
+    Perform DFS on any given problem by defining:
+
+    * the search queue's initial state
+    * a function returning the successors to a given object
+    * (optional) a function for enqueuing objects
+    * (optional) a function for adding objects to the cache
+    * (optional) a function checking if a given object has been cached already
+    * (optional) a function for stopping the search
+
+    Args:
+        queue (list): initial state of the search queue
+        successors (function): function ``f: object -> list(object)`` returning
+            the list of successors to a given object
+
+    Keyword Args:
+        enqueue (function): a function ``f: object -> None`` adding objects to the
+            search queue
+        cache (function): a function ``f: object -> None`` adding a given object
+            to the cache (requires **cached**)
+        cached (function): a function ``f: object -> bool`` checking if a given
+            object has been cached already (requires **cache**)
+        quit (function): a function ``f: object -> bool`` returning ``True`` if
+            the search should stop with the given object
+    """
+    kwargs["dequeue"] = lambda s: s.pop()
+
+    __bfs_dfs_aux__(stack, successors, **kwargs)
 
 def tarjan (nodes, edges):
     """
     Tarjan's Algorithm (p110).
 
+    Find strongly connected components in a directed graph.
+
     Args:
-        nodes (iterable): set of nodes in the graph
-        edges (iterable): set of edges (pairs of nodes) in the graph
+        nodes (iterable): set of nodes
+        edges (iterable): set of edges (pairs of nodes)
 
     Returns:
         list: set of strongly connected components (list of nodes)
