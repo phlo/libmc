@@ -15,7 +15,7 @@ def powerset (s):
     """
     return \
         [
-            list(subset)
+            tuple(subset)
             for subset in chain.from_iterable(
                 combinations(s, r)
                 for r in range(len(s) + 1)
@@ -147,14 +147,14 @@ class LTS:
     def power (self):
         """Create power LTS."""
         S = powerset(self.S)
-        I = [ self.I ]
+        I = [ tuple(self.I) ]
         Σ = self.Σ
         T = [
-                (s1, a, sorted(set(s2)))
+                (s1, a, tuple(sorted(s2)))
                 for s1 in S
                 for a in Σ
                 for s2 in
-                [[ _s for (s, _a, _s) in self.T if s in s1 and _a == a ]]
+                [{ _s for (s, _a, _s) in self.T if s in s1 and _a == a }]
             ]
 
         return LTS(S, I, Σ, T)
@@ -294,7 +294,7 @@ class FA (LTS):
     def product (self, other, full=False):
         """Create product automaton (p20)."""
         lts = super(FA, self).product(other, full)
-        F = list(product(self.F, other.F))
+        F = sorted(set(lts.S) & set(product(self.F, other.F)))
 
         return FA(lts.S, lts.I, lts.Σ, lts.T, F)
 
