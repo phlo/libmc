@@ -13,4 +13,5 @@ doc: libmc.py
 	cd docs && sphinx-apidoc -o source ../
 	make -C docs html
 	mv docs/build/html/* docs
+	mv docs/build/html/.nojekyll docs
 	rm -rf docs/build
