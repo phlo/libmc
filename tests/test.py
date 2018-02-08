@@ -106,6 +106,8 @@ F = FA (
     F = [2]
 )
 
+F.toDot()
+
 expect(F.isComplete(), False, "FA.isComplete")
 expect(F.isDeterministic(), True, "FA.isDeterministic")
 
@@ -1236,3 +1238,46 @@ edges = \
 scc = tarjan(states, edges)
 
 expect(scc, [['A', 'B', 'D', 'E', 'H', 'I'], ['C', 'F', 'G', 'J']], "tarjan")
+
+################################################################################
+# BoolParser
+################################################################################
+
+parser = BoolParser("../../../ex4/tests/t4.boole")
+
+parser.parse()
+
+import sys
+sys.exit()
+
+################################################################################
+# BDD
+################################################################################
+
+from subprocess import run
+
+a = BDD(0)
+b = BDD(1)
+#  c = a & b
+
+#  print(a)
+#  print(b)
+#  print(a & b)
+#  print(~(a & b))
+#  print(a | b)
+#
+#  print(c.toDot())
+#  with open("/tmp/a.dot", 'w') as f:
+    #  f.write(c.toDot())
+#  run(["dot", "-O", "-Tpdf", "/tmp/a.dot"])
+
+#  import pdb; pdb.set_trace()
+d = ~(a ^ b);
+with open("/tmp/py_xor.dot", 'w') as f:
+    f.write(d.toDot())
+run(["dot", "-O", "-Tpdf", "/tmp/py_xor.dot"])
+#
+#  t3 = ~(a ^ b)
+#  with open("/tmp/py_t3.dot", 'w') as f:
+    #  f.write(t3.toDot())
+#  run(["dot", "-O", "-Tpdf", "/tmp/py_t3.dot"])

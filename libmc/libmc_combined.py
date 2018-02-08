@@ -1,13 +1,16 @@
 """ Provides collection of tools for KV Model Checking."""
 
+import re
+
 from math import inf
 from functools import reduce
 from itertools import chain, combinations, product
+from weakref import WeakValueDictionary
 
 __author__  = "Florian Schroegendorfer"
 __email__   = "florian.schroegendorfer@phlo.at"
 __license__ = "GPLv3"
-__version__ = "2017.3"
+__version__ = "2017.4"
 
 def powerset (s):
     """
@@ -802,11 +805,361 @@ def tarjan (nodes, edges):
                 )
         ]
 
+class BDD:
+
+    __unique__ = WeakValueDictionary()
+
+    __id__ = lambda idx, sign, child: \
+        hash((idx, sign, id(child[0]), id(child[1]))) \
+        if child is not None else \
+            1 if sign else 0
+
+    def __hash__ (self):
+        return BDD.__id__(self.idx, self.sign, self.child)
+
+    def __new__ (BDD, *args):
+        def new_bdd (idx, sign, child):
+            node = BDD.__id__(idx, sign, child)
+            if node not in BDD.__unique__:
+                bdd = object.__new__(BDD)
+                bdd.idx = idx
+                bdd.sign = sign
+                bdd.child = child
+                BDD.__unique__[node] = bdd
+                #  print("allocating new node {}".format(hash(bdd)))
+
+            bdd = BDD.__unique__[node]
+            print("new_bdd: result = {}".format(bdd))
+            return BDD.__unique__[node]
+
+        idx = args[0]
+        sign = args[1] if len(args) > 1 else False
+        child = \
+            None if idx < 0 \
+            else \
+                args[2] if len(args) > 2 and args[2] is not None \
+                else [ BDD.false(), BDD.true() ]
+
+        if child is not None:
+            print("new_bdd: c0 = {}".format(child[0]))
+            print("new_bdd: c1 = {}".format(child[1]))
+
+        if child is not None:
+            if child[0] == child[1]:
+                return child[0]
+
+            if BDD.__id__(idx, not sign, child) not in BDD.__unique__:
+                sign = child[0].sign
+                if sign:
+                    child[0] = ~child[0]
+                    child[1] = ~child[1]
+
+        return new_bdd(idx, sign, child)
+
+    #  def __del__ (self):
+        #  print("deleting node {}".format(hash(self)))
+
+    def __repr__ (self):
+        if self.isConstant():
+            return "BDD({}, {})".format(self.idx, self.sign)
+        else:
+            return "BDD({}, {}, {})".format(self.idx, self.sign, self.child)
+
+    @classmethod
+    def __top_idx__ (BDD, *args):
+        return max([ bdd.idx for bdd in args ])
+
+    def __cofactor__ (self, pos, idx):
+        if self.isConstant():
+            return self
+
+        sign = self.sign
+        if sign:
+            self = ~self
+
+        res = self.child[pos] if self.idx == idx else self
+
+        return ~res if sign else res
+
+    @classmethod
+    def __cofactor2__ (BDD, a, b):
+
+        idx = BDD.__top_idx__(a, b)
+
+        c = [
+                [ a.__cofactor__(0, idx), a.__cofactor__(1, idx) ],
+                [ b.__cofactor__(0, idx), b.__cofactor__(1, idx) ]
+            ]
+
+        print("cofactor2: idx = {}".format(idx))
+        for i in [0, 1]:
+            for j in [0, 1]:
+                print("cofactor2: c[{}][{}] = {}".format(i, j, c[i][j]))
+
+        return (idx, c)
+
+    @classmethod
+    def __apply__ (BDD, op, a, b):
+        if a.isConstant() and b.isConstant():
+            return BDD.true() if op(bool(a), bool(b)) else BDD.false()
+
+        print("apply: a = {}".format(a))
+        print("apply: b = {}".format(b))
+
+        idx, c = BDD.__cofactor2__(a, b)
+        bdd = BDD(
+            idx,
+            False,
+            [
+                BDD.__apply__(op, c[0][0], c[1][0]),
+                BDD.__apply__(op, c[0][1], c[1][1])
+            ]
+        )
+        print("apply: result = {}".format(bdd))
+
+        return bdd
+
+    def __bool__ (self): return self.sign
+
+    def __invert__ (self):
+        if self.isConstant():
+            return BDD.false() if self else BDD.true()
+
+        #  import pdb; pdb.set_trace()
+        return BDD(self.idx, not self.sign, self.child)
+        #  self.sign = not self.sign
+        #  return self
+
+    def __and__ (self, other):
+        return BDD.__apply__(bool.__and__, self, other)
+
+    def __or__ (self, other):
+        return BDD.__apply__(bool.__or__, self, other)
+
+    def __xor__ (self, other):
+        return BDD.__apply__(bool.__xor__, self, other)
+
+    def __eq__ (self, other):
+        return hash(self) == hash(other)
+
+    def __neq__ (self, other):
+        return not self == other
+
+    __true__ = None
+
+    @classmethod
+    def true (BDD):
+        if BDD.__true__ is None:
+            BDD.__true__ = BDD(-1, True)
+        return BDD.__true__
+
+    __false__ = None
+
+    @classmethod
+    def false (BDD):
+        if BDD.__false__ is None:
+            BDD.__false__ = BDD(-1, False)
+        return BDD.__false__
+
+    def isConstant (self):
+        return self.idx < 0
+
+    def toDot (self):
+        declared = set()
+
+        def declare (bdd, node):
+            if node in declared:
+                return ""
+            declared.add(node)
+            if bdd.isConstant():
+                return "\t\"{}\" [shape=box]\n".format(node)
+            else:
+                return "\t\"{}\" [label=\"@{}\"{}]\n".format(
+                    node,
+                    bdd.idx,
+                    "" if bdd.sign else ",color=red"
+                )
+
+        def bdd2dot (bdd):
+            edge = "\t\"{}\" -- \"{}\" {}\n"
+            node = hash(bdd)
+            dot = declare(bdd, node)
+            if bdd.isConstant():
+                return dot
+
+            for child in bdd.child:
+                childNode = hash(child)
+                dot += declare(child, childNode)
+                dot += edge.format(
+                    node,
+                    childNode,
+                    "" if child == bdd.child[1] else "[style=dashed,color=red]"
+                )
+                dot += bdd2dot(child)
+
+            return dot
+
+        return "graph BDD {\n" + bdd2dot(self) + "}\n"
+
+class Bool:
+    class Expr: pass
+
+class BoolParser:
+
+    class Rule:
+        def __init__ (self, *args): pass
+        #  @classmethod
+        #  def parse (cls): pass
+
+    class Expr (Rule):
+        @classmethod
+        def parse (cls, parser):
+            self.child = BoolParser.Iff.parse(parser)
+
+    class Iff (Rule):
+        @classmethod
+        def parse (cls, parser):
+            lhs = BoolParser.Implies.parse(parser)
+
+            token = parser.scan()
+
+            if isinstance(token, BoolParser.Iff):
+                rhs = BoolParser.Implies.parse(parser)
+                self.child = ( lhs, rhs )
+                return self
+            elif not isinstance(token, BoolParser.EOF):
+                raise SyntaxError("EOF expected, got {}".format(token))
+            else:
+                return lhs
+
+
+    class Implies (Rule):
+        @classmethod
+        def parse (cls, parser):
+            pass
+
+    class Or (Rule): pass
+
+    class And (Rule): pass
+
+    class Not (Rule): pass
+
+    class Var (Rule):
+        def __init__ (self, *args):
+            super().__init__(*args)
+            self.name = args[1]
+
+    class Basic (Rule): pass
+
+    class Open (Rule): pass
+
+    class Close (Rule): pass
+
+    class EOF (Rule): pass
+
+    __lexicon__ = [
+        ( r'<->', Iff),
+        ( r'->', Implies),
+        ( r'\|', Or),
+        ( r'&', And),
+        ( r'!', Not),
+        ( r'[a-zA-Z0-9-_\.\[\]\$\@]+(?!-)', Var),
+        ( r'\(', Open),
+        ( r'\)', Close),
+        ( r'\s+', None)
+    ]
+
+    def __init__ (self, fileName):
+        self.file = fileName
+        self.tokens = None
+        self.symbol = None
+        self.nextSymbol = None
+
+        self.formula = Bool()
+
+    #  def _expr (self):
+        #  pass
+#
+    #  def _iff (self):
+        #  pass
+#
+    #  def _implies (self):
+        #  pass
+#
+    #  def _or (self):
+        #  pass
+#
+    #  def _and (self):
+        #  pass
+#
+    #  def _not (self):
+        #  pass
+#
+    #  def _basic (self):
+        #  pass
+
+    def tokenize (self):
+        scanner = re.Scanner(self.__lexicon__)
+
+        with open(self.file) as f:
+            content = f.read()
+
+        tokens, remaining = scanner.scan(content)
+
+        for t in tokens:
+            yield t
+
+        yield self.EOF()
+
+    def scan (self):
+        if self.tokens is None:
+            self.tokens = self.tokenize()
+
+        token = next(self.tokens)
+        token.parser = self
+
+        if isinstance(token, self.EOF):
+            self.tokens = None
+
+        self.symbol = token
+
+        return token
+
+    def check (self, expected):
+        if self.symbol == expected:
+            return self.scan()
+
+        raise SyntaxError("{} expected, got {}".format(expected, self.symbol))
+
+    def parse (self):
+        #  import pdb; pdb.set_trace()
+        #  t = self.scan()
+        #  print(self.scan())
+        #  print(self.scan())
+        #  print(self.scan())
+        #  print(self.scan())
+        #  print(self.scan())
+        #  print(self.scan())
+        #  print(self.scan())
+        #  print(self.scan())
+        #  print(self.scan())
+        #  print(self.scan())
+        #  print(self.scan())
+
+        import pdb; pdb.set_trace()
+
+        self.Expr.parse(self)
+
+        pass
+
+        #  for token in self.tokenize():
+            #  print(token)
+
 def formatState (s):
     """Prettify a state's string representation for printing."""
     return str(s).replace("'", "").replace("[", "\{").replace("]", "\}")
 
-def printRelation(relation, A, B):
+def printRelation (relation, A, B):
     """Pretty print relation table in markdown format."""
     def formatPair(s, t): return \
         "(" + \
