@@ -1,6 +1,6 @@
 from itertools import product
 
-from .lts import LTS
+from .LTS import LTS
 from .maximumBisimulation import maximumBisimulation
 from .printing import fa2dot
 

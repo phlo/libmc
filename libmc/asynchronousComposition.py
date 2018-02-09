@@ -1,7 +1,7 @@
 from itertools import product
 
-from .bfs_dfs import dfs
-from .lts import LTS
+from .analysis import dfs
+from .LTS import LTS
 
 def asynchronousComposition (*lts, partialOrderReduction=None):
     """

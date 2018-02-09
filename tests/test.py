@@ -1243,7 +1243,11 @@ expect(scc, [['A', 'B', 'D', 'E', 'H', 'I'], ['C', 'F', 'G', 'J']], "tarjan")
 # BoolParser
 ################################################################################
 
-parser = BoolParser("../../../ex4/tests/t4.boole")
+import glob
+
+files = glob.glob("bool/*.bool")
+
+parser = BooleParser("../../../ex4/tests/t4.boole")
 
 parser.parse()
 

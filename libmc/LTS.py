@@ -1,7 +1,7 @@
 from functools import reduce
 from itertools import chain, combinations, product
 
-from .bfs_dfs import dfs
+from .analysis import dfs
 from .maximumSimulation import maximumSimulation
 from .maximumBisimulation import maximumBisimulation
 from .printing import fa2dot
