@@ -5,19 +5,17 @@ __email__   = "florian.schroegendorfer@phlo.at"
 __license__ = "GPLv3"
 __version__ = "2017.4"
 
-from .analysis import bfs, dfs
-from .asynchronousComposition import asynchronousComposition
-from .BDD import BDD
-from .Boole import Boole
-from .FA import FA
-from .LTS import LTS
-from .maximumBisimulation import maximumBisimulation
-from .maximumSimulation import maximumSimulation
+from .traversal import bfs, dfs
+from .bdd import BDD
+from .boole import Boole
+from .fa import FA
+from .lts import LTS, asynchronousComposition, maximumSimulation, maximumBisimulation
 from .printing import fa2dot, printRelation
 from .tarjan import tarjan
 
 __all__ = [
     "asynchronousComposition",
+    "BDD",
     "Boole",
     "bfs",
     "dfs",
@@ -26,5 +24,8 @@ __all__ = [
     "LTS",
     "maximumSimulation",
     "maximumBisimulation",
+    "printRelation",
     "tarjan"
 ]
+
+del bdd, boole, fa, lts, printing, traversal

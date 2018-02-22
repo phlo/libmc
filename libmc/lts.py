@@ -1,10 +1,8 @@
 from functools import reduce
 from itertools import chain, combinations, product
 
-from .analysis import dfs
-from .maximumSimulation import maximumSimulation
-from .maximumBisimulation import maximumBisimulation
 from .printing import fa2dot
+from .traversal import dfs
 
 def powerset (s):
     """
@@ -244,3 +242,199 @@ class LTS:
         dfs(stack, successors, enqueue=enqueue, cache=cache, cached=cached)
 
         return traces
+
+def maximumSimulation (A1, A2, R0, τ = []):
+    """
+    Constructs the maximum simulation relation A1 ≲ A2 (p36).
+
+    To get the *full* maximum simulation between two LTS A1 and A2 build
+    the union of all possible permutations::
+
+        fullSimulationRelation =
+            maximumSimulation(A1, A1, set(product(A1.S, A1.S))) |
+            maximumSimulation(A1, A2, set(product(A1.S, A2.S))) |
+            maximumSimulation(A2, A1, set(product(A2.S, A1.S))) |
+            maximumSimulation(A2, A2, set(product(A2.S, A2.S)))
+
+    Args:
+        A1 (LTS): some LTS
+        A2 (LTS): another LTS
+        R0 (set): the starting relation, e.g. A1.SxA2.S
+        τ (optional): set of unobservable internal events
+
+    Returns:
+        set: A1 ≲ A2 ⊆ R0 - the maximum simulation relation
+    """
+    def isReachable(traces, a):
+        """Returns True if a trace of the form τ*a exists."""
+        return any(
+                all(t[1] in τ for t in trace[:-1]) and trace[-1][1] == a
+                for trace in traces
+        )
+
+    # refine simulation relation
+    R1 = \
+        {
+            (s, t)
+            for (s, t) in R0
+            # ∀ a ∈ Σ, s' ∈ S [ s -a> s' ]
+            if all(
+                # ∃ t' ∈ S [ t -a> t' ∧ s' ≲ t' ]
+                any(
+                    # s' ≲ t'
+                    (_s, _t) in R0
+                    # { t' ∈ S | t -a> t' }
+                    for _t in A2.S
+                    if isReachable(A2.trace(_t, [t]), a)
+                )
+                # { (a, s') ∈ ΣxS | s -a> s' }
+                for (a, _s) in
+                {
+                    (a, _s)
+                    for a in set(A1.Σ) - set(τ)
+                    for _s in A1.S
+                    if isReachable(A1.trace(_s, [s]), a)
+                }
+            )
+        }
+
+    # return relation if fixpoint is reached else recurse
+    return R1 if R1 == R0 else maximumSimulation(A1, A2, R1, τ)
+
+def maximumBisimulation (A1, A2, R0, τ = []):
+    """
+    Constructs the maximum bisimulation relation A1 ≈ A2 (p43).
+
+    Can also be used to minimize a deterministic automaton by constructing
+    the state equivalence relation using::
+
+        maximumSimulation(A, A, (A.FxA.F)∪((A.S\A.F)x(A.S\A.F)))
+
+    To get the *full* maximum bisimulation between two LTS A1 and A2 build
+    the union of all possible permutations::
+
+        fullSimulationRelation =
+            maximumBisimulation(A1, A1, set(product(A1.S, A1.S))) |
+            maximumBisimulation(A1, A2, set(product(A1.S, A2.S))) |
+            maximumBisimulation(A2, A1, set(product(A2.S, A1.S))) |
+            maximumBisimulation(A2, A2, set(product(A2.S, A2.S)))
+
+    Args:
+        A1 (LTS): some LTS
+        A2 (LTS): another LTS
+        R0 (set): the starting relation, e.g. A1.SxA2.S
+        τ (optional): set of unobservable internal events
+
+    Returns:
+        set: A1 ≈ A2 ⊆ R0 - the maximum simulation relation
+    """
+    return \
+        maximumSimulation(
+            A2,
+            A1,
+            { (s, t) for (t, s) in maximumSimulation(A1, A2, R0, τ) },
+            τ
+        )
+
+def asynchronousComposition (*lts, partialOrderReduction=None):
+    """
+    Asynchronous composition of LTS through interleaving (p84).
+
+    * performs on-the-fly generation of reachable states
+    * Partial Order Reduction can be applied by supplying a function
+      **partialOrderReduction**, selecting the component to expand
+
+    Args:
+        *lts (variable argument list(LTS)): list of LTS to interleave
+
+    Keyword Args:
+        partialOrderReduction (optional): function ``f: list(index) -> index``
+            selecting the local component to expand
+    """
+    S = set(product(*[ l.I for l in lts ]))
+    I = sorted(S)
+    Σ = set.union(*[ set(l.Σ) for l in lts ])
+    T = set()
+
+    # set of component indices
+    components = range(len(lts))
+
+    # local symbols
+    Λ = [
+            {
+                a
+                for a in l.Σ
+                if all(a not in _l.Σ for _l in lts if _l != l)
+            }
+            for l in lts
+        ]
+
+    # map of symbols to the set of components knowing that symbol
+    Ψ = { a: { i for i in components if a in lts[i].Σ } for a in Σ }
+
+    # initialize dfs stack
+    stack = list(I)
+
+    # on-the-fly generation of reachable states (dfs)
+    def enqueue (successor): stack.append(successor[2])
+
+    def cache (successor):
+        S.add(successor[2])
+        T.add(successor)
+
+    def cached (successor): return successor in T
+
+    def successors (fromState):
+        # dictionary containing successors per symbol and component state
+        nextStates = {}
+
+        for i in components:
+            for (s, a, t) in [ t for t in lts[i].T if t[0] == fromState[i] ]:
+                nextStates.setdefault(a, {}).setdefault(i, []).append(t)
+
+        # perform partial order reduction
+        if partialOrderReduction:
+
+            # index of components with local states
+            local = [
+                        i
+                        for i in components
+                        if
+                            # component i has a successor
+                            any(i in nextStates[a] for a in nextStates)
+                            and
+                            # all transitions of component i are local
+                            all(
+                                a in Λ[i]
+                                for a in nextStates
+                                if i in nextStates[a]
+                            )
+                    ]
+
+            # partial expansion
+            if local:
+                local = partialOrderReduction(local)
+
+                # unset successors of skipped components
+                for a in nextStates:
+                    for i in { i for i in components if i not in local }:
+                        if i in nextStates[a]:
+                            del nextStates[a][i]
+
+        # build expansion
+        expansion = [
+                        (fromState, a, toState)
+                        for a in nextStates
+                        if Ψ[a] == nextStates[a].keys()
+                        for toState in
+                            product(*[
+                                nextStates[a].setdefault(i, [fromState[i]])
+                                for i in components
+                            ])
+                    ]
+
+        return expansion
+
+    dfs(stack, successors, enqueue=enqueue, cache=cache, cached=cached)
+
+    return LTS(sorted(S), I, sorted(Σ), sorted(T))

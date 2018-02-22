@@ -3,7 +3,7 @@ from itertools import product, zip_longest
 from collections import OrderedDict
 from collections.abc import Sequence
 
-from .BDD import BDD
+from .bdd import BDD
 
 class Boole:
 
@@ -87,8 +87,6 @@ class Boole:
             lit ^= 1
             litL ^= 1
             litR ^= 1
-
-            #  print("iff lit = {}".format(lit))
 
             aag["literals"][litL] = "{} {}".format(lhs, rhs)
             aag["literals"][litR] = "{} {}".format(lhs ^ 1, rhs ^ 1)

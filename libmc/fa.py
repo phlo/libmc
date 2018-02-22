@@ -1,7 +1,6 @@
 from itertools import product
 
-from .LTS import LTS
-from .maximumBisimulation import maximumBisimulation
+from .lts import LTS, maximumBisimulation
 from .printing import fa2dot
 
 def intersect (l1, l2):
