@@ -10,7 +10,7 @@
 
 .PHONY: test
 test:
-	make -C tests
+	python -m unittest discover --locals -s tests -p "test_*.py"
 
 doc: libmc
 	find docs/ -maxdepth 1 ! -name docs \
