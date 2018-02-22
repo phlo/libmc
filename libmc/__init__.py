@@ -7,7 +7,8 @@ __version__ = "2017.4"
 
 from .analysis import bfs, dfs
 from .asynchronousComposition import asynchronousComposition
-from .Boole import Boole, BooleParser
+from .BDD import BDD
+from .Boole import Boole
 from .FA import FA
 from .LTS import LTS
 from .maximumBisimulation import maximumBisimulation
@@ -18,7 +19,6 @@ from .tarjan import tarjan
 __all__ = [
     "asynchronousComposition",
     "Boole",
-    "BooleParser",
     "bfs",
     "dfs",
     "FA",

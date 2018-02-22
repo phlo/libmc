@@ -1,3 +1,5 @@
+from weakref import WeakValueDictionary
+
 class BDD:
 
     __unique__ = WeakValueDictionary()
@@ -22,7 +24,7 @@ class BDD:
                 #  print("allocating new node {}".format(hash(bdd)))
 
             bdd = BDD.__unique__[node]
-            print("new_bdd: result = {}".format(bdd))
+            #  print("new_bdd: result = {}".format(bdd))
             return BDD.__unique__[node]
 
         idx = args[0]
@@ -33,9 +35,9 @@ class BDD:
                 args[2] if len(args) > 2 and args[2] is not None \
                 else [ BDD.false(), BDD.true() ]
 
-        if child is not None:
-            print("new_bdd: c0 = {}".format(child[0]))
-            print("new_bdd: c1 = {}".format(child[1]))
+        #  if child is not None:
+            #  print("new_bdd: c0 = {}".format(child[0]))
+            #  print("new_bdd: c1 = {}".format(child[1]))
 
         if child is not None:
             if child[0] == child[1]:
@@ -84,10 +86,10 @@ class BDD:
                 [ b.__cofactor__(0, idx), b.__cofactor__(1, idx) ]
             ]
 
-        print("cofactor2: idx = {}".format(idx))
-        for i in [0, 1]:
-            for j in [0, 1]:
-                print("cofactor2: c[{}][{}] = {}".format(i, j, c[i][j]))
+        #  print("cofactor2: idx = {}".format(idx))
+        #  for i in [0, 1]:
+            #  for j in [0, 1]:
+                #  print("cofactor2: c[{}][{}] = {}".format(i, j, c[i][j]))
 
         return (idx, c)
 
@@ -96,8 +98,8 @@ class BDD:
         if a.isConstant() and b.isConstant():
             return BDD.true() if op(bool(a), bool(b)) else BDD.false()
 
-        print("apply: a = {}".format(a))
-        print("apply: b = {}".format(b))
+        #  print("apply: a = {}".format(a))
+        #  print("apply: b = {}".format(b))
 
         idx, c = BDD.__cofactor2__(a, b)
         bdd = BDD(
@@ -108,7 +110,7 @@ class BDD:
                 BDD.__apply__(op, c[0][1], c[1][1])
             ]
         )
-        print("apply: result = {}".format(bdd))
+        #  print("apply: result = {}".format(bdd))
 
         return bdd
 
@@ -118,10 +120,7 @@ class BDD:
         if self.isConstant():
             return BDD.false() if self else BDD.true()
 
-        #  import pdb; pdb.set_trace()
         return BDD(self.idx, not self.sign, self.child)
-        #  self.sign = not self.sign
-        #  return self
 
     def __and__ (self, other):
         return BDD.__apply__(bool.__and__, self, other)
@@ -193,4 +192,3 @@ class BDD:
             return dot
 
         return "graph BDD {\n" + bdd2dot(self) + "}\n"
-
