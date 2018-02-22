@@ -6,7 +6,12 @@ from collections.abc import Sequence
 from .bdd import BDD
 
 class Boole:
+    """
+    Evaluate and convert propositional formulae given in the Boole format [1]_.
 
+    References:
+        .. [1] `limboole <http://fmv.jku.at/limboole>`_
+    """
     class Expr:
         def __init__ (self, *args):
             self.args = args
@@ -35,9 +40,9 @@ class Boole:
 
     class UnaryExpr (Expr): pass
     class BinaryExpr (Expr):
-        def evaluate (self, assignments):
-            return (self.args[0].evaluate(assignments),
-                    self.args[1].evaluate(assignments))
+        def evaluate (self, assignment):
+            return (self.args[0].evaluate(assignment),
+                    self.args[1].evaluate(assignment))
 
         def toBDD (self, variables):
             return (self.args[0].toBDD(variables),
@@ -60,8 +65,8 @@ class Boole:
             return tuple([ lhs, rhs, lit ] + ands)
 
     class Var (Expr):
-        def evaluate (self, assignments):
-            return assignments[self.args[0]]
+        def evaluate (self, assignment):
+            return assignment[self.args[0]]
 
         def toBDD (self, variables):
             return variables[self.args[0]]
@@ -70,8 +75,8 @@ class Boole:
             return aag["inputs"][self.args[0]]
 
     class Iff (BinaryExpr):
-        def evaluate (self, assignments):
-            a, b = super().evaluate(assignments)
+        def evaluate (self, assignment):
+            a, b = super().evaluate(assignment)
             return not a ^ b
 
         def toBDD (self, variables):
@@ -95,8 +100,8 @@ class Boole:
             return lit
 
     class Implies (BinaryExpr):
-        def evaluate (self, assignments):
-            a, b = super().evaluate(assignments)
+        def evaluate (self, assignment):
+            a, b = super().evaluate(assignment)
             return (not a) | b
 
         def toBDD (self, variables):
@@ -116,8 +121,8 @@ class Boole:
             return lit
 
     class ImpliedBy (BinaryExpr):
-        def evaluate (self, assignments):
-            a, b = super().evaluate(assignments)
+        def evaluate (self, assignment):
+            a, b = super().evaluate(assignment)
             return a | (not b)
 
         def toBDD (self, variables):
@@ -137,8 +142,8 @@ class Boole:
             return lit
 
     class Or (BinaryExpr):
-        def evaluate (self, assignments):
-            a, b = super().evaluate(assignments)
+        def evaluate (self, assignment):
+            a, b = super().evaluate(assignment)
             return a | b
 
         def toBDD (self, variables):
@@ -158,8 +163,8 @@ class Boole:
             return lit
 
     class And (BinaryExpr):
-        def evaluate (self, assignments):
-            a, b = super().evaluate(assignments)
+        def evaluate (self, assignment):
+            a, b = super().evaluate(assignment)
             return a & b
 
         def toBDD (self, variables):
@@ -174,8 +179,8 @@ class Boole:
             return lit
 
     class Not (UnaryExpr):
-        def evaluate (self, assignments):
-            return not self.args[0].evaluate(assignments)
+        def evaluate (self, assignment):
+            return not self.args[0].evaluate(assignment)
 
         def toBDD (self, variables):
             return self.args[0].toBDD(variables).__invert__()
@@ -192,13 +197,30 @@ class Boole:
     def __repr__ (self):
         return self.formula.__repr__()
 
-    def evaluate (self, assignments):
-        if isinstance(assignments, Sequence):
-            assignments = dict(zip_longest(self.variables, assignments))
+    def evaluate (self, assignment):
+        """
+        Evaluate the formula using a given assignment to it's variables.
 
-        return self.formula.evaluate(assignments)
+        Args:
+            assignment (dict): dictionary mapping variable names to truth
+                values
+        """
+        if isinstance(assignment, Sequence):
+            assignment = dict(zip_longest(self.variables, assignment))
+
+        return self.formula.evaluate(assignment)
 
     def truthTable (self):
+        """
+        Returns the formula's truth table.
+
+        Returns:
+            list: pairs combining assignments to the resulting truth value
+
+        Warning:
+            Since every possible assignment has to be evaluated, it might take
+            a while for larger formulae!
+        """
         return [
             (values, self.evaluate(values))
             for values in
@@ -206,16 +228,14 @@ class Boole:
         ]
 
     def toBDD (self):
+        """Converts the formula to a :class:`BDD`."""
         return self.formula.toBDD({
             self.variables[i]: BDD(i) for i in range(len(self.variables))
         })
 
     def toAIG (self):
         """
-        x <-> y ... (x & y) | (!x & !y) ... !(!(x & y) & !(!x & !y))
-        x -> y  ... !x | y ... !(x & !y)
-        x <- y  ... x | !y ... !(!x & y)
-        x | y   ... !(!x & !y)
+        Converts the formula to an AIG in the `AIGER <http://fmv.jku.at/aiger>`_ format.
         """
         lit = 2
         inputs = {}
@@ -231,17 +251,6 @@ class Boole:
         }
 
         self.formula.toAIG(aag, True)
-
-        header = "aag {} {} 0 1 {}\n".format(
-            lit - 1 + aag["ands"],
-            lit - 2,
-            aag["ands"]
-        )
-
-        #  import pdb; pdb.set_trace()
-
-        #  print(self.formula.toAIG(aag, True))
-        #  print(aag)
 
         return \
             "aag {} {} 0 1 {}\n".format(
@@ -343,6 +352,7 @@ class BooleParser:
             ])
 
         tokens, remaining = self.scanner.scan(self.formula)
+
         if remaining:
             raise SyntaxError(
                 "{} '{}' followed by '{}'".format(
@@ -351,9 +361,6 @@ class BooleParser:
                     remaining
                 )
             )
-
-        #  print("tokens = {}".format(tokens))
-        #  print("remaining = {}".format(remaining))
 
         for t in tokens:
             yield t
@@ -382,7 +389,6 @@ class BooleParser:
             )
 
     def parse (self):
-        #  import pdb; pdb.set_trace()
         formula = self._expr()
         self.check("eof")
         return (formula, sorted(self.variables))

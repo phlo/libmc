@@ -50,7 +50,8 @@ def printRelation (relation, A, B):
 
 def fa2dot (S, I, Σ, T, F, highlight = []):
     """
-    Returns graphical representation of given automaton (using Graphviz).
+    Returns graphical representation of given automaton (using `Graphviz
+    <https://www.graphviz.org/>`_).
 
     Args:
         S: set of states

@@ -1,7 +1,20 @@
 from weakref import WeakValueDictionary
 
 class BDD:
+    """
+    Binary Decision Diagram (p149).
 
+    Attributes:
+        idx (int): node index
+        sign (bool): the node's sign
+        child (list(BDD, BDD)): the node's *else* and *then* successors
+
+    Note:
+        Operations are carried out using the logic operators ``~``, ``|``,
+        ``&``, ``^``::
+
+            ~(BDD(0) ^ BDD(1))
+    """
     __unique__ = WeakValueDictionary()
 
     __id__ = lambda idx, sign, child: \
@@ -35,10 +48,6 @@ class BDD:
                 args[2] if len(args) > 2 and args[2] is not None \
                 else [ BDD.false(), BDD.true() ]
 
-        #  if child is not None:
-            #  print("new_bdd: c0 = {}".format(child[0]))
-            #  print("new_bdd: c1 = {}".format(child[1]))
-
         if child is not None:
             if child[0] == child[1]:
                 return child[0]
@@ -50,9 +59,6 @@ class BDD:
                     child[1] = ~child[1]
 
         return new_bdd(idx, sign, child)
-
-    #  def __del__ (self):
-        #  print("deleting node {}".format(hash(self)))
 
     def __repr__ (self):
         if self.isConstant():
@@ -86,20 +92,12 @@ class BDD:
                 [ b.__cofactor__(0, idx), b.__cofactor__(1, idx) ]
             ]
 
-        #  print("cofactor2: idx = {}".format(idx))
-        #  for i in [0, 1]:
-            #  for j in [0, 1]:
-                #  print("cofactor2: c[{}][{}] = {}".format(i, j, c[i][j]))
-
         return (idx, c)
 
     @classmethod
     def __apply__ (BDD, op, a, b):
         if a.isConstant() and b.isConstant():
             return BDD.true() if op(bool(a), bool(b)) else BDD.false()
-
-        #  print("apply: a = {}".format(a))
-        #  print("apply: b = {}".format(b))
 
         idx, c = BDD.__cofactor2__(a, b)
         bdd = BDD(
@@ -110,7 +108,6 @@ class BDD:
                 BDD.__apply__(op, c[0][1], c[1][1])
             ]
         )
-        #  print("apply: result = {}".format(bdd))
 
         return bdd
 
@@ -141,6 +138,7 @@ class BDD:
 
     @classmethod
     def true (BDD):
+        """Boolean constant *True*."""
         if BDD.__true__ is None:
             BDD.__true__ = BDD(-1, True)
         return BDD.__true__
@@ -149,14 +147,23 @@ class BDD:
 
     @classmethod
     def false (BDD):
+        """Boolean constant *False*."""
         if BDD.__false__ is None:
             BDD.__false__ = BDD(-1, False)
         return BDD.__false__
 
     def isConstant (self):
+        """Returns *True* for constant nodes."""
         return self.idx < 0
 
     def toDot (self):
+        """
+        Returns a graphical representation of the BDD (using `Graphviz
+        <https://www.graphviz.org/>`_).
+
+        Returns:
+            string: dot language representation
+        """
         declared = set()
 
         def declare (bdd, node):

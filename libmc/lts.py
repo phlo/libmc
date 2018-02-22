@@ -44,7 +44,7 @@ class LTS:
 
     def toDot (self, highlight = []):
         """
-        Return LTS as Graphviz dot language string.
+        Return LTS as `Graphviz <https://www.graphviz.org/>`_ dot language string.
 
         Args:
             highlight (list of transitions - optional): highlight a given path
