@@ -11,7 +11,7 @@ def intersect (l1, l2):
 
 class FA (LTS):
     """
-    Finite Automata (p18).
+    Finite Automaton (p18).
 
     Attributes:
         S: set of states
@@ -34,7 +34,7 @@ class FA (LTS):
             str(self.F) + \
             ")"
 
-    def toDot (self, highlight = []):
+    def toDot (self, highlight=[]):
         """
         Return `Graphviz <https://www.graphviz.org/>`_ dot language string.
 
@@ -108,7 +108,7 @@ class FA (LTS):
         """
         A = self.product(other.power().complement(), full);
 
-        traces = list(filter(lambda x: x == True, [ A.trace(f) for f in A.F ]))
+        traces = [ t for f in A.F for t in A.trace(f) if t ]
 
         return ( not traces, A, traces )
 

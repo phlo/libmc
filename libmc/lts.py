@@ -93,29 +93,22 @@ class LTS:
             full (bool - optional): create full product automaton if True, else
                 only reachable states are included (default)
         """
-        S = set() if not full else list(product(self.S, other.S))
+        states = sorted(product(self.S, other.S))
+        transitions = \
+            {
+                (s, a, (t1, t2))
+                for s in states
+                for a in self.Σ
+                for (s1, a1, t1) in self.T if s1 == s[0] and a1 == a
+                for (s2, a2, t2) in other.T if s2 == s[1] and a2 == a
+            }
+
+        S = set() if not full else states
         I = sorted(product(self.I, other.I))
-        Σ = self.Σ
-        T = [] if not full else \
-            [
-                (s, a, (t1[2], t2[2]))
-                for s in S
-                for a in Σ
-                for t1 in self.T if t1[0] == s[0] and t1[1] == a
-                for t2 in other.T if t2[0] == s[1] and t2[1] == a
-            ]
+        T = set() if not full else transitions
 
         # reachability analysis
         if not full:
-            transitions = \
-                [
-                    (s, a, (t1[2], t2[2]))
-                    for s in list(product(self.S, other.S))
-                    for a in Σ
-                    for t1 in self.T if t1[0] == s[0] and t1[1] == a
-                    for t2 in other.T if t2[0] == s[1] and t2[1] == a
-                ]
-
             stack = list(I)
 
             def cache (successor): S.add(successor)
@@ -124,14 +117,14 @@ class LTS:
 
             def successors (current):
                 for t in [ t for t in transitions if t[0] == current ]:
-                    T.append(t)
+                    T.add(t)
                     yield t[2]
 
             dfs(stack, successors, cache=cache, cached=cached)
 
             S |= set(I)
 
-        return LTS(S, I, Σ, T)
+        return LTS(sorted(S), I, self.Σ, sorted(T))
 
     def power (self):
         """Create power LTS."""
@@ -143,7 +136,8 @@ class LTS:
                 for s1 in S
                 for a in Σ
                 for s2 in
-                [{ _s for (s, _a, _s) in self.T if s in s1 and _a == a }]
+                [{ t for (s, _a, t) in self.T if s in s1 and _a == a }]
+                if s1 and s2
             ]
 
         return LTS(S, I, Σ, T)
