@@ -19,8 +19,13 @@
 #
 import os
 import sys
+
+from datetime import datetime
+
 sys.path.insert(0, os.path.abspath('../../'))
+
 import libmc
+
 #  import sphinx_bootstrap_theme
 
 
@@ -37,6 +42,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
+    'sphinx.ext.graphviz',
     'sphinx.ext.autosummary',
     'sphinx.ext.githubpages',
     'sphinxcontrib.napoleon'
@@ -55,7 +61,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'libmc'
-copyright = '2017, ' + libmc.__author__
+copyright = str(datetime.today().year) + ', ' + libmc.__author__
 author = libmc.__author__
 
 # The version info for the project you're documenting, acts as replacement for
@@ -84,6 +90,10 @@ pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
+
+# -- Options for autodoc --------------------------------------------------
+autodoc_member_order = 'bysource'
+autoclass_content = 'both'
 
 # -- Options for HTML output ----------------------------------------------
 

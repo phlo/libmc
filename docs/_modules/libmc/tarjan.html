@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>libmc.tarjan &mdash; libmc 2017.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="libmc 2017.4 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> libmc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2017.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../automata.html">Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reachability.html">Reachability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../bdd.html">Binary Decision Diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../boole.html">Boole Parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libmc.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">libmc</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>libmc.tarjan</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for libmc.tarjan</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">inf</span>
+
+<div class="viewcode-block" id="tarjan"><a class="viewcode-back" href="../../libmc.html#libmc.tarjan">[docs]</a><span class="k">def</span> <span class="nf">tarjan</span> <span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tarjan&#39;s Algorithm (p110).</span>
+
+<span class="sd">    Find strongly connected components in a directed graph.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        nodes (iterable): set of nodes</span>
+<span class="sd">        edges (iterable): set of edges (pairs of nodes)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: set of strongly connected components (list of nodes)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># depth first search index (DFSI)</span>
+    <span class="n">dfsi</span> <span class="o">=</span> <span class="p">{</span> <span class="n">s</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">nodes</span> <span class="p">}</span>
+
+    <span class="c1"># min. reachable DFSI through back edges (MRDFSI)</span>
+    <span class="n">mrdfsi</span> <span class="o">=</span> <span class="p">{</span> <span class="n">s</span><span class="p">:</span> <span class="n">inf</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">nodes</span> <span class="p">}</span>
+
+    <span class="c1"># auxiliary stack</span>
+    <span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># smallest index of all reachable nodes (SCC index)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># map of strongly connected components: root node -&gt; SCC (list of nodes)</span>
+    <span class="n">scc</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># compute a node&#39;s DFSI and MRDFSI recursively</span>
+    <span class="k">def</span> <span class="nf">tarjan_aux</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">stack</span><span class="p">):</span>
+
+        <span class="c1"># return if the node&#39;s DFSI is already known</span>
+        <span class="k">if</span> <span class="n">dfsi</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="n">i</span>
+
+        <span class="c1"># increment the index</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># set the node&#39;s DFSI and MRDFSI</span>
+        <span class="n">dfsi</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="n">mrdfsi</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+
+        <span class="c1"># push newly reached node on the auxiliary stack</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+        <span class="c1"># find children</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="p">[</span> <span class="n">t</span> <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="n">edges</span> <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="n">node</span> <span class="p">]</span>
+
+        <span class="c1"># compute DFSI and MRDFSI of all child nodes</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">tarjan_aux</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span>
+
+        <span class="c1"># minimize MRDFSI over the MRDFSI of each node and it&#39;s direct children</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+            <span class="n">mrdfsi</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">mrdfsi</span><span class="p">[</span><span class="n">node</span><span class="p">],</span> <span class="n">mrdfsi</span><span class="p">[</span><span class="n">child</span><span class="p">])</span>
+
+        <span class="c1"># return index if it&#39;s not a root node</span>
+        <span class="k">if</span> <span class="n">dfsi</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">!=</span> <span class="n">mrdfsi</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">i</span>
+
+        <span class="c1"># generate the node&#39;s SCC</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="n">child</span> <span class="o">!=</span> <span class="n">node</span><span class="p">:</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+            <span class="n">scc</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+            <span class="n">mrdfsi</span><span class="p">[</span><span class="n">child</span><span class="p">]</span> <span class="o">=</span> <span class="n">inf</span>
+
+        <span class="k">return</span> <span class="n">i</span>
+
+    <span class="c1"># compute each node&#39;s DFSI and MRDFSI</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">tarjan_aux</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span>
+
+    <span class="c1"># return the list of strongly connected components</span>
+    <span class="k">return</span> \
+        <span class="p">[</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">scc</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span>
+            <span class="k">if</span>
+                <span class="n">node</span> <span class="ow">in</span> <span class="n">scc</span>
+                <span class="ow">and</span>
+                <span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">scc</span><span class="p">[</span><span class="n">node</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span>
+                    <span class="ow">or</span>
+                    <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="ow">in</span> <span class="n">edges</span>
+                <span class="p">)</span>
+        <span class="p">]</span></div>
+
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Florian Schroegendorfer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'2017.4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

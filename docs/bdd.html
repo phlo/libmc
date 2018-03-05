@@ -1,0 +1,320 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Binary Decision Diagrams &mdash; libmc 2017.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="libmc 2017.4 documentation" href="index.html"/>
+        <link rel="next" title="Boole Parser" href="boole.html"/>
+        <link rel="prev" title="Reachability Analysis" href="reachability.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> libmc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2017.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reachability.html">Reachability Analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Binary Decision Diagrams</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#variables">Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#operators">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="boole.html">Boole Parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libmc.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">libmc</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Binary Decision Diagrams</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/phlo/libmc" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="binary-decision-diagrams">
+<h1>Binary Decision Diagrams<a class="headerlink" href="#binary-decision-diagrams" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="libmc.html#libmc.BDD" title="libmc.BDD"><code class="xref py py-class docutils literal"><span class="pre">libmc.BDD</span></code></a> offers a class for generating binary decision diagrams.</p>
+<div class="section" id="constants">
+<h2>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h2>
+<p>The two constant nodes representing <code class="docutils literal"><span class="pre">True</span></code> and <code class="docutils literal"><span class="pre">False</span></code> can be accessed
+through the static class methods <a class="reference internal" href="libmc.html#libmc.BDD.true" title="libmc.BDD.true"><code class="xref py py-func docutils literal"><span class="pre">true()</span></code></a> and
+<a class="reference internal" href="libmc.html#libmc.BDD.false" title="libmc.BDD.false"><code class="xref py py-func docutils literal"><span class="pre">false()</span></code></a> respectively.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">true</span>  <span class="o">=</span> <span class="n">BDD</span><span class="o">.</span><span class="n">true</span><span class="p">()</span>
+<span class="n">false</span> <span class="o">=</span> <span class="n">BDD</span><span class="o">.</span><span class="n">false</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="variables">
+<h2>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h2>
+<p>Variable nodes are defined by having an index greater or equal to zero.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">BDD</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">BDD</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Since they have to be unique, a repeated call to the constructor using the same
+index will return a reference to the specific node instead of allocating a new
+one.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">a</span> <span class="ow">is</span> <span class="n">BDD</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">b</span> <span class="ow">is</span> <span class="n">BDD</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="operators">
+<h2>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h2>
+<p>Operations are carried out using the logical connectives <code class="docutils literal"><span class="pre">~</span></code>, <code class="docutils literal"><span class="pre">|</span></code>, <code class="docutils literal"><span class="pre">&amp;</span></code>
+and <code class="docutils literal"><span class="pre">^</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">~</span><span class="n">a</span>
+<span class="n">a</span> <span class="o">&amp;</span> <span class="n">b</span>
+<span class="n">a</span> <span class="o">|</span> <span class="n">b</span>
+<span class="n">a</span> <span class="o">^</span> <span class="n">b</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="visualization">
+<h2>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="libmc.html#libmc.BDD.toDot" title="libmc.BDD.toDot"><code class="xref py py-func docutils literal"><span class="pre">toDot()</span></code></a> method can be used generate the <a class="reference external" href="https://www.graphviz.org">DOT</a> language
+string for a given <a class="reference internal" href="libmc.html#libmc.BDD" title="libmc.BDD"><code class="xref py py-class docutils literal"><span class="pre">BDD</span></code></a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dot</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">a</span> <span class="o">^</span> <span class="n">b</span><span class="p">))</span><span class="o">.</span><span class="n">toDot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Write it to a file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;xnor.dot&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dot</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Generate a PDF:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;xnor.pdf&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">subprocess</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;dot&quot;</span><span class="p">,</span> <span class="s2">&quot;-Tpdf&quot;</span><span class="p">,</span> <span class="s2">&quot;xnor.dot&quot;</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Enjoy :)</p>
+<img src="_images/graphviz-c1352081720788e37ffe25e416901f2960db5bce.png" alt="graph BDD {
+	&quot;-1560438204313394375&quot; [label=&quot;&#64;1&quot;]
+	&quot;-4499075771716060229&quot; [label=&quot;&#64;0&quot;,color=red]
+	&quot;-1560438204313394375&quot; -- &quot;-4499075771716060229&quot; [style=dashed,color=red]
+	&quot;0&quot; [shape=box]
+	&quot;-4499075771716060229&quot; -- &quot;0&quot; [style=dashed,color=red]
+	&quot;1&quot; [shape=box]
+	&quot;-4499075771716060229&quot; -- &quot;1&quot; 
+	&quot;-1786681312931940090&quot; [label=&quot;&#64;0&quot;]
+	&quot;-1560438204313394375&quot; -- &quot;-1786681312931940090&quot; 
+	&quot;-1786681312931940090&quot; -- &quot;0&quot; [style=dashed,color=red]
+	&quot;-1786681312931940090&quot; -- &quot;1&quot; 
+}" />
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="boole.html" class="btn btn-neutral float-right" title="Boole Parser" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="reachability.html" class="btn btn-neutral" title="Reachability Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Florian Schroegendorfer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2017.4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Boole Parser &mdash; libmc 2017.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="libmc 2017.4 documentation" href="index.html"/>
+        <link rel="next" title="libmc Package" href="libmc.html"/>
+        <link rel="prev" title="Binary Decision Diagrams" href="bdd.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> libmc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2017.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reachability.html">Reachability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bdd.html">Binary Decision Diagrams</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Boole Parser</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#format">Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parsing">Parsing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluation">Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conversion">Conversion</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#to-aig">To AIG</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#to-bdd">To BDD</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libmc.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">libmc</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Boole Parser</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/phlo/libmc" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="boole-parser">
+<h1>Boole Parser<a class="headerlink" href="#boole-parser" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="libmc.html#libmc.Boole" title="libmc.Boole"><code class="xref py py-class docutils literal"><span class="pre">libmc.Boole</span></code></a> class can be used to evaluate and convert propositional
+formulae given in the Boole format, introduced by the SAT solver frontend
+<a class="reference external" href="http://fmv.jku.at/limboole">limboole</a>.</p>
+<div class="section" id="format">
+<h2>Format<a class="headerlink" href="#format" title="Permalink to this headline">¶</a></h2>
+<p>The Boole format has the following syntax in BNF:</p>
+<pre>
+<strong id="grammar-token-expr">expr   </strong> ::=  <a class="reference internal" href="#grammar-token-iff"><code class="xref docutils literal"><span class="pre">iff</span></code></a>
+<strong id="grammar-token-iff">iff    </strong> ::=  <a class="reference internal" href="#grammar-token-implies"><code class="xref docutils literal"><span class="pre">implies</span></code></a> { &quot;&lt;-&gt;&quot; <a class="reference internal" href="#grammar-token-implies"><code class="xref docutils literal"><span class="pre">implies</span></code></a> }
+<strong id="grammar-token-implies">implies</strong> ::=  <a class="reference internal" href="#grammar-token-or"><code class="xref docutils literal"><span class="pre">or</span></code></a> [ &quot;-&gt;&quot; <a class="reference internal" href="#grammar-token-or"><code class="xref docutils literal"><span class="pre">or</span></code></a> | &quot;&lt;-&quot; <a class="reference internal" href="#grammar-token-or"><code class="xref docutils literal"><span class="pre">or</span></code></a> ]
+<strong id="grammar-token-or">or     </strong> ::=  <a class="reference internal" href="#grammar-token-and"><code class="xref docutils literal"><span class="pre">and</span></code></a> { &quot;|&quot; <a class="reference internal" href="#grammar-token-and"><code class="xref docutils literal"><span class="pre">and</span></code></a> }
+<strong id="grammar-token-and">and    </strong> ::=  <a class="reference internal" href="#grammar-token-not"><code class="xref docutils literal"><span class="pre">not</span></code></a> { &quot;&amp;&quot; <a class="reference internal" href="#grammar-token-not"><code class="xref docutils literal"><span class="pre">not</span></code></a> }
+<strong id="grammar-token-not">not    </strong> ::=  <a class="reference internal" href="#grammar-token-basic"><code class="xref docutils literal"><span class="pre">basic</span></code></a> | &quot;!&quot; <a class="reference internal" href="#grammar-token-not"><code class="xref docutils literal"><span class="pre">not</span></code></a>
+<strong id="grammar-token-basic">basic  </strong> ::=  <code class="xref docutils literal"><span class="pre">var</span></code> | &quot;(&quot; <a class="reference internal" href="#grammar-token-expr"><code class="xref docutils literal"><span class="pre">expr</span></code></a> &quot;)&quot;
+</pre>
+<p>Where <code class="xref std std-token docutils literal"><span class="pre">var</span></code> is a string over letters, digits and the following
+characters:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>- _ . [ ] $ @
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The last character of <code class="xref std std-token docutils literal"><span class="pre">var</span></code> should be different from <code class="docutils literal"><span class="pre">-</span></code>!</p>
+</div>
+</div>
+<div class="section" id="parsing">
+<h2>Parsing<a class="headerlink" href="#parsing" title="Permalink to this headline">¶</a></h2>
+<p>Parsing a Boole formula is done by creating a <a class="reference internal" href="libmc.html#libmc.Boole" title="libmc.Boole"><code class="xref py py-class docutils literal"><span class="pre">libmc.Boole</span></code></a> object:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">contradiction</span> <span class="o">=</span> <span class="n">Boole</span><span class="p">(</span><span class="s2">&quot;a &amp; !a&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tautology</span> <span class="o">=</span> <span class="n">Boole</span><span class="p">(</span><span class="s2">&quot;a | !a&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">equivalence</span> <span class="o">=</span> <span class="n">Boole</span><span class="p">(</span><span class="s2">&quot;a &lt;-&gt; b&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="evaluation">
+<h2>Evaluation<a class="headerlink" href="#evaluation" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="libmc.html#libmc.Boole.evaluate" title="libmc.Boole.evaluate"><code class="xref py py-func docutils literal"><span class="pre">evaluate()</span></code></a> is used to evaluate a propositional formula
+under a given assignment and <a class="reference internal" href="libmc.html#libmc.Boole.truthTable" title="libmc.Boole.truthTable"><code class="xref py py-func docutils literal"><span class="pre">truthTable()</span></code></a> to generate it’s
+truth table:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="ow">not</span> <span class="n">contradiction</span><span class="o">.</span><span class="n">evaluate</span><span class="p">({</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="kc">True</span> <span class="p">})</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">contradiction</span><span class="o">.</span><span class="n">evaluate</span><span class="p">({</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="kc">False</span> <span class="p">})</span>
+<span class="k">assert</span> <span class="n">contradiction</span><span class="o">.</span><span class="n">truthTable</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span>
+    <span class="p">((</span><span class="kc">False</span><span class="p">,),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">((</span><span class="kc">True</span><span class="p">,),</span> <span class="kc">False</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">tautology</span><span class="o">.</span><span class="n">evaluate</span><span class="p">({</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="kc">True</span> <span class="p">})</span>
+<span class="k">assert</span> <span class="n">tautology</span><span class="o">.</span><span class="n">evaluate</span><span class="p">({</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="kc">False</span> <span class="p">})</span>
+<span class="k">assert</span> <span class="n">tautology</span><span class="o">.</span><span class="n">truthTable</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span>
+    <span class="p">((</span><span class="kc">False</span><span class="p">,),</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="p">((</span><span class="kc">True</span><span class="p">,),</span> <span class="kc">True</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">equivalence</span><span class="o">.</span><span class="n">evaluate</span><span class="p">({</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="kc">True</span> <span class="p">})</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">equivalence</span><span class="o">.</span><span class="n">evaluate</span><span class="p">({</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="kc">False</span> <span class="p">})</span>
+<span class="k">assert</span> <span class="n">equivalence</span><span class="o">.</span><span class="n">truthTable</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span>
+    <span class="p">((</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="p">((</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">((</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">((</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="conversion">
+<h2>Conversion<a class="headerlink" href="#conversion" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="libmc.html#libmc.Boole" title="libmc.Boole"><code class="xref py py-class docutils literal"><span class="pre">libmc.Boole</span></code></a> also offers methods for converting a propositional
+formula into other representations.</p>
+<div class="section" id="to-aig">
+<h3>To AIG<a class="headerlink" href="#to-aig" title="Permalink to this headline">¶</a></h3>
+<p>Convert a Boole formula to an AIG with <a class="reference internal" href="libmc.html#libmc.Boole.toAIG" title="libmc.Boole.toAIG"><code class="xref py py-func docutils literal"><span class="pre">toAIG()</span></code></a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">contradiction</span><span class="o">.</span><span class="n">toAIG</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">aag 3 1 0 1 1</span>
+<span class="s2">2</span>
+<span class="s2">4</span>
+<span class="s2">4 2 3</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">tautology</span><span class="o">.</span><span class="n">toAIG</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">aag 3 1 0 1 1</span>
+<span class="s2">2</span>
+<span class="s2">5</span>
+<span class="s2">4 3 2</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">equivalence</span><span class="o">.</span><span class="n">toAIG</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">aag 6 2 0 1 3</span>
+<span class="s2">2</span>
+<span class="s2">4</span>
+<span class="s2">7</span>
+<span class="s2">6 9 11</span>
+<span class="s2">8 2 4</span>
+<span class="s2">10 3 5</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="to-bdd">
+<h3>To BDD<a class="headerlink" href="#to-bdd" title="Permalink to this headline">¶</a></h3>
+<p>Convert a Boole formula to a BDD with <a class="reference internal" href="libmc.html#libmc.Boole.toBDD" title="libmc.Boole.toBDD"><code class="xref py py-func docutils literal"><span class="pre">toBDD()</span></code></a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">contradiction</span><span class="o">.</span><span class="n">toBDD</span><span class="p">()</span> <span class="ow">is</span> <span class="n">BDD</span><span class="o">.</span><span class="n">false</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">tautology</span><span class="o">.</span><span class="n">toBDD</span><span class="p">()</span> <span class="ow">is</span> <span class="n">BDD</span><span class="o">.</span><span class="n">true</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">equivalence</span><span class="o">.</span><span class="n">toBDD</span><span class="p">()</span> <span class="ow">is</span> <span class="o">~</span><span class="p">(</span><span class="n">BDD</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">^</span> <span class="n">BDD</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="libmc.html" class="btn btn-neutral float-right" title="libmc Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="bdd.html" class="btn btn-neutral" title="Binary Decision Diagrams" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Florian Schroegendorfer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2017.4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

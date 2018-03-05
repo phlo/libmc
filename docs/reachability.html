@@ -1,0 +1,403 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Reachability Analysis &mdash; libmc 2017.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="libmc 2017.4 documentation" href="index.html"/>
+        <link rel="next" title="Binary Decision Diagrams" href="bdd.html"/>
+        <link rel="prev" title="Automata" href="automata.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> libmc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2017.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Automata</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Reachability Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bfs-and-dfs">BFS and DFS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tarjan-s-algorithm">Tarjan’s Algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bdd.html">Binary Decision Diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boole.html">Boole Parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libmc.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">libmc</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Reachability Analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/phlo/libmc" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="reachability-analysis">
+<h1>Reachability Analysis<a class="headerlink" href="#reachability-analysis" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="libmc.html#module-libmc" title="libmc"><code class="xref py py-mod docutils literal"><span class="pre">libmc</span></code></a> offers generic graph search methods, central to explicit model
+checking.</p>
+<div class="section" id="bfs-and-dfs">
+<h2>BFS and DFS<a class="headerlink" href="#bfs-and-dfs" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="libmc.html#libmc.bfs" title="libmc.bfs"><code class="xref py py-func docutils literal"><span class="pre">libmc.bfs()</span></code></a> and <a class="reference internal" href="libmc.html#libmc.dfs" title="libmc.dfs"><code class="xref py py-func docutils literal"><span class="pre">libmc.dfs()</span></code></a> implement a generic way to perform graph
+search.</p>
+<p>Consider this example graph:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># initial states</span>
+<span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="c1"># transitions</span>
+<span class="n">T</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">1</span><span class="p">:</span>  <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+        <span class="mi">2</span><span class="p">:</span>  <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+        <span class="mi">3</span><span class="p">:</span>  <span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+        <span class="mi">4</span><span class="p">:</span>  <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+        <span class="mi">5</span><span class="p">:</span>  <span class="p">[</span><span class="mi">9</span><span class="p">],</span>
+        <span class="mi">6</span><span class="p">:</span>  <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>
+        <span class="mi">7</span><span class="p">:</span>  <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+        <span class="mi">8</span><span class="p">:</span>  <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>
+        <span class="mi">9</span><span class="p">:</span>  <span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+        <span class="mi">10</span><span class="p">:</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>To perform breadth-first and depth-first search, some key components have to be
+defined:</p>
+<ul>
+<li><p class="first">a search node to keep track of the current path by storing a pointer to the
+parent node</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ID</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">ID</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">a mandatory <code class="docutils literal"><span class="pre">successors()</span></code> function, generating the set of successors to the
+given node</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">successors</span> <span class="p">(</span><span class="n">current</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">successor</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="n">current</span><span class="o">.</span><span class="n">id</span><span class="p">]):</span>
+        <span class="k">yield</span> <span class="n">Node</span><span class="p">(</span><span class="n">successor</span><span class="p">,</span> <span class="n">current</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">an optional <code class="docutils literal"><span class="pre">cache()</span></code> function, adding a node’s id to the cache</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">cache</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="n">Cache</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">successor</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">an optional <code class="docutils literal"><span class="pre">cached()</span></code> function, checking if a given node’s id has been
+cached already</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">cached</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="k">return</span> <span class="n">successor</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">Cache</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">an optional <code class="docutils literal"><span class="pre">quit()</span></code> function, returning <code class="docutils literal"><span class="pre">True</span></code> iff the target has been
+found</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="n">current</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">numVisited</span>
+    <span class="n">numVisited</span> <span class="o">=</span> <span class="n">numVisited</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">current</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+        <span class="n">buildTrace</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>To simplify repeated initialization of the global variables <code class="docutils literal"><span class="pre">Cache</span></code>, <code class="docutils literal"><span class="pre">Stack</span></code>
+and <code class="docutils literal"><span class="pre">numVisited</span></code>, the following function is defined:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">initialize</span> <span class="p">():</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="p">[</span> <span class="n">Node</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">I</span> <span class="p">],</span> <span class="c1"># Stack</span>
+        <span class="nb">set</span><span class="p">(</span><span class="n">I</span><span class="p">),</span>                 <span class="c1"># Cache</span>
+        <span class="mi">0</span>                       <span class="c1"># numVisited</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, the function generating the trace in <code class="docutils literal"><span class="pre">quit()</span></code> is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">buildTrace</span> <span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">trace</span>
+    <span class="n">trace</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">trace</span> <span class="o">=</span> <span class="p">[</span> <span class="n">node</span><span class="o">.</span><span class="n">id</span> <span class="p">]</span> <span class="o">+</span> <span class="n">trace</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">break</span>
+</pre></div>
+</div>
+<p>A search on the example graph can now be performed by using the previously
+defined complements.</p>
+<div class="topic">
+<p class="topic-title first">Breadth-First Search</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Stack</span><span class="p">,</span> <span class="n">Cache</span><span class="p">,</span> <span class="n">numVisited</span><span class="p">)</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">()</span>
+
+<span class="n">bfs</span><span class="p">(</span><span class="n">Stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span>
+    <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
+    <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">,</span>
+    <span class="n">quit</span><span class="o">=</span><span class="n">quit</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">numVisited</span> <span class="o">==</span> <span class="mi">7</span>
+<span class="k">assert</span> <span class="n">trace</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="topic">
+<p class="topic-title first">Depth-First Search</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Stack</span><span class="p">,</span> <span class="n">Cache</span><span class="p">,</span> <span class="n">numVisited</span><span class="p">)</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">()</span>
+
+<span class="n">dfs</span><span class="p">(</span><span class="n">Stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span>
+    <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
+    <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">,</span>
+    <span class="n">quit</span><span class="o">=</span><span class="n">quit</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">numVisited</span> <span class="o">==</span> <span class="mi">4</span>
+<span class="k">assert</span> <span class="n">trace</span> <span class="o">==</span> <span class="p">[</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="tarjan-s-algorithm">
+<h2>Tarjan’s Algorithm<a class="headerlink" href="#tarjan-s-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>Tarjan’s algorithm is implemented in <a class="reference internal" href="libmc.html#libmc.tarjan" title="libmc.tarjan"><code class="xref py py-func docutils literal"><span class="pre">libmc.tarjan()</span></code></a> and can be used to
+find strongly connected components in a graph:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">libmc</span> <span class="k">import</span> <span class="n">tarjan</span>
+
+<span class="c1"># example graph (undirected)</span>
+<span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span> <span class="p">]</span>
+<span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;J&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;J&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">)</span>
+        <span class="p">]</span>
+
+<span class="c1"># apply Tarjan&#39;s algorithm</span>
+<span class="n">scc</span> <span class="o">=</span> <span class="n">tarjan</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">edges</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">scc</span> <span class="o">==</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">]</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="bdd.html" class="btn btn-neutral float-right" title="Binary Decision Diagrams" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="automata.html" class="btn btn-neutral" title="Automata" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Florian Schroegendorfer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2017.4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

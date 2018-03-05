@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview &mdash; libmc 2017.3 documentation</title>
+  <title>libmc &mdash; libmc 2017.4 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="libmc 2017.3 documentation" href="#"/>
-        <link rel="next" title="libmc module" href="libmc.html"/> 
+    <link rel="top" title="libmc 2017.4 documentation" href="#"/>
+        <link rel="next" title="Automata" href="automata.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2017.3
+                2017.4
               </div>
             
           
@@ -90,6 +90,10 @@
             
             
               <ul>
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reachability.html">Reachability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bdd.html">Binary Decision Diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boole.html">Boole Parser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="libmc.html">API</a></li>
 </ul>
 
@@ -129,19 +133,24 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>Overview</li>
+      <li>libmc</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/phlo/libmc" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
@@ -154,240 +163,74 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="toctree-wrapper compound">
-</div>
-<div class="section" id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="libmc">
+<h1>libmc<a class="headerlink" href="#libmc" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference internal" href="libmc.html#module-libmc" title="libmc"><code class="xref py py-mod docutils literal"><span class="pre">libmc</span></code></a> is a python module providing a collection of tools for <a class="reference external" href="http://fmv.jku.at/mc">KV Model Checking</a> and implements the following concepts presented in the lecture.</p>
-<div class="section" id="completeness-and-determinism">
-<h2>Completeness and Determinism<a class="headerlink" href="#completeness-and-determinism" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.LTS.isComplete" title="libmc.LTS.isComplete"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.isComplete</span></code></a></td>
-<td>Completeness (p21): True if LTS is complete.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="libmc.html#libmc.LTS.isDeterministic" title="libmc.LTS.isDeterministic"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.isDeterministic</span></code></a></td>
-<td>Determinism (p21): True if LTS is deterministic.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="product-automata-and-sub-set-construction">
-<h2>Product Automata and Sub-Set Construction<a class="headerlink" href="#product-automata-and-sub-set-construction" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.FA.product" title="libmc.FA.product"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA.product</span></code></a></td>
-<td>Create product automaton (p20).</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="libmc.html#libmc.LTS.product" title="libmc.LTS.product"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.product</span></code></a></td>
-<td>Create product LTS.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.FA.power" title="libmc.FA.power"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA.power</span></code></a></td>
-<td>Create power automaton (p22).</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="libmc.html#libmc.LTS.power" title="libmc.LTS.power"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.power</span></code></a></td>
-<td>Create power LTS.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="labelled-transition-systems">
-<h2>Labelled Transition Systems<a class="headerlink" href="#labelled-transition-systems" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.LTS" title="libmc.LTS"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS</span></code></a></td>
-<td>Labelled Transition System (p31).</td>
-</tr>
-</tbody>
-</table>
-<div class="section" id="asynchronous-composition">
-<h3>Asynchronous Composition<a class="headerlink" href="#asynchronous-composition" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.asynchronousComposition" title="libmc.asynchronousComposition"><code class="xref py py-obj docutils literal"><span class="pre">libmc.asynchronousComposition</span></code></a></td>
-<td>Asynchronous composition of LTS through interleaving (p84).</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="simulation-and-bisimulation">
-<h3>Simulation and Bisimulation<a class="headerlink" href="#simulation-and-bisimulation" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.LTS.simulates" title="libmc.LTS.simulates"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.simulates</span></code></a></td>
-<td>Simulation of LTS (p39).</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="libmc.html#libmc.maximumSimulation" title="libmc.maximumSimulation"><code class="xref py py-obj docutils literal"><span class="pre">libmc.maximumSimulation</span></code></a></td>
-<td>Constructs the maximum simulation relation A1 ≲ A2 (p36).</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.LTS.bisimulates" title="libmc.LTS.bisimulates"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.bisimulates</span></code></a></td>
-<td>Bisimulation of LTS (p43).</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="libmc.html#libmc.maximumBisimulation" title="libmc.maximumBisimulation"><code class="xref py py-obj docutils literal"><span class="pre">libmc.maximumBisimulation</span></code></a></td>
-<td>Constructs the maximum bisimulation relation A1 ≈ A2 (p43).</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="traces">
-<h3>Traces<a class="headerlink" href="#traces" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.LTS.trace" title="libmc.LTS.trace"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.trace</span></code></a></td>
-<td>Tries to compute all traces to the target state (DFS).</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section" id="finite-automata">
-<h2>Finite Automata<a class="headerlink" href="#finite-automata" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.FA" title="libmc.FA"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA</span></code></a></td>
-<td>Finite Automata (p18).</td>
-</tr>
-</tbody>
-</table>
-<div class="section" id="acceptance">
-<h3>Acceptance<a class="headerlink" href="#acceptance" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.FA.accepts" title="libmc.FA.accepts"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA.accepts</span></code></a></td>
-<td>Test acceptance of a given word.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="complement">
-<h3>Complement<a class="headerlink" href="#complement" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.FA.complement" title="libmc.FA.complement"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA.complement</span></code></a></td>
-<td>Create complement automaton (p23).</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="conformance">
-<h3>Conformance<a class="headerlink" href="#conformance" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.FA.conforms" title="libmc.FA.conforms"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA.conforms</span></code></a></td>
-<td>Conformance test (p24).</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="minimization">
-<h3>Minimization<a class="headerlink" href="#minimization" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.FA.minimize" title="libmc.FA.minimize"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA.minimize</span></code></a></td>
-<td>Minimization of Deterministic Finite Automata (p44).</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="section" id="breadth-first-and-depth-first-search">
-<h2>Breadth-First and Depth-First Search<a class="headerlink" href="#breadth-first-and-depth-first-search" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.bfs" title="libmc.bfs"><code class="xref py py-obj docutils literal"><span class="pre">libmc.bfs</span></code></a></td>
-<td>Generic breadth-first search.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="libmc.html#libmc.dfs" title="libmc.dfs"><code class="xref py py-obj docutils literal"><span class="pre">libmc.dfs</span></code></a></td>
-<td>Generic depth-first search.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="tarjan-s-algorithm">
-<h2>Tarjan’s Algorithm<a class="headerlink" href="#tarjan-s-algorithm" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.tarjan" title="libmc.tarjan"><code class="xref py py-obj docutils literal"><span class="pre">libmc.tarjan</span></code></a></td>
-<td>Tarjan’s Algorithm (p110).</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="graphviz-dot-language-string-generation">
-<h2>Graphviz DOT Language String Generation<a class="headerlink" href="#graphviz-dot-language-string-generation" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.fa2dot" title="libmc.fa2dot"><code class="xref py py-obj docutils literal"><span class="pre">libmc.fa2dot</span></code></a></td>
-<td>Returns graphical representation of given automaton (using Graphviz).</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="libmc.html#libmc.FA.toDot" title="libmc.FA.toDot"><code class="xref py py-obj docutils literal"><span class="pre">libmc.FA.toDot</span></code></a></td>
-<td>Return Graphviz dot language string.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="libmc.html#libmc.LTS.toDot" title="libmc.LTS.toDot"><code class="xref py py-obj docutils literal"><span class="pre">libmc.LTS.toDot</span></code></a></td>
-<td>Return LTS as Graphviz dot language string.</td>
-</tr>
-</tbody>
-</table>
+<div class="section" id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="automata.html">Automata</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#labelled-transition-systems">Labelled Transition Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#finite-automata">Finite Automata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#acceptance">Acceptance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#completeness-and-determinism">Completeness and Determinism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#product">Product</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#sub-set-construction">Sub-Set Construction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#complement">Complement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#traces">Traces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#conformance">Conformance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#simulation">Simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="automata.html#weak-simulation">Weak Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="automata.html#bisimulation">Bisimulation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#asynchronous-composition">Asynchronous Composition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="automata.html#partial-order-reduction">Partial Order Reduction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="automata.html#visualization">Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="automata.html#highlighting-paths">Highlighting Paths</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reachability.html">Reachability Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reachability.html#bfs-and-dfs">BFS and DFS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reachability.html#tarjan-s-algorithm">Tarjan’s Algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bdd.html">Binary Decision Diagrams</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bdd.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bdd.html#variables">Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bdd.html#operators">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bdd.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="boole.html">Boole Parser</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="boole.html#format">Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boole.html#parsing">Parsing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boole.html#evaluation">Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boole.html#conversion">Conversion</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="boole.html#to-aig">To AIG</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boole.html#to-bdd">To BDD</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="libmc.html">API</a></li>
+</ul>
 </div>
 <div class="section" id="api-index">
-<h2>API Index<a class="headerlink" href="#api-index" title="Permalink to this headline">¶</a></h2>
+<h3>API Index<a class="headerlink" href="#api-index" title="Permalink to this headline">¶</a></h3>
 <p>See <a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a> for a list of module members.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This module has been implemented just for fun! Unfortunately there was no
+time to test it thoroughly, so there might be bugs. In this case feel free
+to report an issue for initiating pest control ;)</p>
+</div>
+</div>
 </div>
 </div>
 
@@ -401,7 +244,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="libmc.html" class="btn btn-neutral float-right" title="libmc module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="automata.html" class="btn btn-neutral float-right" title="Automata" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -411,7 +254,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Florian Schroegendorfer.
+        &copy; Copyright 2018, Florian Schroegendorfer.
 
     </p>
   </div>
@@ -433,7 +276,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'2017.3',
+            VERSION:'2017.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -1,0 +1,782 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Automata &mdash; libmc 2017.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="libmc 2017.4 documentation" href="index.html"/>
+        <link rel="next" title="Reachability Analysis" href="reachability.html"/>
+        <link rel="prev" title="libmc" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> libmc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2017.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Automata</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#labelled-transition-systems">Labelled Transition Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#finite-automata">Finite Automata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#acceptance">Acceptance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#completeness-and-determinism">Completeness and Determinism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#product">Product</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sub-set-construction">Sub-Set Construction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#complement">Complement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#traces">Traces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conformance">Conformance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simulation">Simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#weak-simulation">Weak Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bisimulation">Bisimulation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#asynchronous-composition">Asynchronous Composition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#partial-order-reduction">Partial Order Reduction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#visualization">Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#highlighting-paths">Highlighting Paths</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reachability.html">Reachability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bdd.html">Binary Decision Diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boole.html">Boole Parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="libmc.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">libmc</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Automata</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/phlo/libmc" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="automata">
+<h1>Automata<a class="headerlink" href="#automata" title="Permalink to this headline">¶</a></h1>
+<p>Two main classes of automata are implemented: <a class="reference internal" href="#lts"><span class="std std-ref">Labelled Transition Systems</span></a> and <a class="reference internal" href="#fa"><span class="std std-ref">Finite Automata</span></a>.</p>
+<div class="section" id="labelled-transition-systems">
+<span id="lts"></span><h2>Labelled Transition Systems<a class="headerlink" href="#labelled-transition-systems" title="Permalink to this headline">¶</a></h2>
+<p>Labelled transition systems are created using the <a class="reference internal" href="libmc.html#libmc.LTS" title="libmc.LTS"><code class="xref py py-class docutils literal"><span class="pre">libmc.LTS</span></code></a> class:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">libmc</span> <span class="k">import</span> <span class="n">LTS</span>
+
+<span class="c1"># deterministic version of Milner&#39;s vending machine</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">LTS</span><span class="p">(</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">],</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># nondeterministic version of Milner&#39;s vending machine</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">LTS</span><span class="p">(</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">],</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+        <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="finite-automata">
+<span id="fa"></span><h2>Finite Automata<a class="headerlink" href="#finite-automata" title="Permalink to this headline">¶</a></h2>
+<p>Finite automata are created using the <a class="reference internal" href="libmc.html#libmc.FA" title="libmc.FA"><code class="xref py py-class docutils literal"><span class="pre">libmc.FA</span></code></a> class:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">libmc</span> <span class="k">import</span> <span class="n">FA</span>
+
+<span class="c1"># (un)?sat</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">FA</span><span class="p">(</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">],</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;u&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+        <span class="p">],</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>As a subclass of <a class="reference internal" href="libmc.html#libmc.LTS" title="libmc.LTS"><code class="xref py py-class docutils literal"><span class="pre">libmc.LTS</span></code></a> they support the same methods and more.</p>
+</div>
+<div class="section" id="acceptance">
+<h2>Acceptance<a class="headerlink" href="#acceptance" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="libmc.html#libmc.FA" title="libmc.FA"><code class="xref py py-class docutils literal"><span class="pre">libmc.FA</span></code></a> supports testing the acceptance of a given word using the
+<a class="reference internal" href="libmc.html#libmc.FA.accepts" title="libmc.FA.accepts"><code class="xref py py-func docutils literal"><span class="pre">accepts()</span></code></a> method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">F</span><span class="o">.</span><span class="n">accepts</span><span class="p">(</span><span class="s2">&quot;sat&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">F</span><span class="o">.</span><span class="n">accepts</span><span class="p">(</span><span class="s2">&quot;unsat&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">F</span><span class="o">.</span><span class="n">accepts</span><span class="p">(</span><span class="s2">&quot;santa&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="completeness-and-determinism">
+<h2>Completeness and Determinism<a class="headerlink" href="#completeness-and-determinism" title="Permalink to this headline">¶</a></h2>
+<p>Completeness as well as determinism can be checked using
+<a class="reference internal" href="libmc.html#libmc.LTS.isComplete" title="libmc.LTS.isComplete"><code class="xref py py-func docutils literal"><span class="pre">isComplete()</span></code></a> and <a class="reference internal" href="libmc.html#libmc.LTS.isDeterministic" title="libmc.LTS.isDeterministic"><code class="xref py py-func docutils literal"><span class="pre">isDeterministic()</span></code></a>
+respectively:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="ow">not</span> <span class="n">G</span><span class="o">.</span><span class="n">isComplete</span><span class="p">()</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">B</span><span class="o">.</span><span class="n">isComplete</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">G</span><span class="o">.</span><span class="n">isDeterministic</span><span class="p">()</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">B</span><span class="o">.</span><span class="n">isDeterministic</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="product">
+<h2>Product<a class="headerlink" href="#product" title="Permalink to this headline">¶</a></h2>
+<p>Product automata are created with the <a class="reference internal" href="libmc.html#libmc.LTS.product" title="libmc.LTS.product"><code class="xref py py-func docutils literal"><span class="pre">product()</span></code></a> method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">GB</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">GB</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)]</span>
+<span class="k">assert</span> <span class="n">GB</span><span class="o">.</span><span class="n">I</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+<span class="k">assert</span> <span class="n">GB</span><span class="o">.</span><span class="n">Σ</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">GB</span><span class="o">.</span><span class="n">T</span> <span class="o">==</span> <span class="p">[</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sub-set-construction">
+<h2>Sub-Set Construction<a class="headerlink" href="#sub-set-construction" title="Permalink to this headline">¶</a></h2>
+<p>Power automata are created with the <a class="reference internal" href="libmc.html#libmc.LTS.power" title="libmc.LTS.power"><code class="xref py py-func docutils literal"><span class="pre">power()</span></code></a> method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># nondeterministic version of Milner&#39;s vending machine</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">FA</span><span class="p">(</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">],</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="p">],</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">B</span><span class="o">.</span><span class="n">isComplete</span><span class="p">()</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">B</span><span class="o">.</span><span class="n">isDeterministic</span><span class="p">()</span>
+
+<span class="c1"># power automaton</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">power</span><span class="p">()</span>
+
+<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">isComplete</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">isDeterministic</span><span class="p">()</span>
+
+<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="p">[(),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,)]</span>
+<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">I</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,)]</span>
+<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">Σ</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">T</span> <span class="o">==</span> <span class="p">[</span>
+    <span class="p">((),</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">()),</span>
+    <span class="p">((),</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">()),</span>
+    <span class="p">((),</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">()),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">()),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">()),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,)),</span>
+    <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span><span class="p">,)),</span>
+    <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">()),</span>
+    <span class="p">((</span><span class="mi">4</span><span class="p">,),</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">()),</span>
+    <span class="p">((</span><span class="mi">4</span><span class="p">,),</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">()),</span>
+    <span class="p">((</span><span class="mi">4</span><span class="p">,),</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">()),</span>
+    <span class="p">((</span><span class="mi">5</span><span class="p">,),</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">()),</span>
+    <span class="p">((</span><span class="mi">5</span><span class="p">,),</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">()),</span>
+    <span class="p">((</span><span class="mi">5</span><span class="p">,),</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">())</span>
+<span class="p">]</span>
+<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">F</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">4</span><span class="p">,),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,)]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Due to limitations of sets in python (hashability), power automata states
+are tuples instead of sets.</p>
+</div>
+</div>
+<div class="section" id="complement">
+<h2>Complement<a class="headerlink" href="#complement" title="Permalink to this headline">¶</a></h2>
+<p>The complement of a <a class="reference internal" href="libmc.html#libmc.FA" title="libmc.FA"><code class="xref py py-class docutils literal"><span class="pre">libmc.FA</span></code></a> is created with the
+<a class="reference internal" href="libmc.html#libmc.FA.complement" title="libmc.FA.complement"><code class="xref py py-func docutils literal"><span class="pre">complement()</span></code></a> method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="n">FA</span><span class="p">(</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">],</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">],</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">C</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">complement</span><span class="p">()</span>
+
+<span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="n">F</span><span class="o">.</span><span class="n">S</span>
+<span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">I</span> <span class="o">==</span> <span class="n">F</span><span class="o">.</span><span class="n">I</span>
+<span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">Σ</span> <span class="o">==</span> <span class="n">F</span><span class="o">.</span><span class="n">Σ</span>
+<span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">T</span> <span class="o">==</span> <span class="n">F</span><span class="o">.</span><span class="n">T</span>
+<span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">F</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="traces">
+<h2>Traces<a class="headerlink" href="#traces" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="libmc.html#libmc.LTS.trace" title="libmc.LTS.trace"><code class="xref py py-func docutils literal"><span class="pre">trace()</span></code></a> method offers a way to find all traces from one
+state to another:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># find the way to milk chocolate</span>
+<span class="n">traces</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">traces</span> <span class="o">==</span> <span class="p">[[(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="conformance">
+<h2>Conformance<a class="headerlink" href="#conformance" title="Permalink to this headline">¶</a></h2>
+<p>Checking the conformance of a <a class="reference internal" href="libmc.html#libmc.FA" title="libmc.FA"><code class="xref py py-class docutils literal"><span class="pre">libmc.FA</span></code></a> to another is carried out with
+the <a class="reference internal" href="libmc.html#libmc.FA.conforms" title="libmc.FA.conforms"><code class="xref py py-func docutils literal"><span class="pre">conforms()</span></code></a> method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># automaton modelling the implementation</span>
+<span class="n">I</span> <span class="o">=</span> <span class="n">FA</span> <span class="p">(</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">],</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">],</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="n">Σ</span><span class="p">,</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">)</span>
+        <span class="p">],</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;4&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># automaton modelling the specification</span>
+<span class="n">S</span> <span class="o">=</span> <span class="n">FA</span> <span class="p">(</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">],</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">],</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="n">Σ</span><span class="p">,</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span>
+        <span class="p">],</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># I conforms to  S</span>
+<span class="n">conforms</span><span class="p">,</span> <span class="n">ICPS</span><span class="p">,</span> <span class="n">traces</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">conforms</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">conforms</span>
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">traces</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="simulation">
+<h2>Simulation<a class="headerlink" href="#simulation" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="libmc.html#libmc.LTS.simulates" title="libmc.LTS.simulates"><code class="xref py py-func docutils literal"><span class="pre">simulates()</span></code></a> can be used to check if a <a class="reference internal" href="libmc.html#libmc.LTS" title="libmc.LTS"><code class="xref py py-class docutils literal"><span class="pre">libmc.LTS</span></code></a> simulates another.</p>
+<p>To just generate the simulation relation, use <a class="reference internal" href="libmc.html#libmc.maximumSimulation" title="libmc.maximumSimulation"><code class="xref py py-func docutils literal"><span class="pre">libmc.maximumSimulation()</span></code></a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># full simulation relation</span>
+<span class="n">simulation</span> <span class="o">=</span> \
+    <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span> <span class="o">|</span> \
+    <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span> <span class="o">|</span> \
+    <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span> <span class="o">|</span> \
+    <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span>
+
+<span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>                         <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>                         <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>                                 <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># G.simulate(B)</span>
+<span class="n">simulates</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">simulates</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="n">simulation</span> <span class="o">=</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span>
+
+<span class="k">assert</span> <span class="n">simulates</span>
+<span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{</span>
+    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># B.simulate(G)</span>
+<span class="n">simulates</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">simulates</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+<span class="n">simulation</span> <span class="o">=</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span>
+
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">simulates</span>
+<span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="weak-simulation">
+<h3>Weak Simulation<a class="headerlink" href="#weak-simulation" title="Permalink to this headline">¶</a></h3>
+<p>In order to perform a weak simulation, add the set of internal events <cite>τ</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">A1</span> <span class="o">=</span> <span class="n">LTS</span> <span class="p">(</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;τ&#39;</span><span class="p">],</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;τ&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;τ&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">A2</span> <span class="o">=</span> <span class="n">LTS</span> <span class="p">(</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;τ&#39;</span><span class="p">],</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;τ&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># internal event</span>
+<span class="n">τ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;τ&#39;</span><span class="p">]</span>
+
+<span class="c1"># full simulation relation</span>
+<span class="n">simulation</span> <span class="o">=</span> \
+    <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A1</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span> <span class="o">|</span> \
+    <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span> <span class="o">|</span> \
+    <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A2</span><span class="p">,</span> <span class="n">A1</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span> <span class="o">|</span> \
+    <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A2</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>         <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>         <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>         <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>         <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># A1.simulate(A2)</span>
+<span class="n">simulates</span> <span class="o">=</span> <span class="n">A1</span><span class="o">.</span><span class="n">simulates</span><span class="p">(</span><span class="n">A2</span><span class="p">,</span> <span class="n">τ</span><span class="p">)</span>
+<span class="n">simulation</span> <span class="o">=</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A2</span><span class="p">,</span> <span class="n">A1</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">simulates</span>
+<span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)}</span>
+
+<span class="c1"># A2.simulate(A1)</span>
+<span class="n">simulates</span> <span class="o">=</span> <span class="n">A2</span><span class="o">.</span><span class="n">simulates</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">τ</span><span class="p">)</span>
+<span class="n">simulation</span> <span class="o">=</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">simulates</span>
+<span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bisimulation">
+<h3>Bisimulation<a class="headerlink" href="#bisimulation" title="Permalink to this headline">¶</a></h3>
+<p>Bisimulations are tested in a similar manner by using
+<a class="reference internal" href="libmc.html#libmc.LTS.bisimulates" title="libmc.LTS.bisimulates"><code class="xref py py-func docutils literal"><span class="pre">bisimulates()</span></code></a> and <a class="reference internal" href="libmc.html#libmc.maximumBisimulation" title="libmc.maximumBisimulation"><code class="xref py py-func docutils literal"><span class="pre">libmc.maximumBisimulation()</span></code></a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># full simulation relation</span>
+<span class="n">simulation</span> <span class="o">=</span> \
+    <span class="n">maximumBisimulation</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span> <span class="o">|</span> \
+    <span class="n">maximumBisimulation</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span> <span class="o">|</span> \
+    <span class="n">maximumBisimulation</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span> <span class="o">|</span> \
+    <span class="n">maximumBisimulation</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span>
+
+<span class="c1"># does G bisimulate B</span>
+<span class="n">simulates</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">bisimulates</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="ow">not</span> <span class="n">simulates</span>
+<span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>                         <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>                         <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+                                    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                                            <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+                                                    <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>                         <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>                         <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="asynchronous-composition">
+<h2>Asynchronous Composition<a class="headerlink" href="#asynchronous-composition" title="Permalink to this headline">¶</a></h2>
+<p>Generate the automaton modelling the asynchronous composition of two or
+more <a class="reference internal" href="libmc.html#libmc.LTS" title="libmc.LTS"><code class="xref py py-class docutils literal"><span class="pre">libmc.LTS</span></code></a> with <a class="reference internal" href="libmc.html#libmc.asynchronousComposition" title="libmc.asynchronousComposition"><code class="xref py py-func docutils literal"><span class="pre">libmc.asynchronousComposition()</span></code></a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">libmc</span> <span class="k">import</span> <span class="n">LTS</span><span class="p">,</span> <span class="n">asynchronousComposition</span>
+
+<span class="n">A1</span> <span class="o">=</span> <span class="n">LTS</span> <span class="p">(</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">],</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+<span class="n">A2</span> <span class="o">=</span> <span class="n">LTS</span> <span class="p">(</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">],</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+<span class="c1"># generate the asynchronous composition through interleaving</span>
+<span class="n">composition</span> <span class="o">=</span> <span class="n">asynchronousComposition</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">I</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">Σ</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">T</span> <span class="o">==</span> <span class="p">[</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span> <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span> <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span> <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span> <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)),</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span> <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span> <span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span> <span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="p">]</span>
+
+<span class="c1"># with partial order reduction, expanding the rightmost component</span>
+<span class="n">composition</span> <span class="o">=</span> <span class="n">asynchronousComposition</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="n">partialOrderReduction</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
+<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">I</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">Σ</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">T</span> <span class="o">==</span> <span class="p">[</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<div class="section" id="partial-order-reduction">
+<h3>Partial Order Reduction<a class="headerlink" href="#partial-order-reduction" title="Permalink to this headline">¶</a></h3>
+<p>Perform partial order reduction by supplying a function choosing the index
+of the components used for local expansion:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># with partial order reduction, expanding the rightmost component</span>
+<span class="n">composition</span> <span class="o">=</span> <span class="n">asynchronousComposition</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="n">partialOrderReduction</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
+<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">I</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
+<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">Σ</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">T</span> <span class="o">==</span> <span class="p">[</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)),</span>
+    <span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="visualization">
+<h2>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">¶</a></h2>
+<p>Last but not least, <a class="reference internal" href="libmc.html#libmc.LTS.toDot" title="libmc.LTS.toDot"><code class="xref py py-func docutils literal"><span class="pre">toDot()</span></code></a> offers a way to generate a
+graphical representation of the given automaton using <a class="reference external" href="https://www.graphviz.org">Graphviz</a> in combination
+with <a class="reference external" href="https://dot2tex.readthedocs.io">dot2tex</a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dot</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">toDot</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/milner-deterministic.dot&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dot</span><span class="p">)</span>
+
+<span class="n">dot</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">toDot</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/milner-nondeterministic.dot&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dot</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After generating the DOT language string, use <a class="reference external" href="https://dot2tex.readthedocs.io">dot2tex</a> to convert it into a
+<a class="reference external" href="http://mirror.kumi.systems/ctan/graphics/pgf/base/doc/pgfmanual.pdf">TikZ</a> based LaTeX figure:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ dot2tex --template<span class="o">=</span>dot2tex-template.tex /tmp/milner-deterministic.dot &gt; /tmp/milner-deterministic.tex
+$ dot2tex --template<span class="o">=</span>dot2tex-template.tex /tmp/milner-nondeterministic.dot &gt; /tmp/milner-nondeterministic.tex
+</pre></div>
+</div>
+<p>Using this minimal
+<a class="reference download internal" href="_downloads/dot2tex-template.tex" download=""><code class="xref download docutils literal"><span class="pre">dot2tex</span> <span class="pre">latex</span> <span class="pre">template</span></code></a>
+results in the following graphs:</p>
+<img alt="_images/milner-deterministic.png" src="_images/milner-deterministic.png" />
+<img alt="_images/milner-nondeterministic.png" class="align-right" src="_images/milner-nondeterministic.png" />
+<div class="section" id="highlighting-paths">
+<h3>Highlighting Paths<a class="headerlink" href="#highlighting-paths" title="Permalink to this headline">¶</a></h3>
+<p>Additionally, <a class="reference internal" href="libmc.html#libmc.LTS.toDot" title="libmc.LTS.toDot"><code class="xref py py-func docutils literal"><span class="pre">toDot()</span></code></a> is able to highlight specific paths:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># highlight the way to milk chocolate</span>
+<span class="n">dot</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">toDot</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/milner-deterministic-milkyway.dot&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dot</span><span class="p">)</span>
+
+<span class="n">dot</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">toDot</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/milner-nondeterministic-milkyway.dot&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dot</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/milner-deterministic-milkyway.png" src="_images/milner-deterministic-milkyway.png" />
+<img alt="_images/milner-nondeterministic-milkyway.png" class="align-right" src="_images/milner-nondeterministic-milkyway.png" />
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="reachability.html" class="btn btn-neutral float-right" title="Reachability Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="libmc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Florian Schroegendorfer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2017.4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

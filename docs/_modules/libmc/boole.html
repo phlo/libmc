@@ -1,0 +1,621 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>libmc.boole &mdash; libmc 2017.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="libmc 2017.4 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> libmc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2017.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../automata.html">Automata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reachability.html">Reachability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../bdd.html">Binary Decision Diagrams</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../boole.html">Boole Parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libmc.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">libmc</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>libmc.boole</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for libmc.boole</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">re</span> <span class="k">import</span> <span class="n">Scanner</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">product</span><span class="p">,</span> <span class="n">zip_longest</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="k">import</span> <span class="n">Sequence</span>
+
+<span class="kn">from</span> <span class="nn">.bdd</span> <span class="k">import</span> <span class="n">BDD</span>
+
+<div class="viewcode-block" id="Boole"><a class="viewcode-back" href="../../libmc.html#libmc.Boole">[docs]</a><span class="k">class</span> <span class="nc">Boole</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate and convert propositional formulae given in the Boole format [1]_.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        .. [1] `limboole &lt;http://fmv.jku.at/limboole&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">Expr</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+
+        <span class="k">def</span> <span class="nf">__str__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">def</span> <span class="nf">op</span> <span class="p">():</span>
+                <span class="k">return</span> <span class="n">BooleParser</span><span class="o">.</span><span class="n">patterns</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">group</span> <span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">Boole</span><span class="o">.</span><span class="n">Var</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">Boole</span><span class="o">.</span><span class="n">Not</span><span class="p">)</span>
+                    <span class="k">else</span>
+                    <span class="s2">&quot;(</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Boole</span><span class="o">.</span><span class="n">UnaryExpr</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">op</span><span class="p">()</span> <span class="o">+</span> <span class="n">group</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Boole</span><span class="o">.</span><span class="n">BinaryExpr</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">(</span><span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">op</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">group</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">__repr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;Boole(</span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">class</span> <span class="nc">UnaryExpr</span> <span class="p">(</span><span class="n">Expr</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">class</span> <span class="nc">BinaryExpr</span> <span class="p">(</span><span class="n">Expr</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">evaluate</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">assignment</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">assignment</span><span class="p">))</span>
+
+        <span class="k">def</span> <span class="nf">toBDD</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">toBDD</span><span class="p">(</span><span class="n">variables</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">toBDD</span><span class="p">(</span><span class="n">variables</span><span class="p">))</span>
+
+        <span class="k">def</span> <span class="nf">toAIG</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aag</span><span class="p">,</span> <span class="n">numAnd</span><span class="p">,</span> <span class="n">isOutput</span><span class="p">):</span>
+            <span class="n">lhs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">toAIG</span><span class="p">(</span><span class="n">aag</span><span class="p">)</span>
+            <span class="n">rhs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">toAIG</span><span class="p">(</span><span class="n">aag</span><span class="p">)</span>
+
+            <span class="n">lit</span> <span class="o">=</span> <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">isOutput</span><span class="p">:</span>
+                <span class="n">lit</span> <span class="o">+=</span> <span class="p">(</span><span class="n">aag</span><span class="p">[</span><span class="s2">&quot;ands&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+
+            <span class="n">ands</span> <span class="o">=</span> <span class="n">lit</span> <span class="o">+</span> <span class="p">(</span><span class="n">aag</span><span class="p">[</span><span class="s2">&quot;ands&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">isOutput</span> <span class="k">else</span> <span class="n">lit</span>
+            <span class="n">ands</span> <span class="o">=</span> <span class="p">[</span> <span class="n">ands</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">numAnd</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">]</span>
+
+            <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;ands&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">numAnd</span>
+
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">lit</span> <span class="p">]</span> <span class="o">+</span> <span class="n">ands</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Var</span> <span class="p">(</span><span class="n">Expr</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">evaluate</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">assignment</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="k">def</span> <span class="nf">toBDD</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">variables</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="k">def</span> <span class="nf">toAIG</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aag</span><span class="p">,</span> <span class="n">isOutput</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+    <span class="k">class</span> <span class="nc">Iff</span> <span class="p">(</span><span class="n">BinaryExpr</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">evaluate</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="n">a</span> <span class="o">^</span> <span class="n">b</span>
+
+        <span class="k">def</span> <span class="nf">toBDD</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">toBDD</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">~</span><span class="p">(</span><span class="n">a</span> <span class="o">^</span> <span class="n">b</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">toAIG</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aag</span><span class="p">,</span> <span class="n">isOutput</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            x &lt;-&gt; y ... (x &amp; y) | (!x &amp; !y) ... !(!(x &amp; y) &amp; !(!x &amp; !y))</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">lit</span><span class="p">,</span> <span class="n">litL</span><span class="p">,</span> <span class="n">litR</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">toAIG</span><span class="p">(</span><span class="n">aag</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">isOutput</span><span class="p">)</span>
+
+            <span class="n">lit</span> <span class="o">^=</span> <span class="mi">1</span>
+            <span class="n">litL</span> <span class="o">^=</span> <span class="mi">1</span>
+            <span class="n">litR</span> <span class="o">^=</span> <span class="mi">1</span>
+
+            <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;literals&quot;</span><span class="p">][</span><span class="n">litL</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
+            <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;literals&quot;</span><span class="p">][</span><span class="n">litR</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lhs</span> <span class="o">^</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">^</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;literals&quot;</span><span class="p">][</span><span class="n">lit</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">litL</span><span class="p">,</span> <span class="n">litR</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">lit</span>
+
+    <span class="k">class</span> <span class="nc">Implies</span> <span class="p">(</span><span class="n">BinaryExpr</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">evaluate</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="ow">not</span> <span class="n">a</span><span class="p">)</span> <span class="o">|</span> <span class="n">b</span>
+
+        <span class="k">def</span> <span class="nf">toBDD</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">toBDD</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">~</span><span class="n">a</span> <span class="o">|</span> <span class="n">b</span>
+
+        <span class="k">def</span> <span class="nf">toAIG</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aag</span><span class="p">,</span> <span class="n">isOutput</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            x -&gt; y  ... !x | y ... !(x &amp; !y)</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">lit</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">toAIG</span><span class="p">(</span><span class="n">aag</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">isOutput</span><span class="p">)</span>
+
+            <span class="n">lit</span> <span class="o">^=</span> <span class="mi">1</span>
+
+            <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;literals&quot;</span><span class="p">][</span><span class="n">lit</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">^</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">lit</span>
+
+    <span class="k">class</span> <span class="nc">ImpliedBy</span> <span class="p">(</span><span class="n">BinaryExpr</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">evaluate</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">|</span> <span class="p">(</span><span class="ow">not</span> <span class="n">b</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">toBDD</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">toBDD</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">|</span> <span class="o">~</span><span class="n">b</span>
+
+        <span class="k">def</span> <span class="nf">toAIG</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aag</span><span class="p">,</span> <span class="n">isOutput</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            x &lt;- y  ... x | !y ... !(!x &amp; y)</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">lit</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">toAIG</span><span class="p">(</span><span class="n">aag</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">isOutput</span><span class="p">)</span>
+
+            <span class="n">lit</span> <span class="o">^=</span> <span class="mi">1</span>
+
+            <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;literals&quot;</span><span class="p">][</span><span class="n">lit</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lhs</span> <span class="o">^</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">lit</span>
+
+    <span class="k">class</span> <span class="nc">Or</span> <span class="p">(</span><span class="n">BinaryExpr</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">evaluate</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">|</span> <span class="n">b</span>
+
+        <span class="k">def</span> <span class="nf">toBDD</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">toBDD</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">|</span> <span class="n">b</span>
+
+        <span class="k">def</span> <span class="nf">toAIG</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aag</span><span class="p">,</span> <span class="n">isOutput</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            x | y   ... !(!x &amp; !y)</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">lit</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">toAIG</span><span class="p">(</span><span class="n">aag</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">isOutput</span><span class="p">)</span>
+
+            <span class="n">lit</span> <span class="o">^=</span> <span class="mi">1</span>
+
+            <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;literals&quot;</span><span class="p">][</span><span class="n">lit</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lhs</span> <span class="o">^</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">^</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">lit</span>
+
+    <span class="k">class</span> <span class="nc">And</span> <span class="p">(</span><span class="n">BinaryExpr</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">evaluate</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="n">b</span>
+
+        <span class="k">def</span> <span class="nf">toBDD</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">toBDD</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="n">b</span>
+
+        <span class="k">def</span> <span class="nf">toAIG</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aag</span><span class="p">,</span> <span class="n">isOutput</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">lit</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">toAIG</span><span class="p">(</span><span class="n">aag</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">isOutput</span><span class="p">)</span>
+
+            <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;literals&quot;</span><span class="p">][</span><span class="n">lit</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">lit</span>
+
+    <span class="k">class</span> <span class="nc">Not</span> <span class="p">(</span><span class="n">UnaryExpr</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">evaluate</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">toBDD</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">toBDD</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span><span class="o">.</span><span class="fm">__invert__</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">toAIG</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aag</span><span class="p">,</span> <span class="n">isOutput</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">toAIG</span><span class="p">(</span><span class="n">aag</span><span class="p">,</span> <span class="n">isOutput</span><span class="p">)</span> <span class="o">^</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formula</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span> <span class="o">=</span> <span class="n">BooleParser</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Boole.evaluate"><a class="viewcode-back" href="../../libmc.html#libmc.Boole.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the formula using a given assignment to it&#39;s variables.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            assignment (dict): dictionary mapping variable names to truth</span>
+<span class="sd">                values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">assignment</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+            <span class="n">assignment</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">zip_longest</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="n">assignment</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">assignment</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Boole.truthTable"><a class="viewcode-back" href="../../libmc.html#libmc.Boole.truthTable">[docs]</a>    <span class="k">def</span> <span class="nf">truthTable</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the formula&#39;s truth table.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: pairs combining assignments to the resulting truth value</span>
+
+<span class="sd">        Warning:</span>
+<span class="sd">            Since every possible assignment has to be evaluated, it might take</span>
+<span class="sd">            a while for larger formulae!</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span>
+            <span class="n">product</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">))</span>
+        <span class="p">]</span></div>
+
+<div class="viewcode-block" id="Boole.toBDD"><a class="viewcode-back" href="../../libmc.html#libmc.Boole.toBDD">[docs]</a>    <span class="k">def</span> <span class="nf">toBDD</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Converts the formula to a :class:`BDD`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">toBDD</span><span class="p">({</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="n">BDD</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">))</span>
+        <span class="p">})</span></div>
+
+<div class="viewcode-block" id="Boole.toAIG"><a class="viewcode-back" href="../../libmc.html#libmc.Boole.toAIG">[docs]</a>    <span class="k">def</span> <span class="nf">toAIG</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts the formula to an AIG in the `AIGER &lt;http://fmv.jku.at/aiger&gt;`_ format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lit</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">:</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">lit</span>
+            <span class="n">lit</span> <span class="o">+=</span> <span class="mi">2</span>
+
+        <span class="n">aag</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;inputs&quot;</span> <span class="p">:</span> <span class="n">inputs</span><span class="p">,</span>
+            <span class="s2">&quot;output&quot;</span> <span class="p">:</span> <span class="n">lit</span><span class="p">,</span>
+            <span class="s2">&quot;ands&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;literals&quot;</span> <span class="p">:</span> <span class="p">{}</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">toAIG</span><span class="p">(</span><span class="n">aag</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> \
+            <span class="s2">&quot;aag </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> 0 1 </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">lit</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;ands&quot;</span><span class="p">],</span>
+                <span class="p">(</span><span class="n">lit</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;ands&quot;</span><span class="p">]</span>
+            <span class="p">)</span> <span class="o">+</span> \
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> \
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> \
+            <span class="nb">str</span><span class="p">(</span><span class="n">lit</span> <span class="k">if</span> <span class="n">lit</span> <span class="ow">in</span> <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;literals&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="n">lit</span> <span class="o">^</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> \
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">l</span> <span class="o">%</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">l</span><span class="p">,</span> <span class="n">aag</span><span class="p">[</span><span class="s2">&quot;literals&quot;</span><span class="p">][</span><span class="n">l</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">aag</span><span class="p">[</span><span class="s2">&quot;literals&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span></div></div>
+
+<span class="k">class</span> <span class="nc">BooleParser</span><span class="p">:</span>
+
+    <span class="n">scanner</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># must be ordered</span>
+    <span class="n">patterns</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([</span>
+        <span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">Iff</span>          <span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;&lt;-&gt;&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">Implies</span>      <span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;-&gt;&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">ImpliedBy</span>    <span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;&lt;-&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">Or</span>           <span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\|&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">And</span>          <span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;&amp;&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">Not</span>          <span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;!&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">Var</span>          <span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;[\w\-\.\[\]\$\@]*[\w\.\[\]\$\@]&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;(&quot;</span>                <span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\(&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;)&quot;</span>                <span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\)&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;skip&quot;</span>             <span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">)</span>
+    <span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formula</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formula</span> <span class="o">=</span> <span class="n">formula</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_parseBinary</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">repetitive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">lhs</span> <span class="o">=</span> <span class="n">op</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+                <span class="n">lhs</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parseBinary</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">repetitive</span><span class="p">)</span> <span class="k">if</span> <span class="n">repetitive</span> <span class="k">else</span> <span class="n">op</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">lhs</span>
+
+    <span class="k">def</span> <span class="nf">_expr</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iff</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_iff</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parseBinary</span><span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">Iff</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_implies</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_implies</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parseBinary</span><span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">Implies</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_impliedBy</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_impliedBy</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parseBinary</span><span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">ImpliedBy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_or</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_or</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parseBinary</span><span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">Or</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_and</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_and</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parseBinary</span><span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">And</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_not</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_not</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">Boole</span><span class="o">.</span><span class="n">Not</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">Boole</span><span class="o">.</span><span class="n">Not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_basic</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basic</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_basic</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;(&quot;</span><span class="p">:</span>
+            <span class="n">expr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expr</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">expr</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">Boole</span><span class="o">.</span><span class="n">Var</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">var</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">Boole</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span><span class="n">var</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">tokenize</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scanner</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">createToken</span> <span class="p">(</span><span class="n">rule</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">rule</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="k">return</span> <span class="k">lambda</span> <span class="n">scanner</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">scanner</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">([</span>
+                <span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;skip&quot;</span> <span class="k">else</span> <span class="n">createToken</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">patterns</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">])</span>
+
+        <span class="n">tokens</span><span class="p">,</span> <span class="n">remaining</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scanner</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">remaining</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> &#39;</span><span class="si">{}</span><span class="s2">&#39; followed by &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">tokens</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                    <span class="n">tokens</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">remaining</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">t</span>
+
+        <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;eof&quot;</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="nf">scan</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenize</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;unexpected EOF&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;eof&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">check</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">expected</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> expected, got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">expected</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">formula</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expr</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="s2">&quot;eof&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Florian Schroegendorfer.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'2017.4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
