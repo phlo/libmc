@@ -5,7 +5,7 @@ from libmc import asynchronousComposition, LTS
 class TestAsynchronousComposition (unittest.TestCase):
 
     # simple example presented in the lecture (p89)
-    def test_1 (self):
+    def test_VO (self):
         A = LTS (
             S = [1, 2, 3, 4],
             I = [1],
@@ -101,7 +101,7 @@ class TestAsynchronousComposition (unittest.TestCase):
         )
 
     # assignment 3 - exercise 1
-    def test_2 (self):
+    def test_AS3_EX1 (self):
         A = LTS (
             S = [1, 2, 3, 4],
             I = [1],
@@ -161,7 +161,7 @@ class TestAsynchronousComposition (unittest.TestCase):
         )
 
     # assignment 3 - exercise 2
-    def test_3 (self):
+    def test_AS3_EX2 (self):
         A = LTS (
             S = [1, 2, 3, 4],
             I = [1],

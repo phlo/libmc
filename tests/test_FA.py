@@ -238,6 +238,52 @@ class TestFA (unittest.TestCase):
     def test_power (self):
         P = self.S_EX1.power()
 
+        self.assertTrue(P.isComplete(), "FA.power: isComplete")
+        self.assertTrue(P.isDeterministic(), "FA.power: isDeterministic")
+
+        self.assertEqual(
+            P.S,
+            [
+                ('A',),
+                ('A', 'B'),
+                ('A', 'B', 'C'),
+                ('C', 'D'),
+            ],
+            "FA.power: states"
+        )
+
+        self.assertEqual(P.Σ, self.S_EX1.Σ, "FA.power: alphabet")
+
+        self.assertEqual(
+            P.T,
+            [
+                (('A',), 'a', ('C', 'D')),
+                (('A',), 'b', ('A', 'B')),
+                (('A', 'B'), 'a', ('C', 'D')),
+                (('A', 'B'), 'b', ('A', 'B', 'C')),
+                (('A', 'B', 'C'), 'a', ('C', 'D')),
+                (('A', 'B', 'C'), 'b', ('A', 'B', 'C')),
+                (('C', 'D'), 'a', ('C', 'D')),
+                (('C', 'D'), 'b', ('A',)),
+            ],
+            "FA.power: transitions"
+        )
+
+        self.assertEqual(
+            P.F,
+            [
+                ('A', 'B'),
+                ('A', 'B', 'C'),
+            ],
+            "FA.power: final states"
+        )
+
+    def test_power_full (self):
+        P = self.S_EX1.power(True)
+
+        self.assertTrue(P.isComplete(), "FA.power: isComplete")
+        self.assertTrue(P.isDeterministic(), "FA.power: isDeterministic")
+
         self.assertEqual(
             P.S,
             [
@@ -266,11 +312,15 @@ class TestFA (unittest.TestCase):
         self.assertEqual(
             P.T,
             [
+                ((), 'a', ()),
+                ((), 'b', ()),
                 (('A',), 'a', ('C', 'D')),
                 (('A',), 'b', ('A', 'B')),
                 (('B',), 'a', ('D',)),
                 (('B',), 'b', ('C',)),
                 (('C',), 'a', ('C', 'D')),
+                (('C',), 'b', ()),
+                (('D',), 'a', ()),
                 (('D',), 'b', ('A',)),
                 (('A', 'B'), 'a', ('C', 'D')),
                 (('A', 'B'), 'b', ('A', 'B', 'C')),
@@ -341,6 +391,104 @@ class TestFA (unittest.TestCase):
     #
     # example presented in assignment 1 - exercise 1
     ############################################################################
+    def test_conformance_false (self):
+        I = FA(
+            S = [1, 2, 3],
+            I = [1],
+            Σ = ['a', 'b'],
+            T = [
+                (1, 'a', 2),
+                (1, 'b', 3),
+            ],
+            F = [3]
+        )
+
+        S = FA(
+            S = ['A', 'B', 'C'],
+            I = ['A'],
+            Σ = ['a', 'b'],
+            T = [
+                ('A', 'b', 'B'),
+                ('B', 'a', 'C'),
+            ],
+            F = ['C']
+        )
+
+        [ conforms, ICPS, traces ] = I.conforms(S)
+
+        self.assertEqual(conforms, False, "FA.conforms: conforms")
+
+        self.assertEqual(
+            ICPS.S,
+            [(1, ('A',)), (2, ()), (3, ('B',))],
+            "FA.conforms: states"
+        )
+
+        self.assertEqual(ICPS.Σ, self.I_EX1.Σ, "FA.conforms: alphabet")
+
+        self.assertEqual(
+            ICPS.T,
+            [((1, ('A',)), 'a', (2, ())), ((1, ('A',)), 'b', (3, ('B',)))],
+            "FA.conforms: transitions"
+        )
+
+        self.assertEqual(
+            ICPS.F,
+            [(3, ('B',))],
+            "FA.conforms: final states"
+        )
+
+        self.assertEqual(
+            traces,
+            [[((1, ('A',)), 'b', (3, ('B',)))]],
+            "FA.conforms: traces"
+        )
+
+    def test_conformance (self):
+        [ conforms, ICPS, traces ] = self.I_EX1.conforms(self.S_EX1)
+
+        self.assertEqual(conforms, True, "FA.conforms: conforms")
+
+        self.assertEqual(
+            ICPS.S,
+            [
+                (1, ('A',)),
+                (1, ('C', 'D')),
+                (2, ('A',)),
+                (2, ('A', 'B')),
+                (3, ('A', 'B')),
+                (3, ('A', 'B', 'C')),
+                (4, ('A', 'B')),
+                (4, ('A', 'B', 'C'))
+            ],
+            "FA.conforms: states"
+        )
+
+        self.assertEqual(ICPS.Σ, self.I_EX1.Σ, "FA.conforms: alphabet")
+
+        self.assertEqual(
+            ICPS.T,
+            [
+                ((1, ('A',)), 'b', (2, ('A', 'B'))),
+                ((1, ('C', 'D')), 'b', (2, ('A',))),
+                ((2, ('A',)), 'b', (3, ('A', 'B'))),
+                ((2, ('A',)), 'b', (4, ('A', 'B'))),
+                ((2, ('A', 'B')), 'b', (3, ('A', 'B', 'C'))),
+                ((2, ('A', 'B')), 'b', (4, ('A', 'B', 'C'))),
+                ((3, ('A', 'B')), 'a', (1, ('C', 'D'))),
+                ((3, ('A', 'B')), 'b', (3, ('A', 'B', 'C'))),
+                ((3, ('A', 'B', 'C')), 'a', (1, ('C', 'D'))),
+                ((3, ('A', 'B', 'C')), 'b', (3, ('A', 'B', 'C'))),
+                ((4, ('A', 'B')), 'b', (3, ('A', 'B', 'C'))),
+                ((4, ('A', 'B', 'C')), 'b', (3, ('A', 'B', 'C'))),
+            ],
+            "FA.conforms: transitions"
+        )
+
+        self.assertEqual(ICPS.F, [], "FA.conforms: final states")
+
+        self.assertEqual(traces, [], "FA.conforms: traces")
+
     def test_conformance_full (self):
         [ conforms, ICPS, traces ] = self.I_EX1.conforms(self.S_EX1, full=True)
 
@@ -422,6 +570,7 @@ class TestFA (unittest.TestCase):
         self.assertEqual(
             ICPS.T,
             [
+                ((1, ()), 'b', (2, ())),
                 ((1, ('A',)), 'b', (2, ('A', 'B'))),
                 ((1, ('A', 'B')), 'b', (2, ('A', 'B', 'C'))),
                 ((1, ('A', 'B', 'C')), 'b', (2, ('A', 'B', 'C'))),
@@ -434,8 +583,11 @@ class TestFA (unittest.TestCase):
                 ((1, ('B', 'C')), 'b', (2, ('C',))),
                 ((1, ('B', 'C', 'D')), 'b', (2, ('A', 'C'))),
                 ((1, ('B', 'D')), 'b', (2, ('A', 'C'))),
+                ((1, ('C',)), 'b', (2, ())),
                 ((1, ('C', 'D')), 'b', (2, ('A',))),
                 ((1, ('D',)), 'b', (2, ('A',))),
+                ((2, ()), 'b', (3, ())),
+                ((2, ()), 'b', (4, ())),
                 ((2, ('A',)), 'b', (3, ('A', 'B'))),
                 ((2, ('A',)), 'b', (4, ('A', 'B'))),
                 ((2, ('A', 'B')), 'b', (3, ('A', 'B', 'C'))),
@@ -460,10 +612,14 @@ class TestFA (unittest.TestCase):
                 ((2, ('B', 'C', 'D')), 'b', (4, ('A', 'C'))),
                 ((2, ('B', 'D')), 'b', (3, ('A', 'C'))),
                 ((2, ('B', 'D')), 'b', (4, ('A', 'C'))),
+                ((2, ('C',)), 'b', (3, ())),
+                ((2, ('C',)), 'b', (4, ())),
                 ((2, ('C', 'D')), 'b', (3, ('A',))),
                 ((2, ('C', 'D')), 'b', (4, ('A',))),
                 ((2, ('D',)), 'b', (3, ('A',))),
                 ((2, ('D',)), 'b', (4, ('A',))),
+                ((3, ()), 'a', (1, ())),
+                ((3, ()), 'b', (3, ())),
                 ((3, ('A',)), 'a', (1, ('C', 'D'))),
                 ((3, ('A',)), 'b', (3, ('A', 'B'))),
                 ((3, ('A', 'B')), 'a', (1, ('C', 'D'))),
@@ -489,9 +645,12 @@ class TestFA (unittest.TestCase):
                 ((3, ('B', 'D')), 'a', (1, ('D',))),
                 ((3, ('B', 'D')), 'b', (3, ('A', 'C'))),
                 ((3, ('C',)), 'a', (1, ('C', 'D'))),
+                ((3, ('C',)), 'b', (3, ())),
                 ((3, ('C', 'D')), 'a', (1, ('C', 'D'))),
                 ((3, ('C', 'D')), 'b', (3, ('A',))),
+                ((3, ('D',)), 'a', (1, ())),
                 ((3, ('D',)), 'b', (3, ('A',))),
+                ((4, ()), 'b', (3, ())),
                 ((4, ('A',)), 'b', (3, ('A', 'B'))),
                 ((4, ('A', 'B')), 'b', (3, ('A', 'B', 'C'))),
                 ((4, ('A', 'B', 'C')), 'b', (3, ('A', 'B', 'C'))),
@@ -504,6 +663,7 @@ class TestFA (unittest.TestCase):
                 ((4, ('B', 'C')), 'b', (3, ('C',))),
                 ((4, ('B', 'C', 'D')), 'b', (3, ('A', 'C'))),
                 ((4, ('B', 'D')), 'b', (3, ('A', 'C'))),
+                ((4, ('C',)), 'b', (3, ())),
                 ((4, ('C', 'D')), 'b', (3, ('A',))),
                 ((4, ('D',)), 'b', (3, ('A',))),
             ],

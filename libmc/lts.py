@@ -84,63 +84,74 @@ class LTS:
                 )
             )
 
+    @classmethod
+    def _generateReachable (cls, initial, transitions):
+        S = set()
+        T = set()
+
+        stack = list(initial)
+
+        def cache (successor): S.add(successor)
+
+        def cached (successor): return successor in S
+
+        def successors (current):
+            for t in [ t for t in transitions if t[0] == current ]:
+                T.add(t)
+                yield t[2]
+
+        dfs(stack, successors, cache=cache, cached=cached)
+
+        S |= set(initial)
+
+        return (sorted(S), sorted(T))
+
     def product (self, other, full=False):
         """
-        Create product LTS.
+        Create product automaton (p20).
 
         Args:
             other (LTS): another LTS
             full (bool - optional): create full product automaton if True, else
                 only reachable states are included (default)
         """
-        states = sorted(product(self.S, other.S))
-        transitions = \
-            {
+        S = sorted(product(self.S, other.S))
+        I = sorted(product(self.I, other.I))
+        T = [
                 (s, a, (t1, t2))
-                for s in states
+                for s in S
                 for a in self.Σ
                 for (s1, a1, t1) in self.T if s1 == s[0] and a1 == a
                 for (s2, a2, t2) in other.T if s2 == s[1] and a2 == a
-            }
+            ]
 
-        S = set() if not full else states
-        I = sorted(product(self.I, other.I))
-        T = set() if not full else transitions
-
-        # reachability analysis
         if not full:
-            stack = list(I)
+            S, T = self._generateReachable(I, T)
 
-            def cache (successor): S.add(successor)
+        return LTS(S, I, self.Σ, T)
 
-            def cached (successor): return successor in S
+    def power (self, full=False):
+        """
+        Create power automaton (p22).
 
-            def successors (current):
-                for t in [ t for t in transitions if t[0] == current ]:
-                    T.add(t)
-                    yield t[2]
-
-            dfs(stack, successors, cache=cache, cached=cached)
-
-            S |= set(I)
-
-        return LTS(sorted(S), I, self.Σ, sorted(T))
-
-    def power (self):
-        """Create power LTS."""
+        Args:
+            full (bool - optional): create full product automaton if True, else
+                only reachable states are included (default)
+        """
         S = powerset(self.S)
         I = [ tuple(self.I) ]
-        Σ = self.Σ
         T = [
                 (s1, a, tuple(sorted(s2)))
                 for s1 in S
-                for a in Σ
+                for a in self.Σ
                 for s2 in
                 [{ t for (s, _a, t) in self.T if s in s1 and _a == a }]
-                if s1 and s2
             ]
 
-        return LTS(S, I, Σ, T)
+        if not full:
+            S, T = self._generateReachable(I, T)
+
+        return LTS(S, I, self.Σ, T)
 
     def simulates (self, other, τ = []):
         """

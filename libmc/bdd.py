@@ -10,10 +10,8 @@ class BDD:
         child (list(BDD, BDD)): the node's *else* and *then* successors
 
     Note:
-        Operations are carried out using the logic operators ``~``, ``|``,
-        ``&``, ``^``::
-
-            ~(BDD(0) ^ BDD(1))
+        Operations are carried out using the logical connectives ``~``, ``|``,
+        ``&`` and ``^``.
     """
     __unique__ = WeakValueDictionary()
 
@@ -34,10 +32,8 @@ class BDD:
                 bdd.sign = sign
                 bdd.child = child
                 BDD.__unique__[node] = bdd
-                #  print("allocating new node {}".format(hash(bdd)))
 
             bdd = BDD.__unique__[node]
-            #  print("new_bdd: result = {}".format(bdd))
             return BDD.__unique__[node]
 
         idx = args[0]

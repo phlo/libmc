@@ -47,15 +47,28 @@ class FA (LTS):
         return fa2dot(self.S, self.I, self.Σ, self.T, self.F, highlight)
 
     def product (self, other, full=False):
-        """Create product automaton (p20)."""
+        """
+        Create product automaton (p20).
+
+        Args:
+            other (FA): another FA
+            full (bool - optional): create full product automaton if True, else
+                only reachable states are included (default)
+        """
         lts = super(FA, self).product(other, full)
         F = sorted(set(lts.S) & set(product(self.F, other.F)))
 
         return FA(lts.S, lts.I, lts.Σ, lts.T, F)
 
-    def power (self):
-        """Create power automaton (p22)."""
-        lts = super(FA, self).power()
+    def power (self, full=False):
+        """
+        Create power automaton (p22).
+
+        Args:
+            full (bool - optional): create full product automaton if True, else
+                only reachable states are included (default)
+        """
+        lts = super(FA, self).power(full)
         F = [ s for s in lts.S if intersect(self.F, s) ]
 
         return FA(lts.S, lts.I, lts.Σ, lts.T, F)
@@ -104,9 +117,13 @@ class FA (LTS):
             other (FA): the other FA to conform to
 
         Returns:
-            bool: True if this FA conforms to the other
+            (bool, FA, list): a triple containing:
+
+            * the result of the conformance test
+            * the generated checker automaton self × C(P(other))
+            * all traces from initial to final states
         """
-        A = self.product(other.power().complement(), full);
+        A = self.product(other.power(full).complement(), full);
 
         traces = [ t for f in A.F for t in A.trace(f) if t ]
 

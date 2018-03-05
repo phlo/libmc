@@ -1,6 +1,10 @@
 def formatState (s):
     """Prettify a state's string representation for printing."""
-    return str(s).replace("'", "").replace("[", "\{").replace("]", "\}")
+    return str(s) \
+        .replace("'", "") \
+        .replace("[", "\{") \
+        .replace("]", "\}") \
+        .replace(",)", ")")
 
 def printRelation (relation, A, B):
     """Pretty print relation table in markdown format."""
@@ -66,28 +70,37 @@ def fa2dot (S, I, Σ, T, F, highlight = []):
     """
     tex = """\
 digraph FSM {
-  node [style="state"]
-  edge [lblstyle="auto"]
+  d2toptions = "-f tikz -t math --tikzedgelabels --styleonly --usepdflatex";
+  d2tdocpreamble = "\\usetikzlibrary{automata}";
+  node [style="state"];
+  edge [lblstyle="auto"];
 """
     # generate states
     for s in S:
         style = []
         if s in I: style.append("initial")
         if s in F: style.append("accepting")
-        if [ t for t in highlight if s == t[0] or s == t[2] ]:
+        #  if [ t for t in highlight if s == t[0] or s == t[2] ]:
+        if [ t for trace in highlight for t in trace if s == t[0] or s == t[2] ]:
             style.append("draw=red")
 
-        tex += "  \"{}\"{};\n".format(
+        tex += "  \"state {}\"{};\n".format(
                 formatState(s),
-                " [style=\"state," + ','.join(style) + "\"]" if style else "")
+                " [label=\"{}\"{}]".format(
+                    formatState(s),
+                    ",style=\"state," + ','.join(style) + '\"' if style else ""
+                    )
+                )
+                #  " [style=\"state," + ','.join(style) + "\"]" if style else "")
 
     # generate transitions
     for t in T:
-        tex += "  \"{}\" -> \"{}\" [label=\"{}\"{}];\n".format(
+        tex += "  \"state {}\" -> \"state {}\" [label=\"{}\"{}];\n".format(
                 formatState(t[0]),
                 formatState(t[2]),
                 t[1],
-                ",style=\"draw=red\"" if t in highlight else "")
+                #  ",style=\"draw=red\"" if t in highlight else "")
+                ",style=\"draw=red\"" if t in { t for trace in highlight for t in trace } else "")
 
     tex += "}"
     return tex

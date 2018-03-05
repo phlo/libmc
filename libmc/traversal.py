@@ -11,7 +11,7 @@ def __bfs_dfs_aux__ (stack, successors, **kwargs):
     else:
         if "cached" in kwargs:
             raise ValueError("missing 'cache' argument")
-        __cache = set()
+        __cache = set(stack)
         cache = lambda x: __cache.add(x)
         cached = lambda x: x in __cache
 
