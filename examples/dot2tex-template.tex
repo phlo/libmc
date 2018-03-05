@@ -1,0 +1,13 @@
+% minimal dot2tex template
+\documentclass[class=minimal,border=0pt]{standalone}
+\usepackage{pdfpages}
+\usepackage{amssymb}
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,automata}
+
+\begin{document}
+\begin{tikzpicture}[>=latex',scale=1,anchor=mid,join=bevel]
+  <<drawcommands>>
+\end{tikzpicture}
+\end{document}
