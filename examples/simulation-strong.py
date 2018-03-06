@@ -5,7 +5,7 @@ from itertools import product
 from libmc import LTS, maximumSimulation
 
 # deterministic version of Milner's vending machine
-G = LTS (
+G = LTS(
     S = [1, 2, 3, 4],
     I = [1],
     Σ = ['p', 'd', 'm'],
@@ -17,7 +17,7 @@ G = LTS (
 )
 
 # nondeterministic version of Milner's vending machine
-B = LTS (
+B = LTS(
     S = [5, 6, 7, 8, 9],
     I = [5],
     Σ = ['p', 'd', 'm'],

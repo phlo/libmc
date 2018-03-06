@@ -3,7 +3,18 @@ import subprocess
 from os import path
 
 def run (cmd, **kwargs):
-    """Run the given system command in a subshell."""
+    """
+    Run the given system command in a subshell.
+
+    Args:
+        cmd (string): shell command to be executed
+
+    Keyword Args:
+        toFile (string): write output to the given file name
+
+    Returns:
+        string: output (stdout)
+    """
     stdin = kwargs["stdin"] if "stdin" in kwargs else None
 
     proc = subprocess.run(
@@ -45,6 +56,7 @@ def dot2pdf (dot, pdfName, prog="dot", template=None):
     run(" ".join(pdflatex))
 
 def pdf2png (pdfName):
+    """Convert the given PDF to a PNG using imagemagick."""
     pngName = pdfName[:-3] + "png"
 
     convert = [

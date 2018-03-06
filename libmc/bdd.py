@@ -134,7 +134,7 @@ class BDD:
 
     @classmethod
     def true (BDD):
-        """Boolean constant *True*."""
+        """Boolean constant ``True``."""
         if BDD.__true__ is None:
             BDD.__true__ = BDD(-1, True)
         return BDD.__true__
@@ -143,13 +143,13 @@ class BDD:
 
     @classmethod
     def false (BDD):
-        """Boolean constant *False*."""
+        """Boolean constant ``False``."""
         if BDD.__false__ is None:
             BDD.__false__ = BDD(-1, False)
         return BDD.__false__
 
     def isConstant (self):
-        """Returns *True* for constant nodes."""
+        """Returns ``True`` for constant nodes."""
         return self.idx < 0
 
     def toDot (self):

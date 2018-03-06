@@ -210,7 +210,8 @@ class LTS:
             sources (optional): set of initial states
 
         Returns:
-            list: the trace or an empty list if target is unreachable
+            list: all paths (list of transitions) to the target or an empty
+            list if it is unreachable
         """
         if sources is None: sources = self.I
 
@@ -270,7 +271,7 @@ def maximumSimulation (A1, A2, R0, τ = []):
     Returns:
         set: A1 ≲ A2 ⊆ R0 - the maximum simulation relation
     """
-    def isReachable(traces, a):
+    def isReachable (traces, a):
         """Returns True if a trace of the form τ*a exists."""
         return any(
                 all(t[1] in τ for t in trace[:-1]) and trace[-1][1] == a

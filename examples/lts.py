@@ -97,6 +97,5 @@ utils.dot2pdf(GB.toDot(), fname, template="examples/dot2tex-template.tex")
 utils.pdf2png(fname)
 
 fname = "/tmp/milner-power.pdf"
-utils.dot2pdf(G.power().toDot(), fname)
-utils.dot2pdf(G.toDot(), fname, template="examples/dot2tex-template.tex")
+utils.dot2pdf(G.power().toDot(), fname, template="examples/dot2tex-template.tex")
 utils.pdf2png(fname)

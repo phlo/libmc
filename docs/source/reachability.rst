@@ -30,7 +30,7 @@ search.
 Consider this example graph:
 
 .. literalinclude:: ../../examples/bfs_dfs.py
-  :lines: 10-25
+  :lines: 9-24
 
 To perform breadth-first and depth-first search, some key components have to be
 defined:
@@ -39,54 +39,54 @@ defined:
   parent node
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-    :lines: 32-35
+    :lines: 31-34
 
 * a mandatory ``successors()`` function, generating the set of successors to the
   given node
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-    :lines: 42-44
+    :lines: 41-43
 
 * an optional ``cache()`` function, adding a node's id to the cache
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-    :lines: 38
+    :lines: 37
 
 * an optional ``cached()`` function, checking if a given node's id has been
   cached already
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-    :lines: 40
+    :lines: 39
 
 * an optional ``quit()`` function, returning ``True`` iff the target has been
   found
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-    :lines: 46-54
+    :lines: 45-53
 
 To simplify repeated initialization of the global variables ``Cache``, ``Stack``
 and ``numVisited``, the following function is defined:
 
 .. literalinclude:: ../../examples/bfs_dfs.py
-   :lines: 57-62
+   :lines: 56-61
 
 Finally, the function generating the trace in ``quit()`` is given below:
 
 .. literalinclude:: ../../examples/bfs_dfs.py
-   :lines: 65-71
+   :lines: 64-70
 
 A search on the example graph can now be performed by using the previously
-defined complements.
+defined components.
 
 .. topic:: Breadth-First Search
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-     :lines: 91-100
+     :lines: 90-99
 
 .. topic:: Depth-First Search
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-     :lines: 79-88
+     :lines: 78-87
 
 Tarjan's Algorithm
 ==================

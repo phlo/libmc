@@ -4,7 +4,7 @@ from itertools import product
 
 from libmc import LTS, maximumSimulation
 
-A1 = LTS (
+A1 = LTS(
     S = [1, 2, 3],
     I = [1],
     Σ = ['a', 'b', 'τ'],
@@ -16,7 +16,7 @@ A1 = LTS (
         ]
 )
 
-A2 = LTS (
+A2 = LTS(
     S = [4, 5],
     I = [4],
     Σ = ['a', 'b', 'τ'],

@@ -10,7 +10,6 @@ from .bdd import BDD
 from .boole import Boole
 from .fa import FA
 from .lts import LTS, asynchronousComposition, maximumSimulation, maximumBisimulation
-from .printing import fa2dot, printRelation
 from .tarjan import tarjan
 
 __all__ = [
@@ -20,11 +19,9 @@ __all__ = [
     "bfs",
     "dfs",
     "FA",
-    "fa2dot",
     "LTS",
     "maximumSimulation",
     "maximumBisimulation",
-    "printRelation",
     "tarjan"
 ]
 

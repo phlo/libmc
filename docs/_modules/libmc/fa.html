@@ -13,8 +13,6 @@
 
   
   
-  
-  
 
   
 
@@ -45,7 +43,6 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
   <div class="wy-grid-for-nav">
 
     
@@ -86,10 +83,7 @@
           
             
             
-              
-            
-            
-              <ul>
+                <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../automata.html">Automata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reachability.html">Reachability Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../bdd.html">Binary Decision Diagrams</a></li>
@@ -107,10 +101,8 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">libmc</a>
-        
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">libmc</a>
       </nav>
 
 
@@ -123,36 +115,19 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
-
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
-        
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
           <li><a href="../index.html">Module code</a> &raquo;</li>
-        
-      <li>libmc.fa</li>
-    
-    
+      
+    <li>libmc.fa</li>
       <li class="wy-breadcrumbs-aside">
         
-            
+          
         
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -217,7 +192,7 @@
 <span class="sd">                only reachable states are included (default)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lts</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">FA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">full</span><span class="p">)</span>
-        <span class="n">F</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">lts</span><span class="o">.</span><span class="n">S</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">F</span><span class="p">)))</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="p">[</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">lts</span><span class="o">.</span><span class="n">S</span> <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="ow">and</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">F</span> <span class="p">]</span>
 
         <span class="k">return</span> <span class="n">FA</span><span class="p">(</span><span class="n">lts</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">lts</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="n">lts</span><span class="o">.</span><span class="n">Σ</span><span class="p">,</span> <span class="n">lts</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span></div>
 
@@ -333,9 +308,6 @@
 </pre></div>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
           </div>
           <footer>
   
@@ -369,8 +341,7 @@
             VERSION:'2017.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
+            HAS_SOURCE:  true
         };
     </script>
       <script type="text/javascript" src="../../_static/jquery.js"></script>

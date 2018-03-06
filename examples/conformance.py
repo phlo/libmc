@@ -5,7 +5,7 @@ from libmc import FA
 Σ = ['a', 'b']
 
 # automaton modelling the implementation
-I = FA (
+I = FA(
     S = ['1', '2', '3', '4'],
     I = ['1'],
     Σ = Σ,
@@ -21,7 +21,7 @@ I = FA (
 )
 
 # automaton modelling the specification
-S = FA (
+S = FA(
     S = ['A', 'B', 'C', 'D'],
     I = ['A'],
     Σ = Σ,

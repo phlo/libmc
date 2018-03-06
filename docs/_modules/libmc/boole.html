@@ -13,8 +13,6 @@
 
   
   
-  
-  
 
   
 
@@ -45,7 +43,6 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
   <div class="wy-grid-for-nav">
 
     
@@ -86,10 +83,7 @@
           
             
             
-              
-            
-            
-              <ul>
+                <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../automata.html">Automata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reachability.html">Reachability Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../bdd.html">Binary Decision Diagrams</a></li>
@@ -107,10 +101,8 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">libmc</a>
-        
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">libmc</a>
       </nav>
 
 
@@ -123,36 +115,19 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
-
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
-        
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
           <li><a href="../index.html">Module code</a> &raquo;</li>
-        
-      <li>libmc.boole</li>
-    
-    
+      
+    <li>libmc.boole</li>
       <li class="wy-breadcrumbs-aside">
         
-            
+          
         
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -200,6 +175,7 @@
             <span class="k">return</span> <span class="s2">&quot;Boole(</span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 
     <span class="k">class</span> <span class="nc">UnaryExpr</span> <span class="p">(</span><span class="n">Expr</span><span class="p">):</span> <span class="k">pass</span>
+
     <span class="k">class</span> <span class="nc">BinaryExpr</span> <span class="p">(</span><span class="n">Expr</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">evaluate</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignment</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">assignment</span><span class="p">),</span>
@@ -373,7 +349,7 @@
 
 <div class="viewcode-block" id="Boole.truthTable"><a class="viewcode-back" href="../../libmc.html#libmc.Boole.truthTable">[docs]</a>    <span class="k">def</span> <span class="nf">truthTable</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the formula&#39;s truth table.</span>
+<span class="sd">        Generates the formula&#39;s truth table.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            list: pairs combining assignments to the resulting truth value</span>
@@ -389,7 +365,12 @@
         <span class="p">]</span></div>
 
 <div class="viewcode-block" id="Boole.toBDD"><a class="viewcode-back" href="../../libmc.html#libmc.Boole.toBDD">[docs]</a>    <span class="k">def</span> <span class="nf">toBDD</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Converts the formula to a :class:`BDD`.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts the formula to a BDD.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            BDD: BDD representing the formula</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">toBDD</span><span class="p">({</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="n">BDD</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">))</span>
         <span class="p">})</span></div>
@@ -397,6 +378,9 @@
 <div class="viewcode-block" id="Boole.toAIG"><a class="viewcode-back" href="../../libmc.html#libmc.Boole.toAIG">[docs]</a>    <span class="k">def</span> <span class="nf">toAIG</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Converts the formula to an AIG in the `AIGER &lt;http://fmv.jku.at/aiger&gt;`_ format.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            string: AIG representing the formula in the AIGER format</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lit</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="n">inputs</span> <span class="o">=</span> <span class="p">{}</span>
@@ -556,9 +540,6 @@
 </pre></div>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
           </div>
           <footer>
   
@@ -592,8 +573,7 @@
             VERSION:'2017.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
+            HAS_SOURCE:  true
         };
     </script>
       <script type="text/javascript" src="../../_static/jquery.js"></script>

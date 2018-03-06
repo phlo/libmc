@@ -39,6 +39,7 @@ class Boole:
             return "Boole(\"{}\")".format(str(self))
 
     class UnaryExpr (Expr): pass
+
     class BinaryExpr (Expr):
         def evaluate (self, assignment):
             return (self.args[0].evaluate(assignment),
@@ -212,7 +213,7 @@ class Boole:
 
     def truthTable (self):
         """
-        Returns the formula's truth table.
+        Generates the formula's truth table.
 
         Returns:
             list: pairs combining assignments to the resulting truth value
@@ -228,7 +229,12 @@ class Boole:
         ]
 
     def toBDD (self):
-        """Converts the formula to a :class:`BDD`."""
+        """
+        Converts the formula to a BDD.
+
+        Returns:
+            BDD: BDD representing the formula
+        """
         return self.formula.toBDD({
             self.variables[i]: BDD(i) for i in range(len(self.variables))
         })
@@ -236,6 +242,9 @@ class Boole:
     def toAIG (self):
         """
         Converts the formula to an AIG in the `AIGER <http://fmv.jku.at/aiger>`_ format.
+
+        Returns:
+            string: AIG representing the formula in the AIGER format
         """
         lit = 2
         inputs = {}

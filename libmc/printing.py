@@ -8,7 +8,7 @@ def formatState (s):
 
 def printRelation (relation, A, B):
     """Pretty print relation table in markdown format."""
-    def formatPair(s, t): return \
+    def formatPair (s, t): return \
         "(" + \
         formatState(s) + \
         ", " + \

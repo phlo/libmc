@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-from libmc import bfs
-from libmc import dfs
+from libmc import bfs, dfs
 
 ################################################################################
 # example graph
@@ -43,7 +42,7 @@ def successors (current):
     for successor in sorted(T[current.id]):
         yield Node(successor, current)
 
-def quit(current):
+def quit (current):
     global numVisited
     numVisited = numVisited + 1
 
@@ -85,7 +84,7 @@ dfs(Stack, successors,
 )
 
 assert numVisited == 4
-assert trace == [ 2, 6, 7 ]
+assert trace == [2, 6, 7]
 
 # BFS
 (Stack, Cache, numVisited) = initialize()
@@ -97,7 +96,7 @@ bfs(Stack, successors,
 )
 
 assert numVisited == 7
-assert trace == [ 1, 4, 7 ]
+assert trace == [1, 4, 7]
 
 ################################################################################
 # search target = 5
@@ -114,7 +113,7 @@ dfs(Stack, successors,
 )
 
 assert numVisited == 7
-assert trace == [ 2, 5 ]
+assert trace == [2, 5]
 
 # BFS
 (Stack, Cache, numVisited) = initialize()
@@ -127,4 +126,4 @@ bfs(Stack, successors,
 
 
 assert numVisited == 4
-assert trace == [ 2, 5 ]
+assert trace == [2, 5]

@@ -13,8 +13,6 @@
 
   
   
-  
-  
 
   
 
@@ -45,7 +43,6 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
   <div class="wy-grid-for-nav">
 
     
@@ -86,10 +83,7 @@
           
             
             
-              
-            
-            
-              <ul>
+                <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../automata.html">Automata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reachability.html">Reachability Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../bdd.html">Binary Decision Diagrams</a></li>
@@ -107,10 +101,8 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">libmc</a>
-        
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">libmc</a>
       </nav>
 
 
@@ -123,36 +115,19 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
-
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
-        
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
           <li><a href="../index.html">Module code</a> &raquo;</li>
-        
-      <li>libmc.lts</li>
-    
-    
+      
+    <li>libmc.lts</li>
       <li class="wy-breadcrumbs-aside">
         
-            
+          
         
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -171,7 +146,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> \
         <span class="p">[</span>
-            <span class="nb">tuple</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span>
                 <span class="n">combinations</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
@@ -247,23 +222,23 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_generateReachable</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">initial</span><span class="p">,</span> <span class="n">transitions</span><span class="p">):</span>
-        <span class="n">S</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="n">T</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">stack</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">cache</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="n">S</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">successor</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">cache</span> <span class="p">(</span><span class="n">succ</span><span class="p">):</span> <span class="n">S</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">succ</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">cached</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="k">return</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">S</span>
+        <span class="k">def</span> <span class="nf">cached</span> <span class="p">(</span><span class="n">succ</span><span class="p">):</span> <span class="k">return</span> <span class="n">succ</span> <span class="ow">in</span> <span class="n">S</span>
 
-        <span class="k">def</span> <span class="nf">successors</span> <span class="p">(</span><span class="n">current</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transitions</span> <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">current</span> <span class="p">]:</span>
-                <span class="n">T</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">successors</span> <span class="p">(</span><span class="n">cur</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">cur</span> <span class="ow">and</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">T</span><span class="p">,</span> <span class="n">transitions</span><span class="p">):</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
                 <span class="k">yield</span> <span class="n">t</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
         <span class="n">dfs</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">)</span>
 
-        <span class="n">S</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
+        <span class="n">S</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">initial</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">S</span> <span class="p">])</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
 
@@ -300,9 +275,9 @@
 <span class="sd">                only reachable states are included (default)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">S</span> <span class="o">=</span> <span class="n">powerset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
-        <span class="n">I</span> <span class="o">=</span> <span class="p">[</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="p">]</span>
+        <span class="n">I</span> <span class="o">=</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span> <span class="p">]</span>
         <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">s2</span><span class="p">)))</span>
+                <span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">s2</span><span class="p">))</span>
                 <span class="k">for</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">S</span>
                 <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span>
                 <span class="k">for</span> <span class="n">s2</span> <span class="ow">in</span>
@@ -371,7 +346,8 @@
 <span class="sd">            sources (optional): set of initial states</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            list: the trace or an empty list if target is unreachable</span>
+<span class="sd">            list: all paths (list of transitions) to the target or an empty</span>
+<span class="sd">            list if it is unreachable</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">sources</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">sources</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span>
 
@@ -431,7 +407,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        set: A1 ≲ A2 ⊆ R0 - the maximum simulation relation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">isReachable</span><span class="p">(</span><span class="n">traces</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">isReachable</span> <span class="p">(</span><span class="n">traces</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns True if a trace of the form τ*a exists.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
                 <span class="nb">all</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">τ</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trace</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="ow">and</span> <span class="n">trace</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">a</span>
@@ -607,9 +583,6 @@
 </pre></div>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
           </div>
           <footer>
   
@@ -643,8 +616,7 @@
             VERSION:'2017.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
+            HAS_SOURCE:  true
         };
     </script>
       <script type="text/javascript" src="../../_static/jquery.js"></script>

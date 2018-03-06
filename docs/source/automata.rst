@@ -161,7 +161,7 @@ Power automata are created with the :func:`~libmc.LTS.power` method:
 
 .. note::
    Due to limitations of sets in python (hashability), power automata states
-   are tuples instead of sets.
+   are lists instead of sets.
 
 ..
 .. .. seealso::
@@ -207,7 +207,7 @@ state to another:
 Conformance
 ===========
 
-Checking the conformance of a :class:`libmc.FA` to another is carried out with
+Checking the conformance of one :class:`libmc.FA` to another is carried out with
 the :func:`~libmc.FA.conforms` method:
 
 ..
@@ -279,7 +279,7 @@ Generate the automaton modelling the asynchronous composition of two or
 more :class:`libmc.LTS` with :func:`libmc.asynchronousComposition`:
 
 .. literalinclude:: ../../examples/asynchronousComposition.py
-   :lines: 3-
+   :lines: 3-54
 
 ..
 .. .. image:: img/asynchronousComposition.png

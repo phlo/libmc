@@ -13,8 +13,6 @@
 
   
   
-  
-  
 
   
 
@@ -45,7 +43,6 @@
 
 <body class="wy-body-for-nav" role="document">
 
-   
   <div class="wy-grid-for-nav">
 
     
@@ -86,10 +83,7 @@
           
             
             
-              
-            
-            
-              <ul class="current">
+                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="automata.html">Automata</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reachability.html">Reachability Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bdd.html">Binary Decision Diagrams</a></li>
@@ -107,10 +101,8 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">libmc</a>
-        
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">libmc</a>
       </nav>
 
 
@@ -119,40 +111,23 @@
         <div class="rst-content">
           
 
-
-
-
-
-
-
-
-
-
-
-
+ 
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
-
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
-      <li>libmc Package</li>
-    
-    
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>libmc Package</li>
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/libmc.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -215,13 +190,13 @@ selecting the local component to expand</td>
 <dl class="classmethod">
 <dt id="libmc.BDD.false">
 <em class="property">classmethod </em><code class="descname">false</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/bdd.html#BDD.false"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.BDD.false" title="Permalink to this definition">¶</a></dt>
-<dd><p>Boolean constant <em>False</em>.</p>
+<dd><p>Boolean constant <code class="docutils literal"><span class="pre">False</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="libmc.BDD.isConstant">
 <code class="descname">isConstant</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/bdd.html#BDD.isConstant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.BDD.isConstant" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns <em>True</em> for constant nodes.</p>
+<dd><p>Returns <code class="docutils literal"><span class="pre">True</span></code> for constant nodes.</p>
 </dd></dl>
 
 <dl class="method">
@@ -243,7 +218,7 @@ selecting the local component to expand</td>
 <dl class="classmethod">
 <dt id="libmc.BDD.true">
 <em class="property">classmethod </em><code class="descname">true</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/bdd.html#BDD.true"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.BDD.true" title="Permalink to this definition">¶</a></dt>
-<dd><p>Boolean constant <em>True</em>.</p>
+<dd><p>Boolean constant <code class="docutils literal"><span class="pre">True</span></code>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -279,18 +254,38 @@ values</td>
 <dt id="libmc.Boole.toAIG">
 <code class="descname">toAIG</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/boole.html#Boole.toAIG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.Boole.toAIG" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts the formula to an AIG in the <a class="reference external" href="http://fmv.jku.at/aiger">AIGER</a> format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">AIG representing the formula in the AIGER format</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="libmc.Boole.toBDD">
 <code class="descname">toBDD</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/boole.html#Boole.toBDD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.Boole.toBDD" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts the formula to a <a class="reference internal" href="#libmc.BDD" title="libmc.BDD"><code class="xref py py-class docutils literal"><span class="pre">BDD</span></code></a>.</p>
+<dd><p>Converts the formula to a BDD.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">BDD representing the formula</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#libmc.BDD" title="libmc.BDD">BDD</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="libmc.Boole.truthTable">
 <code class="descname">truthTable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/boole.html#Boole.truthTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.Boole.truthTable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the formula’s truth table.</p>
+<dd><p>Generates the formula’s truth table.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -636,7 +631,8 @@ only reachable states are included (default)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the trace or an empty list if target is unreachable</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">all paths (list of transitions) to the target or an empty
+list if it is unreachable</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
@@ -646,34 +642,6 @@ only reachable states are included (default)</li>
 </table>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="function">
-<dt id="libmc.fa2dot">
-<code class="descclassname">libmc.</code><code class="descname">fa2dot</code><span class="sig-paren">(</span><em>S</em>, <em>I</em>, <em>Σ</em>, <em>T</em>, <em>F</em>, <em>highlight=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/printing.html#fa2dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.fa2dot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns graphical representation of given automaton (using <a class="reference external" href="https://www.graphviz.org/">Graphviz</a>).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>S</strong> – set of states</li>
-<li><strong>I</strong> – set of initial states I ⊆ S</li>
-<li><strong>Σ</strong> – input alphabet</li>
-<li><strong>T</strong> – transition relation T ⊆ SxΣxS</li>
-<li><strong>F</strong> – set of final states F ⊆ S</li>
-<li><strong>highlight</strong> (<em>list of transitions - optional</em>) – highlight a given path</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">.dot file tweaked for dot2tex</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">string</p>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="class">
@@ -834,7 +802,8 @@ only reachable states are included (default)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the trace or an empty list if target is unreachable</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">all paths (list of transitions) to the target or an empty
+list if it is unreachable</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
@@ -922,12 +891,6 @@ the union of all possible permutations:</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="libmc.printRelation">
-<code class="descclassname">libmc.</code><code class="descname">printRelation</code><span class="sig-paren">(</span><em>relation</em>, <em>A</em>, <em>B</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/printing.html#printRelation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.printRelation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pretty print relation table in markdown format.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="libmc.tarjan">
 <code class="descclassname">libmc.</code><code class="descname">tarjan</code><span class="sig-paren">(</span><em>nodes</em>, <em>edges</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/tarjan.html#tarjan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.tarjan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tarjan’s Algorithm (p110).</p>
@@ -956,16 +919,13 @@ the union of all possible permutations:</p>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="boole.html" class="btn btn-neutral" title="Boole Parser" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="boole.html" class="btn btn-neutral" title="Boole Parser" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -999,8 +959,7 @@ the union of all possible permutations:</p>
             VERSION:'2017.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
+            HAS_SOURCE:  true
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

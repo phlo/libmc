@@ -2,7 +2,7 @@
 
 from libmc import LTS, asynchronousComposition
 
-A1 = LTS (
+A1 = LTS(
     S = [1, 2, 3, 4],
     I = [1],
     Σ = ['a', 'b', 'c', 's'],
@@ -14,7 +14,7 @@ A1 = LTS (
         ]
     )
 
-A2 = LTS (
+A2 = LTS(
     S = [5, 6, 7, 8],
     I = [5],
     Σ = ['d', 'e', 'f', 's'],
