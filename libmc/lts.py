@@ -10,7 +10,7 @@ def powerset (s):
     """
     return \
         [
-            tuple(subset)
+            list(subset)
             for subset in chain.from_iterable(
                 combinations(s, r)
                 for r in range(len(s) + 1)
@@ -86,23 +86,23 @@ class LTS:
 
     @classmethod
     def _generateReachable (cls, initial, transitions):
-        S = set()
-        T = set()
+        S = []
+        T = []
 
         stack = list(initial)
 
-        def cache (successor): S.add(successor)
+        def cache (succ): S.append(succ)
 
-        def cached (successor): return successor in S
+        def cached (succ): return succ in S
 
-        def successors (current):
-            for t in [ t for t in transitions if t[0] == current ]:
-                T.add(t)
+        def successors (cur):
+            for t in filter(lambda t: t[0] == cur and t not in T, transitions):
+                T.append(t)
                 yield t[2]
 
         dfs(stack, successors, cache=cache, cached=cached)
 
-        S |= set(initial)
+        S.extend([ s for s in initial if s not in S ])
 
         return (sorted(S), sorted(T))
 
@@ -139,9 +139,9 @@ class LTS:
                 only reachable states are included (default)
         """
         S = powerset(self.S)
-        I = [ tuple(self.I) ]
+        I = [ self.I ]
         T = [
-                (s1, a, tuple(sorted(s2)))
+                (s1, a, sorted(s2))
                 for s1 in S
                 for a in self.Σ
                 for s2 in

@@ -56,7 +56,7 @@ class FA (LTS):
                 only reachable states are included (default)
         """
         lts = super(FA, self).product(other, full)
-        F = sorted(set(lts.S) & set(product(self.F, other.F)))
+        F = [ s for s in lts.S if s[0] in self.F and s[1] in other.F ]
 
         return FA(lts.S, lts.I, lts.Σ, lts.T, F)
 

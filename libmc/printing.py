@@ -80,7 +80,6 @@ digraph FSM {
         style = []
         if s in I: style.append("initial")
         if s in F: style.append("accepting")
-        #  if [ t for t in highlight if s == t[0] or s == t[2] ]:
         if [ t for trace in highlight for t in trace if s == t[0] or s == t[2] ]:
             style.append("draw=red")
 
@@ -91,7 +90,6 @@ digraph FSM {
                     ",style=\"state," + ','.join(style) + '\"' if style else ""
                     )
                 )
-                #  " [style=\"state," + ','.join(style) + "\"]" if style else "")
 
     # generate transitions
     for t in T:
@@ -99,8 +97,7 @@ digraph FSM {
                 formatState(t[0]),
                 formatState(t[2]),
                 t[1],
-                #  ",style=\"draw=red\"" if t in highlight else "")
-                ",style=\"draw=red\"" if t in { t for trace in highlight for t in trace } else "")
+                ",style=\"draw=red\"" if t in [ t for trace in highlight for t in trace ] else "")
 
     tex += "}"
     return tex
