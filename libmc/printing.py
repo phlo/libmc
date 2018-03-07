@@ -94,10 +94,13 @@ digraph FSM {
     # generate transitions
     for t in T:
         tex += "  \"state {}\" -> \"state {}\" [label=\"{}\"{}];\n".format(
-                formatState(t[0]),
-                formatState(t[2]),
-                t[1],
-                ",style=\"draw=red\"" if t in [ t for trace in highlight for t in trace ] else "")
+            formatState(t[0]),
+            formatState(t[2]),
+            t[1],
+            ",style=\"draw=red\"" if t in [
+                t for trace in highlight for t in trace
+            ] else ""
+        )
 
     tex += "}"
     return tex

@@ -4,9 +4,7 @@ from .lts import LTS, maximumBisimulation
 from .printing import fa2dot
 
 def intersect (l1, l2):
-    """
-    Returns the intersection of two lists.
-    """
+    """Returns the intersection of two lists."""
     return [ x for x in l1 if x in l2 ]
 
 class FA (LTS):

@@ -33,7 +33,6 @@ class BDD:
                 bdd.child = child
                 BDD.__unique__[node] = bdd
 
-            bdd = BDD.__unique__[node]
             return BDD.__unique__[node]
 
         idx = args[0]
@@ -80,7 +79,6 @@ class BDD:
 
     @classmethod
     def __cofactor2__ (BDD, a, b):
-
         idx = BDD.__top_idx__(a, b)
 
         c = [
@@ -107,7 +105,8 @@ class BDD:
 
         return bdd
 
-    def __bool__ (self): return self.sign
+    def __bool__ (self):
+        return self.sign
 
     def __invert__ (self):
         if self.isConstant():
@@ -165,7 +164,9 @@ class BDD:
         def declare (bdd, node):
             if node in declared:
                 return ""
+
             declared.add(node)
+
             if bdd.isConstant():
                 return "\t\"{}\" [shape=box]\n".format(node)
             else:

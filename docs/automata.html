@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -44,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -84,7 +87,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Automata</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#labelled-transition-systems">Labelled Transition Systems</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#finite-automata">Finite Automata</a></li>
@@ -126,8 +132,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">libmc</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">libmc</a>
+        
       </nav>
 
 
@@ -136,23 +144,45 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Automata</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Automata</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/automata.rst.txt" rel="nofollow"> View page source</a>
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/phlo/libmc" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -262,50 +292,33 @@ respectively:</p>
 <div class="section" id="sub-set-construction">
 <h2>Sub-Set Construction<a class="headerlink" href="#sub-set-construction" title="Permalink to this headline">¶</a></h2>
 <p>Power automata are created with the <a class="reference internal" href="libmc.html#libmc.LTS.power" title="libmc.LTS.power"><code class="xref py py-func docutils literal"><span class="pre">power()</span></code></a> method:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># nondeterministic version of Milner&#39;s vending machine</span>
-<span class="n">B</span> <span class="o">=</span> <span class="n">FA</span><span class="p">(</span>
-    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
-    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-    <span class="n">Σ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">],</span>
-    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-            <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
-        <span class="p">],</span>
-    <span class="n">F</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
-<span class="p">)</span>
-
-<span class="k">assert</span> <span class="ow">not</span> <span class="n">B</span><span class="o">.</span><span class="n">isComplete</span><span class="p">()</span>
-<span class="k">assert</span> <span class="ow">not</span> <span class="n">B</span><span class="o">.</span><span class="n">isDeterministic</span><span class="p">()</span>
-
-<span class="c1"># power automaton</span>
-<span class="n">P</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">power</span><span class="p">()</span>
-
-<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">isComplete</span><span class="p">()</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">P</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">power</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">isComplete</span><span class="p">()</span>
 <span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">isDeterministic</span><span class="p">()</span>
-
-<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="p">[[],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">]]</span>
-<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">I</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">1</span><span class="p">]]</span>
-<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">Σ</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="p">[[],</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">]]</span>
+<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">I</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">5</span><span class="p">]]</span>
+<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">Σ</span> <span class="o">==</span> <span class="n">B</span><span class="o">.</span><span class="n">Σ</span>
 <span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">T</span> <span class="o">==</span> <span class="p">[</span>
     <span class="p">([],</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">[]),</span>
     <span class="p">([],</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">[]),</span>
     <span class="p">([],</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">[]),</span>
-    <span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">[]),</span>
-    <span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">[]),</span>
-    <span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span>
-    <span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">4</span><span class="p">]),</span>
-    <span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">]),</span>
-    <span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">[]),</span>
-    <span class="p">([</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">[]),</span>
-    <span class="p">([</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">[]),</span>
-    <span class="p">([</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">[]),</span>
     <span class="p">([</span><span class="mi">5</span><span class="p">],</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">[]),</span>
     <span class="p">([</span><span class="mi">5</span><span class="p">],</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">[]),</span>
-    <span class="p">([</span><span class="mi">5</span><span class="p">],</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="p">([</span><span class="mi">5</span><span class="p">],</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]),</span>
+    <span class="p">([</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">8</span><span class="p">]),</span>
+    <span class="p">([</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">9</span><span class="p">]),</span>
+    <span class="p">([</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+    <span class="p">([</span><span class="mi">8</span><span class="p">],</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+    <span class="p">([</span><span class="mi">8</span><span class="p">],</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+    <span class="p">([</span><span class="mi">8</span><span class="p">],</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+    <span class="p">([</span><span class="mi">9</span><span class="p">],</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+    <span class="p">([</span><span class="mi">9</span><span class="p">],</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+    <span class="p">([</span><span class="mi">9</span><span class="p">],</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="p">[])</span>
 <span class="p">]</span>
-<span class="k">assert</span> <span class="n">P</span><span class="o">.</span><span class="n">F</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">]]</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -318,24 +331,14 @@ are lists instead of sets.</p>
 <h2>Complement<a class="headerlink" href="#complement" title="Permalink to this headline">¶</a></h2>
 <p>The complement of a <a class="reference internal" href="libmc.html#libmc.FA" title="libmc.FA"><code class="xref py py-class docutils literal"><span class="pre">libmc.FA</span></code></a> is created with the
 <a class="reference internal" href="libmc.html#libmc.FA.complement" title="libmc.FA.complement"><code class="xref py py-func docutils literal"><span class="pre">complement()</span></code></a> method:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">F</span> <span class="o">=</span> <span class="n">FA</span><span class="p">(</span>
-    <span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
-    <span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-    <span class="n">Σ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">],</span>
-    <span class="n">T</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-        <span class="p">],</span>
-    <span class="n">F</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="p">)</span>
-
-<span class="n">C</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">complement</span><span class="p">()</span>
-
-<span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="n">F</span><span class="o">.</span><span class="n">S</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">C</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">complement</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="n">F</span><span class="o">.</span><span class="n">S</span>
 <span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">I</span> <span class="o">==</span> <span class="n">F</span><span class="o">.</span><span class="n">I</span>
 <span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">Σ</span> <span class="o">==</span> <span class="n">F</span><span class="o">.</span><span class="n">Σ</span>
 <span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">T</span> <span class="o">==</span> <span class="n">F</span><span class="o">.</span><span class="n">T</span>
-<span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">F</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">C</span><span class="o">.</span><span class="n">F</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -345,8 +348,9 @@ are lists instead of sets.</p>
 state to another:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># find the way to milk chocolate</span>
 <span class="n">traces</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">traces</span> <span class="o">==</span> <span class="p">[[(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">traces</span> <span class="o">==</span> <span class="p">[[(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]]</span>
 </pre></div>
 </div>
 </div>
@@ -388,11 +392,12 @@ the <a class="reference internal" href="libmc.html#libmc.FA.conforms" title="lib
         <span class="p">],</span>
     <span class="n">F</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span>
 <span class="p">)</span>
-
-<span class="c1"># I conforms to  S</span>
-<span class="n">conforms</span><span class="p">,</span> <span class="n">ICPS</span><span class="p">,</span> <span class="n">traces</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">conforms</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">conforms</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">conforms</span><span class="p">,</span> <span class="n">ICPS</span><span class="p">,</span> <span class="n">traces</span> <span class="o">=</span> <span class="n">I</span><span class="o">.</span><span class="n">conforms</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">conforms</span>
 <span class="k">assert</span> <span class="ow">not</span> <span class="n">traces</span>
 </pre></div>
 </div>
@@ -407,8 +412,9 @@ the <a class="reference internal" href="libmc.html#libmc.FA.conforms" title="lib
     <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span> <span class="o">|</span> \
     <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span> <span class="o">|</span> \
     <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span>
-
-<span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{</span>
     <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
             <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
@@ -419,12 +425,14 @@ the <a class="reference internal" href="libmc.html#libmc.FA.conforms" title="lib
     <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
 <span class="p">}</span>
-
-<span class="c1"># G.simulate(B)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># G.simulate(B)</span>
 <span class="n">simulates</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">simulates</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
 <span class="n">simulation</span> <span class="o">=</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span>
-
-<span class="k">assert</span> <span class="n">simulates</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">simulates</span>
 <span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{</span>
     <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
             <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
@@ -432,12 +440,14 @@ the <a class="reference internal" href="libmc.html#libmc.FA.conforms" title="lib
     <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="p">}</span>
-
-<span class="c1"># B.simulate(G)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># B.simulate(G)</span>
 <span class="n">simulates</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">simulates</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
 <span class="n">simulation</span> <span class="o">=</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span>
-
-<span class="k">assert</span> <span class="ow">not</span> <span class="n">simulates</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="ow">not</span> <span class="n">simulates</span>
 <span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{</span>
     <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
@@ -473,34 +483,40 @@ the <a class="reference internal" href="libmc.html#libmc.FA.conforms" title="lib
 
 <span class="c1"># internal event</span>
 <span class="n">τ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;τ&#39;</span><span class="p">]</span>
-
-<span class="c1"># full simulation relation</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># full simulation relation</span>
 <span class="n">simulation</span> <span class="o">=</span> \
     <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A1</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span> <span class="o">|</span> \
     <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span> <span class="o">|</span> \
     <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A2</span><span class="p">,</span> <span class="n">A1</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span> <span class="o">|</span> \
     <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A2</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{</span>
     <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>         <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>         <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>         <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>         <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="p">}</span>
-
-<span class="c1"># A1.simulate(A2)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># A1.simulate(A2)</span>
 <span class="n">simulates</span> <span class="o">=</span> <span class="n">A1</span><span class="o">.</span><span class="n">simulates</span><span class="p">(</span><span class="n">A2</span><span class="p">,</span> <span class="n">τ</span><span class="p">)</span>
 <span class="n">simulation</span> <span class="o">=</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A2</span><span class="p">,</span> <span class="n">A1</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">simulates</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">simulates</span>
 <span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)}</span>
-
-<span class="c1"># A2.simulate(A1)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># A2.simulate(A1)</span>
 <span class="n">simulates</span> <span class="o">=</span> <span class="n">A2</span><span class="o">.</span><span class="n">simulates</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">τ</span><span class="p">)</span>
 <span class="n">simulation</span> <span class="o">=</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">simulates</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">simulates</span>
 <span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)}</span>
 </pre></div>
 </div>
@@ -515,11 +531,13 @@ the <a class="reference internal" href="libmc.html#libmc.FA.conforms" title="lib
     <span class="n">maximumBisimulation</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span> <span class="o">|</span> \
     <span class="n">maximumBisimulation</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span> <span class="o">|</span> \
     <span class="n">maximumBisimulation</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span>
-
-<span class="c1"># does G bisimulate B</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># does G bisimulate B</span>
 <span class="n">simulates</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">bisimulates</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
-
-<span class="k">assert</span> <span class="ow">not</span> <span class="n">simulates</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="ow">not</span> <span class="n">simulates</span>
 <span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{</span>
     <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
             <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
@@ -564,11 +582,13 @@ more <a class="reference internal" href="libmc.html#libmc.LTS" title="libmc.LTS"
             <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
         <span class="p">]</span>
     <span class="p">)</span>
-
-<span class="c1"># generate the asynchronous composition through interleaving</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># generate the asynchronous composition through interleaving</span>
 <span class="n">composition</span> <span class="o">=</span> <span class="n">asynchronousComposition</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="p">[</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="p">[</span>
     <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
@@ -599,8 +619,9 @@ more <a class="reference internal" href="libmc.html#libmc.LTS" title="libmc.LTS"
 of the components used for local expansion:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># with partial order reduction, expanding the rightmost component</span>
 <span class="n">composition</span> <span class="o">=</span> <span class="n">asynchronousComposition</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="n">partialOrderReduction</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
-
-<span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
 <span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">I</span> <span class="o">==</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span>
 <span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">Σ</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">]</span>
 <span class="k">assert</span> <span class="n">composition</span><span class="o">.</span><span class="n">T</span> <span class="o">==</span> <span class="p">[</span>
@@ -624,8 +645,9 @@ with <a class="reference external" href="https://dot2tex.readthedocs.io">dot2tex
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dot</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">toDot</span><span class="p">()</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/milner-deterministic.dot&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dot</span><span class="p">)</span>
-
-<span class="n">dot</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">toDot</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dot</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">toDot</span><span class="p">()</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/milner-nondeterministic.dot&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dot</span><span class="p">)</span>
 </pre></div>
@@ -644,12 +666,12 @@ results in the following graphs:</p>
 <div class="section" id="highlighting-paths">
 <h3>Highlighting Paths<a class="headerlink" href="#highlighting-paths" title="Permalink to this headline">¶</a></h3>
 <p>Additionally, <a class="reference internal" href="libmc.html#libmc.LTS.toDot" title="libmc.LTS.toDot"><code class="xref py py-func docutils literal"><span class="pre">toDot()</span></code></a> is able to highlight specific paths:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># highlight the way to milk chocolate</span>
-<span class="n">dot</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">toDot</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dot</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">toDot</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/milner-deterministic-milkyway.dot&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dot</span><span class="p">)</span>
-
-<span class="n">dot</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">toDot</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dot</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">toDot</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/milner-nondeterministic-milkyway.dot&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dot</span><span class="p">)</span>
 </pre></div>
@@ -662,15 +684,18 @@ results in the following graphs:</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="reachability.html" class="btn btn-neutral float-right" title="Reachability Analysis" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="reachability.html" class="btn btn-neutral float-right" title="Reachability Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="libmc" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="libmc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -704,7 +729,8 @@ results in the following graphs:</p>
             VERSION:'2017.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

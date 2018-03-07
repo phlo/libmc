@@ -156,8 +156,14 @@ Sub-Set Construction
 
 Power automata are created with the :func:`~libmc.LTS.power` method:
 
-.. literalinclude:: ../../examples/power.py
-   :lines: 5-48
+.. literalinclude:: ../../examples/lts.py
+   :lines: 52
+
+.. literalinclude:: ../../examples/lts.py
+   :lines: 54-55
+
+.. literalinclude:: ../../examples/lts.py
+   :lines: 57-76
 
 .. note::
    Due to limitations of sets in python (hashability), power automata states
@@ -182,8 +188,11 @@ Complement
 The complement of a :class:`libmc.FA` is created with the
 :func:`~libmc.FA.complement` method:
 
-.. literalinclude:: ../../examples/complement.py
-   :lines: 5-22
+.. literalinclude:: ../../examples/fa.py
+   :lines: 33
+
+.. literalinclude:: ../../examples/fa.py
+   :lines: 35-39
 
 ..
 .. .. seealso::
@@ -196,7 +205,10 @@ The :func:`~libmc.LTS.trace` method offers a way to find all traces from one
 state to another:
 
 .. literalinclude:: ../../examples/trace.py
-   :lines: 17-20
+   :lines: 17-18
+
+.. literalinclude:: ../../examples/trace.py
+   :lines: 20
 
 ..
 .. .. autosummary::
@@ -232,7 +244,13 @@ the :func:`~libmc.FA.conforms` method:
 
 
 .. literalinclude:: ../../examples/conformance.py
-   :lines: 7-46
+   :lines: 7-40
+
+.. literalinclude:: ../../examples/conformance.py
+   :lines: 43
+
+.. literalinclude:: ../../examples/conformance.py
+   :lines: 45-46
 
 Simulation
 ==========
@@ -245,7 +263,22 @@ Simulation
 To just generate the simulation relation, use :func:`libmc.maximumSimulation`:
 
 .. literalinclude:: ../../examples/simulation-strong.py
-   :lines: 32-
+   :lines: 32-37
+
+.. literalinclude:: ../../examples/simulation-strong.py
+   :lines: 39-49
+
+.. literalinclude:: ../../examples/simulation-strong.py
+   :lines: 51-53
+
+.. literalinclude:: ../../examples/simulation-strong.py
+   :lines: 55-62
+
+.. literalinclude:: ../../examples/simulation-strong.py
+   :lines: 64-66
+
+.. literalinclude:: ../../examples/simulation-strong.py
+   :lines: 68-72
 
 Weak Simulation
 ---------------
@@ -253,7 +286,25 @@ Weak Simulation
 In order to perform a weak simulation, add the set of internal events `τ`:
 
 .. literalinclude:: ../../examples/simulation-weak.py
-   :lines: 7-
+   :lines: 7-32
+
+.. literalinclude:: ../../examples/simulation-weak.py
+   :lines: 34-39
+
+.. literalinclude:: ../../examples/simulation-weak.py
+   :lines: 41-47
+
+.. literalinclude:: ../../examples/simulation-weak.py
+   :lines: 49-51
+
+.. literalinclude:: ../../examples/simulation-weak.py
+   :lines: 53-54
+
+.. literalinclude:: ../../examples/simulation-weak.py
+   :lines: 56-58
+
+.. literalinclude:: ../../examples/simulation-weak.py
+   :lines: 60-61
 
 Bisimulation
 ------------
@@ -262,7 +313,13 @@ Bisimulations are tested in a similar manner by using
 :func:`~libmc.LTS.bisimulates` and :func:`libmc.maximumBisimulation`:
 
 .. literalinclude:: ../../examples/bisimulation.py
-   :lines: 30-
+   :lines: 32-37
+
+.. literalinclude:: ../../examples/bisimulation.py
+   :lines: 39-40
+
+.. literalinclude:: ../../examples/bisimulation.py
+   :lines: 42-
 
 .. .. autosummary::
    .. :nosignatures:
@@ -279,7 +336,13 @@ Generate the automaton modelling the asynchronous composition of two or
 more :class:`libmc.LTS` with :func:`libmc.asynchronousComposition`:
 
 .. literalinclude:: ../../examples/asynchronousComposition.py
-   :lines: 3-54
+   :lines: 3-27
+
+.. literalinclude:: ../../examples/asynchronousComposition.py
+   :lines: 29-30
+
+.. literalinclude:: ../../examples/asynchronousComposition.py
+   :lines: 32-54
 
 ..
 .. .. image:: img/asynchronousComposition.png
@@ -293,7 +356,10 @@ Perform partial order reduction by supplying a function choosing the index
 of the components used for local expansion:
 
 .. literalinclude:: ../../examples/asynchronousComposition.py
-   :lines: 56-
+   :lines: 56-57
+
+.. literalinclude:: ../../examples/asynchronousComposition.py
+   :lines: 59-
 
 ..
 .. .. image:: img/partialOrderReduction.png
@@ -313,7 +379,10 @@ graphical representation of the given automaton using `Graphviz`_ in combination
 with `dot2tex`_.
 
 .. literalinclude:: ../../examples/lts.py
-   :lines: 52-58
+   :lines: 79-81
+
+.. literalinclude:: ../../examples/lts.py
+   :lines: 83-85
 
 After generating the DOT language string, use `dot2tex`_ to convert it into a
 `TikZ`_ based LaTeX figure:
@@ -338,7 +407,10 @@ Highlighting Paths
 Additionally, :func:`~libmc.LTS.toDot` is able to highlight specific paths:
 
 .. literalinclude:: ../../examples/lts.py
-   :lines: 60-67
+   :lines: 88-90
+
+.. literalinclude:: ../../examples/lts.py
+   :lines: 92-94
 
 .. image:: img/milner-deterministic-milkyway.png
 

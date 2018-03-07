@@ -4,7 +4,9 @@
 libmc
 *****
 
-:mod:`libmc` is a python module providing a collection of tools for `KV Model Checking <http://fmv.jku.at/mc>`_ and implements the following concepts presented in the lecture.
+`libmc <https://github.com/phlo/libmc>`_ is a python module providing a
+collection of tools for `KV Model Checking <http://fmv.jku.at/mc>`_ and
+implements the following concepts presented in the lecture.
 
 .. :download:`slides<mcslides.pdf>`.
 

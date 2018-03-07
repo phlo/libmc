@@ -39,7 +39,7 @@ S = FA(
     F = ['B']
 )
 
-# I conforms to  S
+# I conforms to S
 conforms, ICPS, traces = I.conforms(S)
 
 assert conforms

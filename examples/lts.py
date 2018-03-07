@@ -48,6 +48,33 @@ assert GB.T == [
     ((2, 7), 'm', (4, 9))
 ]
 
+# power
+P = B.power()
+
+assert P.isComplete()
+assert P.isDeterministic()
+
+assert P.S == [[], [5], [6, 7], [8], [9]]
+assert P.I == [[5]]
+assert P.Σ == B.Σ
+assert P.T == [
+    ([], 'd', []),
+    ([], 'm', []),
+    ([], 'p', []),
+    ([5], 'd', []),
+    ([5], 'm', []),
+    ([5], 'p', [6, 7]),
+    ([6, 7], 'd', [8]),
+    ([6, 7], 'm', [9]),
+    ([6, 7], 'p', []),
+    ([8], 'd', []),
+    ([8], 'm', []),
+    ([8], 'p', []),
+    ([9], 'd', []),
+    ([9], 'm', []),
+    ([9], 'p', [])
+]
+
 # visualization
 dot = G.toDot()
 with open("/tmp/milner-deterministic.dot", 'w') as f:
@@ -76,8 +103,8 @@ print("=" * 80)
 print(G.toDot())
 with open("/tmp/milner-deterministic.dot", 'w') as f:
     f.write(G.toDot())
-#  utils.dot2pdf(G.toDot(), fname, template="examples/dot2tex-template.tex")
-utils.dot2pdf(G.toDot(), fname)
+utils.dot2pdf(G.toDot(), fname, template="examples/dot2tex-template.tex")
+#  utils.dot2pdf(G.toDot(), fname)
 utils.pdf2png(fname)
 
 fname = "/tmp/milner-deterministic-milkyway.pdf"
