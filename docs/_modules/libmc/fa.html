@@ -184,14 +184,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">=</span> <span class="n">F</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> \
-            <span class="s2">&quot;FA(&quot;</span> <span class="o">+</span> \
+        <span class="k">return</span> <span class="s2">&quot;FA(&quot;</span> <span class="o">+</span> \
             <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> \
             <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> \
             <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Σ</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> \
             <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> \
             <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="s2">&quot;)&quot;</span>
+        <span class="s2">&quot;)&quot;</span>
 
 <div class="viewcode-block" id="FA.toDot"><a class="viewcode-back" href="../../libmc.html#libmc.FA.toDot">[docs]</a>    <span class="k">def</span> <span class="nf">toDot</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">highlight</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -286,26 +285,23 @@
 
         <span class="n">traces</span> <span class="o">=</span> <span class="p">[</span> <span class="n">t</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">A</span><span class="o">.</span><span class="n">F</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">A</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">if</span> <span class="n">t</span> <span class="p">]</span>
 
-        <span class="k">return</span> <span class="p">(</span> <span class="ow">not</span> <span class="n">traces</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">traces</span> <span class="p">)</span></div>
+        <span class="k">return</span> <span class="p">(</span><span class="ow">not</span> <span class="n">traces</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">traces</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FA.minimize"><a class="viewcode-back" href="../../libmc.html#libmc.FA.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Minimization of Deterministic Finite Automata (p44).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Minimization of Deterministic Finite Automata (p44).&quot;&quot;&quot;</span>
         <span class="n">notFinal</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
 
-        <span class="n">bisimulation</span> <span class="o">=</span> \
-            <span class="p">{</span>
-                <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-                <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span>
-                    <span class="n">maximumBisimulation</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="p">,</span>
-                        <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">))</span> <span class="o">|</span> \
-                        <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">notFinal</span><span class="p">,</span> <span class="n">notFinal</span><span class="p">))</span>
-                    <span class="p">)</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-            <span class="p">}</span>
+        <span class="n">bisimulation</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span>
+                <span class="n">maximumBisimulation</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="p">,</span>
+                    <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">))</span> <span class="o">|</span> \
+                    <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">notFinal</span><span class="p">,</span> <span class="n">notFinal</span><span class="p">))</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+        <span class="p">}</span>
 
         <span class="n">redundantStates</span> <span class="o">=</span> <span class="p">{</span> <span class="n">b</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="n">bisimulation</span> <span class="p">}</span>
 

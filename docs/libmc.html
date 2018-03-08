@@ -133,6 +133,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -145,7 +147,10 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/libmc.rst.txt" rel="nofollow"> View page source</a>
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/phlo/libmc" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
@@ -164,7 +169,7 @@
 <dl class="function">
 <dt id="libmc.asynchronousComposition">
 <code class="descclassname">libmc.</code><code class="descname">asynchronousComposition</code><span class="sig-paren">(</span><em>*lts</em>, <em>partialOrderReduction=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/lts.html#asynchronousComposition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.asynchronousComposition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Asynchronous composition of LTS through interleaving (p84).</p>
+<dd><p>Asynchronous composition of two or more LTS through interleaving (p84).</p>
 <ul class="simple">
 <li>performs on-the-fly generation of reachable states</li>
 <li>Partial Order Reduction can be applied by supplying a function

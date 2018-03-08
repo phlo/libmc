@@ -40,13 +40,13 @@ Parsing a Boole formula is done by creating a :class:`libmc.Boole` object:
    .. :lines: 6-7,15-16,24
 
 .. literalinclude:: ../../examples/boole.py
-   :lines: 6
+  :lines: 6
 
 .. literalinclude:: ../../examples/boole.py
-   :lines: 15
+  :lines: 15
 
 .. literalinclude:: ../../examples/boole.py
-   :lines: 24
+  :lines: 24
 
 Evaluation
 ==========
@@ -56,13 +56,13 @@ under a given assignment and :func:`~libmc.Boole.truthTable` to generate it's
 truth table:
 
 .. literalinclude:: ../../examples/boole.py
-   :lines: 8-13
+  :lines: 8-13
 
 .. literalinclude:: ../../examples/boole.py
-   :lines: 17-22
+  :lines: 17-22
 
 .. literalinclude:: ../../examples/boole.py
-   :lines: 26-33
+  :lines: 26-33
 
 Conversion
 ==========
@@ -73,16 +73,17 @@ formula into other representations.
 To AIG
 ------
 
-Convert a Boole formula to an AIG with :func:`~libmc.Boole.toAIG`:
+Convert a Boole formula to an AIG in the `AIGER <http://fmv.jku.at/aiger>`_ 
+format with :func:`~libmc.Boole.toAIG`:
 
 .. literalinclude:: ../../examples/boole.py
-   :lines: 43-48
+  :lines: 43-48
 
 .. literalinclude:: ../../examples/boole.py
-   :lines: 50-55
+  :lines: 50-55
 
 .. literalinclude:: ../../examples/boole.py
-   :lines: 57-65
+  :lines: 57-65
 
 To BDD
 ------
@@ -90,10 +91,10 @@ To BDD
 Convert a Boole formula to a BDD with :func:`~libmc.Boole.toBDD`:
 
 .. literalinclude:: ../../examples/boole.py
-   :lines: 36
+  :lines: 36
 
 .. literalinclude:: ../../examples/boole.py
-   :lines: 38
+  :lines: 38
 
 .. literalinclude:: ../../examples/boole.py
-   :lines: 40
+  :lines: 40

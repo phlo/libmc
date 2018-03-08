@@ -170,7 +170,7 @@
             
   <div class="section" id="reachability-analysis">
 <h1>Reachability Analysis<a class="headerlink" href="#reachability-analysis" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="libmc.html#module-libmc" title="libmc"><code class="xref py py-mod docutils literal"><span class="pre">libmc</span></code></a> offers generic graph search methods, central to explicit model
+<p><a class="reference internal" href="libmc.html#module-libmc" title="libmc"><code class="xref py py-mod docutils literal"><span class="pre">libmc</span></code></a> also offers graph search methods, central to explicit model
 checking.</p>
 <div class="section" id="bfs-and-dfs">
 <h2>BFS and DFS<a class="headerlink" href="#bfs-and-dfs" title="Permalink to this headline">¶</a></h2>
@@ -272,8 +272,9 @@ defined components.</p>
     <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">,</span>
     <span class="n">quit</span><span class="o">=</span><span class="n">quit</span>
 <span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">numVisited</span> <span class="o">==</span> <span class="mi">7</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">numVisited</span> <span class="o">==</span> <span class="mi">7</span>
 <span class="k">assert</span> <span class="n">trace</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -287,8 +288,9 @@ defined components.</p>
     <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">,</span>
     <span class="n">quit</span><span class="o">=</span><span class="n">quit</span>
 <span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">numVisited</span> <span class="o">==</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">numVisited</span> <span class="o">==</span> <span class="mi">4</span>
 <span class="k">assert</span> <span class="n">trace</span> <span class="o">==</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -298,9 +300,7 @@ defined components.</p>
 <h2>Tarjan’s Algorithm<a class="headerlink" href="#tarjan-s-algorithm" title="Permalink to this headline">¶</a></h2>
 <p>Tarjan’s algorithm is implemented in <a class="reference internal" href="libmc.html#libmc.tarjan" title="libmc.tarjan"><code class="xref py py-func docutils literal"><span class="pre">libmc.tarjan()</span></code></a> and can be used to
 find strongly connected components in a graph:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">libmc</span> <span class="k">import</span> <span class="n">tarjan</span>
-
-<span class="c1"># example graph (undirected)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># example graph (undirected)</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span> <span class="p">]</span>
 <span class="n">edges</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span>
@@ -314,11 +314,12 @@ find strongly connected components in a graph:</p>
             <span class="p">(</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">),</span>
             <span class="p">(</span><span class="s1">&#39;J&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;J&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">)</span>
         <span class="p">]</span>
-
-<span class="c1"># apply Tarjan&#39;s algorithm</span>
-<span class="n">scc</span> <span class="o">=</span> <span class="n">tarjan</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">edges</span><span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">scc</span> <span class="o">==</span> <span class="p">[</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">scc</span> <span class="o">=</span> <span class="n">tarjan</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">edges</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">scc</span> <span class="o">==</span> <span class="p">[</span>
     <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;I&#39;</span><span class="p">],</span>
     <span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">]</span>
 <span class="p">]</span>

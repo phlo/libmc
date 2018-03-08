@@ -127,9 +127,7 @@ class FA (LTS):
         return (not traces, A, traces)
 
     def minimize (self):
-        """
-        Minimization of Deterministic Finite Automata (p44).
-        """
+        """Minimization of Deterministic Finite Automata (p44)."""
         notFinal = set(self.S) - set(self.F)
 
         bisimulation = {

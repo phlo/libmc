@@ -166,6 +166,7 @@ API Index
 See :ref:`genindex` for a list of module members.
 
 .. warning::
-   This module has been implemented just for fun! Unfortunately there was no
-   time to test it thoroughly, so there might be bugs. In this case feel free
-   to report an issue for initiating pest control ;)
+  This module has been implemented just for fun and educational purposes!
+  Unfortunately there was no time to test it rigorously, so there might be
+  bugs. Please feel free to report an issue for initiating pest control if you
+  find one ;)

@@ -334,7 +334,7 @@ def maximumBisimulation (A1, A2, R0, τ=[]):
 
 def asynchronousComposition (*lts, partialOrderReduction=None):
     """
-    Asynchronous composition of LTS through interleaving (p84).
+    Asynchronous composition of two or more LTS through interleaving (p84).
 
     * performs on-the-fly generation of reachable states
     * Partial Order Reduction can be applied by supplying a function

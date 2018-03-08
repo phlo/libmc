@@ -171,7 +171,7 @@
 <span class="sd">    Evaluate and convert propositional formulae given in the Boole format [1]_.</span>
 
 <span class="sd">    References:</span>
-<span class="sd">        .. [1] `limboole &lt;http://fmv.jku.at/limboole&gt;`_</span>
+<span class="sd">      .. [1] `limboole &lt;http://fmv.jku.at/limboole&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">class</span> <span class="nc">Expr</span><span class="p">:</span>
         <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -414,10 +414,10 @@
             <span class="n">lit</span> <span class="o">+=</span> <span class="mi">2</span>
 
         <span class="n">aag</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;inputs&quot;</span> <span class="p">:</span> <span class="n">inputs</span><span class="p">,</span>
-            <span class="s2">&quot;output&quot;</span> <span class="p">:</span> <span class="n">lit</span><span class="p">,</span>
-            <span class="s2">&quot;ands&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;literals&quot;</span> <span class="p">:</span> <span class="p">{}</span>
+            <span class="s2">&quot;inputs&quot;</span><span class="p">:</span>   <span class="n">inputs</span><span class="p">,</span>
+            <span class="s2">&quot;output&quot;</span><span class="p">:</span>   <span class="n">lit</span><span class="p">,</span>
+            <span class="s2">&quot;ands&quot;</span><span class="p">:</span>     <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;literals&quot;</span><span class="p">:</span> <span class="p">{}</span>
         <span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">toAIG</span><span class="p">(</span><span class="n">aag</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>

@@ -4,7 +4,7 @@
 Reachability Analysis
 *********************
 
-:mod:`libmc` offers generic graph search methods, central to explicit model
+:mod:`libmc` also offers graph search methods, central to explicit model
 checking.
 
 BFS and DFS
@@ -81,12 +81,18 @@ defined components.
 .. topic:: Breadth-First Search
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-     :lines: 90-99
+     :lines: 90-96
+
+  .. literalinclude:: ../../examples/bfs_dfs.py
+     :lines: 98-99
 
 .. topic:: Depth-First Search
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-     :lines: 78-87
+     :lines: 78-84
+
+  .. literalinclude:: ../../examples/bfs_dfs.py
+     :lines: 86-87
 
 Tarjan's Algorithm
 ==================
@@ -95,4 +101,10 @@ Tarjan's algorithm is implemented in :func:`libmc.tarjan` and can be used to
 find strongly connected components in a graph:
 
 .. literalinclude:: ../../examples/tarjan.py
-  :lines: 3-
+  :lines: 5-18
+
+.. literalinclude:: ../../examples/tarjan.py
+  :lines: 21
+
+.. literalinclude:: ../../examples/tarjan.py
+  :lines: 23-26

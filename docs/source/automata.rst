@@ -18,7 +18,7 @@ Labelled Transition Systems
 Labelled transition systems are created using the :class:`libmc.LTS` class:
 
 .. literalinclude:: ../../examples/lts.py
-   :lines: 3-28
+  :lines: 5-28
 
 ..
 .. .. literalinclude:: ../../examples/lts.py
@@ -52,9 +52,10 @@ Finite Automata
 Finite automata are created using the :class:`libmc.FA` class:
 
 .. literalinclude:: ../../examples/fa.py
-   :lines: 3-19
+  :lines: 5-19
 
-As a subclass of :class:`libmc.LTS` they support the same methods and more.
+.. note::
+  As a subclass of :class:`libmc.LTS` they support the same methods and more.
 
 ..
 .. .. seealso::
@@ -260,14 +261,6 @@ Simulation
 
 :func:`~libmc.LTS.simulates` can be used to check if a :class:`libmc.LTS` simulates another.
 
-To just generate the simulation relation, use :func:`libmc.maximumSimulation`:
-
-.. literalinclude:: ../../examples/simulation-strong.py
-   :lines: 32-37
-
-.. literalinclude:: ../../examples/simulation-strong.py
-   :lines: 39-49
-
 .. literalinclude:: ../../examples/simulation-strong.py
    :lines: 51-53
 
@@ -279,6 +272,14 @@ To just generate the simulation relation, use :func:`libmc.maximumSimulation`:
 
 .. literalinclude:: ../../examples/simulation-strong.py
    :lines: 68-72
+
+To just generate the simulation relation, use :func:`libmc.maximumSimulation`:
+
+.. literalinclude:: ../../examples/simulation-strong.py
+   :lines: 32-37
+
+.. literalinclude:: ../../examples/simulation-strong.py
+   :lines: 39-49
 
 Weak Simulation
 ---------------
@@ -313,10 +314,10 @@ Bisimulations are tested in a similar manner by using
 :func:`~libmc.LTS.bisimulates` and :func:`libmc.maximumBisimulation`:
 
 .. literalinclude:: ../../examples/bisimulation.py
-   :lines: 32-37
+   :lines: 39-40
 
 .. literalinclude:: ../../examples/bisimulation.py
-   :lines: 39-40
+   :lines: 32-37
 
 .. literalinclude:: ../../examples/bisimulation.py
    :lines: 42-
@@ -329,6 +330,20 @@ Bisimulations are tested in a similar manner by using
    .. libmc.LTS.bisimulates
    .. libmc.maximumBisimulation
 
+Minimization
+============
+
+Minimize a deterministic :class:`libmc.FA` with :func:`~libmc.FA.minimize`:
+
+.. literalinclude:: ../../examples/minimization.py
+  :lines: 6-27
+
+.. literalinclude:: ../../examples/minimization.py
+  :lines: 30
+
+.. literalinclude:: ../../examples/minimization.py
+  :lines: 32-43
+
 Asynchronous Composition
 ========================
 
@@ -336,10 +351,10 @@ Generate the automaton modelling the asynchronous composition of two or
 more :class:`libmc.LTS` with :func:`libmc.asynchronousComposition`:
 
 .. literalinclude:: ../../examples/asynchronousComposition.py
-   :lines: 3-27
+   :lines: 5-27
 
 .. literalinclude:: ../../examples/asynchronousComposition.py
-   :lines: 29-30
+   :lines: 30
 
 .. literalinclude:: ../../examples/asynchronousComposition.py
    :lines: 32-54

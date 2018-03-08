@@ -10,7 +10,7 @@ class Boole:
     Evaluate and convert propositional formulae given in the Boole format [1]_.
 
     References:
-        .. [1] `limboole <http://fmv.jku.at/limboole>`_
+      .. [1] `limboole <http://fmv.jku.at/limboole>`_
     """
     class Expr:
         def __init__ (self, *args):
