@@ -8,11 +8,11 @@ def formatState (s):
 
 def printRelation (relation, A, B):
     """Pretty print relation table in markdown format."""
-    def formatPair (s, t): return \
-        "(" + \
-        formatState(s) + \
-        ", " + \
-        formatState(t) + \
+    def formatPair (s, t):
+        return "(" + \
+            formatState(s) + \
+            ", " + \
+            formatState(t) + \
         ")"
 
     # determine header column width (bold)
@@ -80,7 +80,7 @@ digraph FSM {
         style = []
         if s in I: style.append("initial")
         if s in F: style.append("accepting")
-        if [ t for trace in highlight for t in trace if s == t[0] or s == t[2] ]:
+        if any(s == t[0] or s == t[2] for trace in highlight for t in trace):
             style.append("draw=red")
 
         tex += "  \"state {}\"{};\n".format(
@@ -97,9 +97,8 @@ digraph FSM {
             formatState(t[0]),
             formatState(t[2]),
             t[1],
-            ",style=\"draw=red\"" if t in [
-                t for trace in highlight for t in trace
-            ] else ""
+            ",style=\"draw=red\"" if any(t in trace for trace in highlight)
+            else ""
         )
 
     tex += "}"

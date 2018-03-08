@@ -253,10 +253,10 @@ class Boole:
             lit += 2
 
         aag = {
-            "inputs" : inputs,
-            "output" : lit,
-            "ands" : 0,
-            "literals" : {}
+            "inputs":   inputs,
+            "output":   lit,
+            "ands":     0,
+            "literals": {}
         }
 
         self.formula.toAIG(aag, True)

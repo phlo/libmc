@@ -5,17 +5,14 @@ from .printing import fa2dot
 from .traversal import dfs
 
 def powerset (s):
-    """
-    Returns the powerset of s.
-    """
-    return \
-        [
-            list(subset)
-            for subset in chain.from_iterable(
-                combinations(s, r)
-                for r in range(len(s) + 1)
-            )
-        ]
+    """Returns the powerset of s."""
+    return [
+        list(subset)
+        for subset in chain.from_iterable(
+            combinations(s, r)
+            for r in range(len(s) + 1)
+        )
+    ]
 
 class LTS:
     """
@@ -34,15 +31,14 @@ class LTS:
         self.T = T
 
     def __repr__ (self):
-        return \
-            "LTS(" + \
+        return "LTS(" + \
             str(self.S) + ", " + \
             str(self.I) + ", " + \
             str(self.Σ) + ", " + \
             str(self.T) + \
-            ")"
+        ")"
 
-    def toDot (self, highlight = []):
+    def toDot (self, highlight=[]):
         """
         Return LTS as `Graphviz <https://www.graphviz.org/>`_ dot language string.
 
@@ -55,9 +51,7 @@ class LTS:
         return fa2dot(self.S, self.I, self.Σ, self.T, [], highlight)
 
     def isComplete (self):
-        """
-        Completeness (p21): True if LTS is complete.
-        """
+        """Completeness (p21): True if LTS is complete."""
         return len(self.I) > 0 and \
             reduce(lambda x, y: x and y,
                 map(lambda x: len(x) > 0,
@@ -70,9 +64,7 @@ class LTS:
             )
 
     def isDeterministic (self):
-        """
-        Determinism (p21): True if LTS is deterministic.
-        """
+        """Determinism (p21): True if LTS is deterministic."""
         return len(self.I) <= 1 and \
             reduce(lambda x, y: x and y,
                 map(lambda x: len(x) <= 1,
@@ -102,7 +94,7 @@ class LTS:
 
         dfs(stack, successors, cache=cache, cached=cached)
 
-        S.extend([ s for s in initial if s not in S ])
+        S.extend(s for s in initial if s not in S)
 
         return (sorted(S), sorted(T))
 
@@ -153,7 +145,7 @@ class LTS:
 
         return LTS(S, I, self.Σ, T)
 
-    def simulates (self, other, τ = []):
+    def simulates (self, other, τ=[]):
         """
         Simulation of LTS (p39).
 
@@ -176,7 +168,7 @@ class LTS:
             for s1 in other.I
         )
 
-    def bisimulates (self, other, τ = []):
+    def bisimulates (self, other, τ=[]):
         """
         Bisimulation of LTS (p43).
 
@@ -239,7 +231,7 @@ class LTS:
 
         def successors (current):
             nonlocal node, path, trace
-            (node, path, trace) = current
+            node, path, trace = current
             return [
                 t for t in self.T
                 if t[0] == node and t[2] not in path[1:]
@@ -249,7 +241,7 @@ class LTS:
 
         return traces
 
-def maximumSimulation (A1, A2, R0, τ = []):
+def maximumSimulation (A1, A2, R0, τ=[]):
     """
     Constructs the maximum simulation relation A1 ≲ A2 (p36).
 
@@ -274,13 +266,12 @@ def maximumSimulation (A1, A2, R0, τ = []):
     def isReachable (traces, a):
         """Returns True if a trace of the form τ*a exists."""
         return any(
-                all(t[1] in τ for t in trace[:-1]) and trace[-1][1] == a
-                for trace in traces
+            all(t[1] in τ for t in trace[:-1]) and trace[-1][1] == a
+            for trace in traces
         )
 
     # refine simulation relation
-    R1 = \
-        {
+    R = {
             (s, t)
             for (s, t) in R0
             # ∀ a ∈ Σ, s' ∈ S [ s -a> s' ]
@@ -304,10 +295,10 @@ def maximumSimulation (A1, A2, R0, τ = []):
             )
         }
 
-    # return relation if fixpoint is reached else recurse
-    return R1 if R1 == R0 else maximumSimulation(A1, A2, R1, τ)
+    # return relation if fixpoint is reached else recurs
+    return R if R == R0 else maximumSimulation(A1, A2, R, τ)
 
-def maximumBisimulation (A1, A2, R0, τ = []):
+def maximumBisimulation (A1, A2, R0, τ=[]):
     """
     Constructs the maximum bisimulation relation A1 ≈ A2 (p43).
 
@@ -334,13 +325,12 @@ def maximumBisimulation (A1, A2, R0, τ = []):
     Returns:
         set: A1 ≈ A2 ⊆ R0 - the maximum simulation relation
     """
-    return \
-        maximumSimulation(
-            A2,
-            A1,
-            { (s, t) for (t, s) in maximumSimulation(A1, A2, R0, τ) },
-            τ
-        )
+    return maximumSimulation(
+        A2,
+        A1,
+        { (s, t) for (t, s) in maximumSimulation(A1, A2, R0, τ) },
+        τ
+    )
 
 def asynchronousComposition (*lts, partialOrderReduction=None):
     """
@@ -370,7 +360,7 @@ def asynchronousComposition (*lts, partialOrderReduction=None):
             {
                 a
                 for a in l.Σ
-                if all(a not in _l.Σ for _l in lts if _l != l)
+                if all(a not in _l.Σ for _l in lts if _l is not l)
             }
             for l in lts
         ]
@@ -403,19 +393,19 @@ def asynchronousComposition (*lts, partialOrderReduction=None):
 
             # index of components with local states
             local = [
-                        i
-                        for i in components
-                        if
-                            # component i has a successor
-                            any(i in nextStates[a] for a in nextStates)
-                            and
-                            # all transitions of component i are local
-                            all(
-                                a in Λ[i]
-                                for a in nextStates
-                                if i in nextStates[a]
-                            )
-                    ]
+                i
+                for i in components
+                if
+                    # component i has a successor
+                    any(i in nextStates[a] for a in nextStates)
+                    and
+                    # all transitions of component i are local
+                    all(
+                        a in Λ[i]
+                        for a in nextStates
+                        if i in nextStates[a]
+                    )
+            ]
 
             # partial expansion
             if local:
@@ -427,19 +417,17 @@ def asynchronousComposition (*lts, partialOrderReduction=None):
                         if i in nextStates[a]:
                             del nextStates[a][i]
 
-        # build expansion
-        expansion = [
-                        (fromState, a, toState)
-                        for a in nextStates
-                        if Ψ[a] == nextStates[a].keys()
-                        for toState in
-                            product(*[
-                                nextStates[a].setdefault(i, [fromState[i]])
-                                for i in components
-                            ])
-                    ]
-
-        return expansion
+        # return expansion
+        return [
+            (fromState, a, toState)
+            for a in nextStates
+            if Ψ[a] == nextStates[a].keys()
+            for toState in
+                product(*[
+                    nextStates[a].setdefault(i, [fromState[i]])
+                    for i in components
+                ])
+        ]
 
     dfs(stack, successors, enqueue=enqueue, cache=cache, cached=cached)
 

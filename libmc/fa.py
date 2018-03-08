@@ -23,14 +23,13 @@ class FA (LTS):
         self.F = F
 
     def __repr__ (self):
-        return \
-            "FA(" + \
+        return "FA(" + \
             str(self.S) + ", " + \
             str(self.I) + ", " + \
             str(self.Σ) + ", " + \
             str(self.T) + ", " + \
             str(self.F) + \
-            ")"
+        ")"
 
     def toDot (self, highlight=[]):
         """
@@ -125,7 +124,7 @@ class FA (LTS):
 
         traces = [ t for f in A.F for t in A.trace(f) if t ]
 
-        return ( not traces, A, traces )
+        return (not traces, A, traces)
 
     def minimize (self):
         """
@@ -133,18 +132,17 @@ class FA (LTS):
         """
         notFinal = set(self.S) - set(self.F)
 
-        bisimulation = \
-            {
-                (a, b)
-                for (a, b) in
-                    maximumBisimulation(
-                        self,
-                        self,
-                        set(product(self.F, self.F)) | \
-                        set(product(notFinal, notFinal))
-                    )
-                if self.S.index(a) < self.S.index(b)
-            }
+        bisimulation = {
+            (a, b)
+            for (a, b) in
+                maximumBisimulation(
+                    self,
+                    self,
+                    set(product(self.F, self.F)) | \
+                    set(product(notFinal, notFinal))
+                )
+            if self.S.index(a) < self.S.index(b)
+        }
 
         redundantStates = { b for (a, b) in bisimulation }
 

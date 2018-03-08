@@ -63,7 +63,7 @@ class BDD:
 
     @classmethod
     def __top_idx__ (BDD, *args):
-        return max([ bdd.idx for bdd in args ])
+        return max(bdd.idx for bdd in args)
 
     def __cofactor__ (self, pos, idx):
         if self.isConstant():

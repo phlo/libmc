@@ -1,4 +1,4 @@
-""" Provides collection of tools for `KV Model Checking <http://fmv.jku.at/mc>`_."""
+"""Provides collection of tools for `KV Model Checking <http://fmv.jku.at/mc>`_."""
 
 __author__  = "Florian Schroegendorfer"
 __email__   = "florian.schroegendorfer@phlo.at"
