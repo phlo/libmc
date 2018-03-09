@@ -48,7 +48,7 @@ assert GB.T == [
     ((2, 7), 'm', (4, 9))
 ]
 
-# power
+# sub-set construction
 P = B.power()
 
 assert P.isComplete()
@@ -92,37 +92,3 @@ with open("/tmp/milner-deterministic-milkyway.dot", 'w') as f:
 dot = B.toDot(B.trace(9))
 with open("/tmp/milner-nondeterministic-milkyway.dot", 'w') as f:
     f.write(dot)
-
-################################################################################
-
-import utils
-
-fname = "/tmp/milner-deterministic.pdf"
-print("milner-deterministic")
-print("=" * 80)
-print(G.toDot())
-with open("/tmp/milner-deterministic.dot", 'w') as f:
-    f.write(G.toDot())
-utils.dot2pdf(G.toDot(), fname, template="examples/dot2tex-template.tex")
-#  utils.dot2pdf(G.toDot(), fname)
-utils.pdf2png(fname)
-
-fname = "/tmp/milner-deterministic-milkyway.pdf"
-utils.dot2pdf(G.toDot(G.trace(4)), fname, template="examples/dot2tex-template.tex")
-utils.pdf2png(fname)
-
-fname = "/tmp/milner-nondeterministic.pdf"
-utils.dot2pdf(B.toDot(), fname, template="examples/dot2tex-template.tex")
-utils.pdf2png(fname)
-
-fname = "/tmp/milner-nondeterministic-milkyway.pdf"
-utils.dot2pdf(B.toDot(B.trace(9)), fname, template="examples/dot2tex-template.tex")
-utils.pdf2png(fname)
-
-fname = "/tmp/milner-product.pdf"
-utils.dot2pdf(GB.toDot(), fname, template="examples/dot2tex-template.tex")
-utils.pdf2png(fname)
-
-fname = "/tmp/milner-power.pdf"
-utils.dot2pdf(G.power().toDot(), fname, template="examples/dot2tex-template.tex")
-utils.pdf2png(fname)

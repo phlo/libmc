@@ -2,7 +2,7 @@
 
 from libmc import FA
 
-# deterministic example automaton
+# example automaton (deterministic)
 F = FA (
     S = ['A', 'B', 'C', 'D', 'E', 'F'],
     I = ['A'],

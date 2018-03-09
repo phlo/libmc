@@ -14,7 +14,7 @@ G = LTS(
         ]
 )
 
-# find the way to milk chocolate
+# find the milky way
 traces = G.trace(4)
 
 assert traces == [[(1, 'p', 2), (2, 'm', 4)]]

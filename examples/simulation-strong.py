@@ -48,7 +48,7 @@ assert simulation == {
     (9, 1), (9, 2), (9, 3), (9, 4), (9, 5), (9, 6), (9, 7), (9, 8), (9, 9)
 }
 
-# G.simulate(B)
+# G simulates B?
 simulates = G.simulates(B)
 simulation = maximumSimulation(B, G, set(product(B.S, G.S)))
 
@@ -61,7 +61,7 @@ assert simulation == {
     (9, 1), (9, 2), (9, 3), (9, 4)
 }
 
-# B.simulate(G)
+# B simulates G?
 simulates = B.simulates(G)
 simulation = maximumSimulation(G, B, set(product(G.S, B.S)))
 

@@ -75,25 +75,17 @@ def buildTrace (node):
 target = 7
 
 # DFS
-(Stack, Cache, numVisited) = initialize()
+Stack, Cache, numVisited = initialize()
 
-dfs(Stack, successors,
-    cache=cache,
-    cached=cached,
-    quit=quit
-)
+dfs(Stack, successors, cache=cache, cached=cached, quit=quit)
 
 assert numVisited == 4
 assert trace == [2, 6, 7]
 
 # BFS
-(Stack, Cache, numVisited) = initialize()
+Stack, Cache, numVisited = initialize()
 
-bfs(Stack, successors,
-    cache=cache,
-    cached=cached,
-    quit=quit
-)
+bfs(Stack, successors, cache=cache, cached=cached, quit=quit)
 
 assert numVisited == 7
 assert trace == [1, 4, 7]
@@ -104,26 +96,17 @@ assert trace == [1, 4, 7]
 target = 5
 
 # DFS
-(Stack, Cache, numVisited) = initialize()
+Stack, Cache, numVisited = initialize()
 
-dfs(Stack, successors,
-    cache=cache,
-    cached=cached,
-    quit=quit
-)
+dfs(Stack, successors, cache=cache, cached=cached, quit=quit)
 
 assert numVisited == 7
 assert trace == [2, 5]
 
 # BFS
-(Stack, Cache, numVisited) = initialize()
+Stack, Cache, numVisited = initialize()
 
-bfs(Stack, successors,
-    cache=cache,
-    cached=cached,
-    quit=quit
-)
-
+bfs(Stack, successors, cache=cache, cached=cached, quit=quit)
 
 assert numVisited == 4
 assert trace == [2, 5]

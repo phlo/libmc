@@ -13,20 +13,6 @@ BFS and DFS
 :func:`libmc.bfs` and :func:`libmc.dfs` implement a generic way to perform graph
 search.
 
-.. , using the following skeleton:
-..
-.. .. code-block:: python
-..
-  .. while stack:
-    .. current = dequeue(stack)
-..
-    .. for successor in successors(current):
-        .. if not cached(successor):
-            .. cache(successor)
-            .. enqueue(successor)
-..
-    .. if quit is not None and quit(current): return
-
 Consider this example graph:
 
 .. literalinclude:: ../../examples/bfs_dfs.py
@@ -68,31 +54,40 @@ To simplify repeated initialization of the global variables ``Cache``, ``Stack``
 and ``numVisited``, the following function is defined:
 
 .. literalinclude:: ../../examples/bfs_dfs.py
-   :lines: 56-61
+  :lines: 56-61
 
 Finally, the function generating the trace in ``quit()`` is given below:
 
 .. literalinclude:: ../../examples/bfs_dfs.py
-   :lines: 64-70
+  :lines: 64-70
 
 A search on the example graph can now be performed by using the previously
 defined components.
 
+.. literalinclude:: ../../examples/bfs_dfs.py
+  :lines: 75
+
 .. topic:: Breadth-First Search
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-     :lines: 90-96
+    :lines: 86
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-     :lines: 98-99
+    :lines: 88
+
+  .. literalinclude:: ../../examples/bfs_dfs.py
+    :lines: 90-91
 
 .. topic:: Depth-First Search
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-     :lines: 78-84
+    :lines: 78
 
   .. literalinclude:: ../../examples/bfs_dfs.py
-     :lines: 86-87
+    :lines: 80
+
+  .. literalinclude:: ../../examples/bfs_dfs.py
+    :lines: 82-83
 
 Tarjan's Algorithm
 ==================

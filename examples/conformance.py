@@ -2,7 +2,12 @@
 
 from libmc import FA
 
+# common alphabet
 Σ = ['a', 'b']
+
+################################################################################
+# implementation conforms to specification
+################################################################################
 
 # automaton modelling the implementation
 I = FA(
@@ -46,31 +51,7 @@ assert conforms
 assert not traces
 
 ################################################################################
-import utils
-
-fname = "/tmp/conforms-I.pdf"
-utils.dot2pdf(I.toDot(), fname)
-utils.pdf2png(fname)
-
-fname = "/tmp/conforms-S.pdf"
-utils.dot2pdf(S.toDot(), fname)
-utils.pdf2png(fname)
-
-fname = "/tmp/conforms-product.pdf"
-utils.dot2pdf(I.product(S).toDot(), fname)
-utils.pdf2png(fname)
-
-fname = "/tmp/conforms-power.pdf"
-utils.dot2pdf(S.power().toDot(), fname)
-utils.pdf2png(fname)
-
-fname = "/tmp/conforms-complement.pdf"
-utils.dot2pdf(S.power().complement().toDot(), fname)
-utils.pdf2png(fname)
-
-fname = "/tmp/conforms-true.pdf"
-utils.dot2pdf(ICPS.toDot(), fname)
-utils.pdf2png(fname)
+# implementation does not conforms specification
 ################################################################################
 
 # automaton modelling the implementation
@@ -97,24 +78,8 @@ S = FA(
     F = ['C']
 )
 
-# I doesn't conform to S
+# I does not conform to S
 conforms, ICPS, traces = I.conforms(S)
 
 assert not conforms
 assert traces
-
-fname = "/tmp/conforms-a.pdf"
-utils.dot2pdf(I.toDot(), fname)
-utils.pdf2png(fname)
-
-fname = "/tmp/conforms-b.pdf"
-utils.dot2pdf(S.toDot(), fname)
-utils.pdf2png(fname)
-
-fname = "/tmp/conforms-false.pdf"
-utils.dot2pdf(ICPS.toDot(traces[0]), fname)
-utils.pdf2png(fname)
-
-# visualize non-conforming path
-#  with open("/tmp/ICPS.dot", "w") as f:
-    #  f.write(ICPS.toDot(traces[0]))

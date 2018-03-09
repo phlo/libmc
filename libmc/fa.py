@@ -33,10 +33,12 @@ class FA (LTS):
 
     def toDot (self, highlight=[]):
         """
-        Return `Graphviz <https://www.graphviz.org/>`_ dot language string.
+        Return FA as `Graphviz <https://www.graphviz.org/>`_ dot language
+        string.
 
         Args:
-            highlight (list of transitions - optional): highlight a given path
+            highlight (list of transitions lists - optional): highlight the
+                given paths
 
         Returns:
             string: .dot file tweaked for dot2tex

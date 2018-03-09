@@ -223,8 +223,8 @@ class Boole:
             a while for larger formulae!
         """
         return [
-            (values, self.evaluate(values))
-            for values in
+            (assignment, self.evaluate(assignment))
+            for assignment in
             product([False, True], repeat=len(self.variables))
         ]
 
@@ -241,7 +241,8 @@ class Boole:
 
     def toAIG (self):
         """
-        Converts the formula to an AIG in the `AIGER <http://fmv.jku.at/aiger>`_ format.
+        Converts the formula to an AIG in the `AIGER <http://fmv.jku.at/aiger>`_
+        format.
 
         Returns:
             string: AIG representing the formula in the AIGER format

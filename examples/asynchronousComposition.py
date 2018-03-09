@@ -2,6 +2,7 @@
 
 from libmc import LTS, asynchronousComposition
 
+# example automata
 A1 = LTS(
     S = [1, 2, 3, 4],
     I = [1],

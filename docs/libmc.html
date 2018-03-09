@@ -283,7 +283,8 @@ values</td>
 <dl class="method">
 <dt id="libmc.Boole.toAIG">
 <code class="descname">toAIG</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/boole.html#Boole.toAIG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.Boole.toAIG" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts the formula to an AIG in the <a class="reference external" href="http://fmv.jku.at/aiger">AIGER</a> format.</p>
+<dd><p>Converts the formula to an AIG in the <a class="reference external" href="http://fmv.jku.at/aiger">AIGER</a>
+format.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -631,12 +632,14 @@ only reachable states are included (default)</li>
 <dl class="method">
 <dt id="libmc.FA.toDot">
 <code class="descname">toDot</code><span class="sig-paren">(</span><em>highlight=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/fa.html#FA.toDot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.FA.toDot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return <a class="reference external" href="https://www.graphviz.org/">Graphviz</a> dot language string.</p>
+<dd><p>Return FA as <a class="reference external" href="https://www.graphviz.org/">Graphviz</a> dot language
+string.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>highlight</strong> (<em>list of transitions - optional</em>) – highlight a given path</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>highlight</strong> (<em>list of transitions lists - optional</em>) – highlight the
+given paths</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">.dot file tweaked for dot2tex</td>
 </tr>
@@ -802,12 +805,14 @@ only reachable states are included (default)</li>
 <dl class="method">
 <dt id="libmc.LTS.toDot">
 <code class="descname">toDot</code><span class="sig-paren">(</span><em>highlight=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/libmc/lts.html#LTS.toDot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#libmc.LTS.toDot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return LTS as <a class="reference external" href="https://www.graphviz.org/">Graphviz</a> dot language string.</p>
+<dd><p>Return LTS as <a class="reference external" href="https://www.graphviz.org/">Graphviz</a> dot language
+string.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>highlight</strong> (<em>list of transitions - optional</em>) – highlight a given path</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>highlight</strong> (<em>list of transitions lists - optional</em>) – highlight the
+given paths</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">.dot file tweaked for dot2tex</td>
 </tr>

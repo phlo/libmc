@@ -63,7 +63,8 @@ def fa2dot (S, I, Σ, T, F, highlight = []):
         Σ: input alphabet
         T: transition relation T ⊆ SxΣxS
         F: set of final states F ⊆ S
-        highlight (list of transitions - optional): highlight a given path
+        highlight (list of transitions lists - optional): highlight the given
+            paths
 
     Returns:
         string: .dot file tweaked for dot2tex

@@ -37,10 +37,3 @@ assert C.I == F.I
 assert C.Σ == F.Σ
 assert C.T == F.T
 assert C.F == [1, 2, 3, 4, 5]
-
-################################################################################
-#  import utils
-#
-#  fname = "/tmp/fa.pdf"
-#  utils.dot2pdf(F.toDot(), fname)
-#  utils.pdf2png(fname)

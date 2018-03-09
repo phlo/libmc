@@ -263,15 +263,15 @@ and <code class="docutils literal"><span class="pre">numVisited</span></code>, t
 </div>
 <p>A search on the example graph can now be performed by using the previously
 defined components.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="mi">7</span>
+</pre></div>
+</div>
 <div class="topic">
 <p class="topic-title first">Breadth-First Search</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Stack</span><span class="p">,</span> <span class="n">Cache</span><span class="p">,</span> <span class="n">numVisited</span><span class="p">)</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">()</span>
-
-<span class="n">bfs</span><span class="p">(</span><span class="n">Stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span>
-    <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
-    <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">,</span>
-    <span class="n">quit</span><span class="o">=</span><span class="n">quit</span>
-<span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Stack</span><span class="p">,</span> <span class="n">Cache</span><span class="p">,</span> <span class="n">numVisited</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">bfs</span><span class="p">(</span><span class="n">Stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">,</span> <span class="n">quit</span><span class="o">=</span><span class="n">quit</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">numVisited</span> <span class="o">==</span> <span class="mi">7</span>
@@ -281,13 +281,10 @@ defined components.</p>
 </div>
 <div class="topic">
 <p class="topic-title first">Depth-First Search</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Stack</span><span class="p">,</span> <span class="n">Cache</span><span class="p">,</span> <span class="n">numVisited</span><span class="p">)</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">()</span>
-
-<span class="n">dfs</span><span class="p">(</span><span class="n">Stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span>
-    <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
-    <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">,</span>
-    <span class="n">quit</span><span class="o">=</span><span class="n">quit</span>
-<span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Stack</span><span class="p">,</span> <span class="n">Cache</span><span class="p">,</span> <span class="n">numVisited</span> <span class="o">=</span> <span class="n">initialize</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dfs</span><span class="p">(</span><span class="n">Stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">,</span> <span class="n">quit</span><span class="o">=</span><span class="n">quit</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">numVisited</span> <span class="o">==</span> <span class="mi">4</span>

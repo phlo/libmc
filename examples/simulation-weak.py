@@ -4,6 +4,7 @@ from itertools import product
 
 from libmc import LTS, maximumSimulation
 
+# example automata
 A1 = LTS(
     S = [1, 2, 3],
     I = [1],
@@ -46,14 +47,14 @@ assert simulation == {
     (5, 1),         (5, 3), (5, 4), (5, 5)
 }
 
-# A1.simulate(A2)
+# A1 simulates A2?
 simulates = A1.simulates(A2, τ)
 simulation = maximumSimulation(A2, A1, set(product(A2.S, A1.S)), τ)
 
 assert simulates
 assert simulation == {(4, 1), (4, 3), (5, 1), (5, 3)}
 
-# A2.simulate(A1)
+# A2 simulates A1?
 simulates = A2.simulates(A1, τ)
 simulation = maximumSimulation(A1, A2, set(product(A1.S, A2.S)), τ)
 

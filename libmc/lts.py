@@ -40,10 +40,12 @@ class LTS:
 
     def toDot (self, highlight=[]):
         """
-        Return LTS as `Graphviz <https://www.graphviz.org/>`_ dot language string.
+        Return LTS as `Graphviz <https://www.graphviz.org/>`_ dot language
+        string.
 
         Args:
-            highlight (list of transitions - optional): highlight a given path
+            highlight (list of transitions lists - optional): highlight the
+                given paths
 
         Returns:
             string: .dot file tweaked for dot2tex

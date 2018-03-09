@@ -384,8 +384,8 @@
 <span class="sd">            a while for larger formulae!</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span>
+            <span class="p">(</span><span class="n">assignment</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">assignment</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span>
             <span class="n">product</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">))</span>
         <span class="p">]</span></div>
 
@@ -402,7 +402,8 @@
 
 <div class="viewcode-block" id="Boole.toAIG"><a class="viewcode-back" href="../../libmc.html#libmc.Boole.toAIG">[docs]</a>    <span class="k">def</span> <span class="nf">toAIG</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Converts the formula to an AIG in the `AIGER &lt;http://fmv.jku.at/aiger&gt;`_ format.</span>
+<span class="sd">        Converts the formula to an AIG in the `AIGER &lt;http://fmv.jku.at/aiger&gt;`_</span>
+<span class="sd">        format.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            string: AIG representing the formula in the AIGER format</span>

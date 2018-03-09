@@ -344,9 +344,9 @@ are lists instead of sets.</p>
 </div>
 <div class="section" id="traces">
 <h2>Traces<a class="headerlink" href="#traces" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="libmc.html#libmc.LTS.trace" title="libmc.LTS.trace"><code class="xref py py-func docutils literal"><span class="pre">trace()</span></code></a> method offers a way to find all traces from one
+<p>The <a class="reference internal" href="libmc.html#libmc.LTS.trace" title="libmc.LTS.trace"><code class="xref py py-func docutils literal"><span class="pre">trace()</span></code></a> method offers a way to find all paths from one
 state to another:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># find the way to milk chocolate</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># find the milky way</span>
 <span class="n">traces</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -405,7 +405,7 @@ the <a class="reference internal" href="libmc.html#libmc.FA.conforms" title="lib
 <div class="section" id="simulation">
 <h2>Simulation<a class="headerlink" href="#simulation" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="libmc.html#libmc.LTS.simulates" title="libmc.LTS.simulates"><code class="xref py py-func docutils literal"><span class="pre">simulates()</span></code></a> can be used to check if a <a class="reference internal" href="libmc.html#libmc.LTS" title="libmc.LTS"><code class="xref py py-class docutils literal"><span class="pre">libmc.LTS</span></code></a> simulates another.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># G.simulate(B)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># G simulates B?</span>
 <span class="n">simulates</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">simulates</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
 <span class="n">simulation</span> <span class="o">=</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span>
 </pre></div>
@@ -420,7 +420,7 @@ the <a class="reference internal" href="libmc.html#libmc.FA.conforms" title="lib
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># B.simulate(G)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># B simulates G?</span>
 <span class="n">simulates</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">simulates</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
 <span class="n">simulation</span> <span class="o">=</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">S</span><span class="p">)))</span>
 </pre></div>
@@ -502,7 +502,7 @@ the <a class="reference internal" href="libmc.html#libmc.FA.conforms" title="lib
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># A1.simulate(A2)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># A1 simulates A2?</span>
 <span class="n">simulates</span> <span class="o">=</span> <span class="n">A1</span><span class="o">.</span><span class="n">simulates</span><span class="p">(</span><span class="n">A2</span><span class="p">,</span> <span class="n">τ</span><span class="p">)</span>
 <span class="n">simulation</span> <span class="o">=</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A2</span><span class="p">,</span> <span class="n">A1</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span>
 </pre></div>
@@ -511,7 +511,7 @@ the <a class="reference internal" href="libmc.html#libmc.FA.conforms" title="lib
 <span class="k">assert</span> <span class="n">simulation</span> <span class="o">==</span> <span class="p">{(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)}</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># A2.simulate(A1)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># A2 simulates A1?</span>
 <span class="n">simulates</span> <span class="o">=</span> <span class="n">A2</span><span class="o">.</span><span class="n">simulates</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">τ</span><span class="p">)</span>
 <span class="n">simulation</span> <span class="o">=</span> <span class="n">maximumSimulation</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">A2</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">A1</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">A2</span><span class="o">.</span><span class="n">S</span><span class="p">)),</span> <span class="n">τ</span><span class="p">)</span>
 </pre></div>
@@ -525,7 +525,7 @@ the <a class="reference internal" href="libmc.html#libmc.FA.conforms" title="lib
 <h3>Bisimulation<a class="headerlink" href="#bisimulation" title="Permalink to this headline">¶</a></h3>
 <p>Bisimulations are tested in a similar manner by using
 <a class="reference internal" href="libmc.html#libmc.LTS.bisimulates" title="libmc.LTS.bisimulates"><code class="xref py py-func docutils literal"><span class="pre">bisimulates()</span></code></a> and <a class="reference internal" href="libmc.html#libmc.maximumBisimulation" title="libmc.maximumBisimulation"><code class="xref py py-func docutils literal"><span class="pre">libmc.maximumBisimulation()</span></code></a>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># does G bisimulate B</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># G bisimulates B?</span>
 <span class="n">simulates</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">bisimulates</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -701,8 +701,8 @@ $ dot2tex --template<span class="o">=</span>dot2tex-template.tex /tmp/milner-non
 </pre></div>
 </div>
 <p>Using this minimal
-<a class="reference download internal" href="_downloads/dot2tex-template.tex" download=""><code class="xref download docutils literal"><span class="pre">dot2tex</span> <span class="pre">latex</span> <span class="pre">template</span></code></a>
-results in the following graphs:</p>
+<a class="reference download internal" href="_downloads/dot2tex-template.tex" download=""><code class="xref download docutils literal"><span class="pre">dot2tex</span> <span class="pre">latex</span> <span class="pre">template</span></code></a> results
+in the following graphs:</p>
 <img alt="_images/milner-deterministic.png" src="_images/milner-deterministic.png" />
 <img alt="_images/milner-nondeterministic.png" class="align-right" src="_images/milner-nondeterministic.png" />
 <div class="section" id="highlighting-paths">

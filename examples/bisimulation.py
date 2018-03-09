@@ -36,7 +36,7 @@ simulation = \
     maximumBisimulation(B, G, set(product(B.S, G.S))) | \
     maximumBisimulation(B, B, set(product(B.S, B.S)))
 
-# does G bisimulate B
+# G bisimulates B?
 simulates = G.bisimulates(B)
 
 assert not simulates

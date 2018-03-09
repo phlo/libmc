@@ -35,10 +35,6 @@ Parsing
 
 Parsing a Boole formula is done by creating a :class:`libmc.Boole` object:
 
-..
-.. .. literalinclude:: ../../examples/boole.py
-   .. :lines: 6-7,15-16,24
-
 .. literalinclude:: ../../examples/boole.py
   :lines: 6
 
@@ -73,7 +69,7 @@ formula into other representations.
 To AIG
 ------
 
-Convert a Boole formula to an AIG in the `AIGER <http://fmv.jku.at/aiger>`_ 
+Convert a Boole formula to an AIG in the `AIGER <http://fmv.jku.at/aiger>`_
 format with :func:`~libmc.Boole.toAIG`:
 
 .. literalinclude:: ../../examples/boole.py

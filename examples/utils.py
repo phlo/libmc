@@ -35,7 +35,16 @@ def run (cmd, **kwargs):
     return proc.stdout
 
 def dot2pdf (dot, pdfName, prog="dot", template=None):
-    """Convert the given DOT string into a PDF."""
+    """
+    Convert the given DOT string into a PDF.
+
+    Args:
+        dot (string): dot language string
+        pdfName (string): PDF file name
+        prog (string - optional): layout program (default: dot)
+        template (string - optional): dot2tex template file name
+            (default: None)
+    """
     dot2tex = [
         "dot2tex",
         "--prog " + prog,
