@@ -2,7 +2,7 @@
 
 __author__  = "Florian Schroegendorfer"
 __email__   = "florian.schroegendorfer@phlo.at"
-__license__ = "GPLv3"
+__license__ = "MIT"
 __version__ = "2017.4"
 
 from .traversal import bfs, dfs
