@@ -198,13 +198,29 @@
 <span class="sd">        string.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            highlight (list of transitions lists - optional): highlight the</span>
+<span class="sd">            highlight (list of transition lists - optional): highlight the</span>
 <span class="sd">                given paths</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            string: .dot file tweaked for dot2tex</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">fa2dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="n">highlight</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FA.toTex"><a class="viewcode-back" href="../../libmc.html#libmc.FA.toTex">[docs]</a>    <span class="k">def</span> <span class="nf">toTex</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">highlight</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return LTS as TikZ based LaTeX figure (tikzpicture).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            highlight (list of transition lists - optional): highlight the</span>
+<span class="sd">                given paths</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            string: .tex file (tikzpicture)</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Requires manual positioning!</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">fa2tex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Σ</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="n">highlight</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FA.product"><a class="viewcode-back" href="../../libmc.html#libmc.FA.product">[docs]</a>    <span class="k">def</span> <span class="nf">product</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

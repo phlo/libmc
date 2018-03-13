@@ -37,13 +37,29 @@ class FA (LTS):
         string.
 
         Args:
-            highlight (list of transitions lists - optional): highlight the
+            highlight (list of transition lists - optional): highlight the
                 given paths
 
         Returns:
             string: .dot file tweaked for dot2tex
         """
         return fa2dot(self.S, self.I, self.Σ, self.T, self.F, highlight)
+
+    def toTex (self, highlight=[]):
+        """
+        Return LTS as TikZ based LaTeX figure (tikzpicture).
+
+        Args:
+            highlight (list of transition lists - optional): highlight the
+                given paths
+
+        Returns:
+            string: .tex file (tikzpicture)
+
+        Note:
+            Requires manual positioning!
+        """
+        return fa2tex(self.S, self.I, self.Σ, self.T, self.F, highlight)
 
     def product (self, other, full=False):
         """

@@ -75,20 +75,38 @@ assert P.T == [
     ([9], 'p', [])
 ]
 
-# visualization
+# visualization (toDot)
 dot = G.toDot()
-with open("/tmp/milner-deterministic.dot", 'w') as f:
+with open("/tmp/milner-deterministic-toDot.dot", 'w') as f:
     f.write(dot)
 
 dot = B.toDot()
-with open("/tmp/milner-nondeterministic.dot", 'w') as f:
+with open("/tmp/milner-nondeterministic-toDot.dot", 'w') as f:
     f.write(dot)
 
-# highlight the way to milk chocolate
+# visualization (toTex)
+tex = G.toTex()
+with open("/tmp/milner-deterministic-toTex.tex", 'w') as f:
+    f.write(tex)
+
+tex = B.toTex()
+with open("/tmp/milner-nondeterministic-toTex.tex", 'w') as f:
+    f.write(tex)
+
+# highlight the way to milk chocolate (toDot)
 dot = G.toDot(G.trace(4))
-with open("/tmp/milner-deterministic-milkyway.dot", 'w') as f:
+with open("/tmp/milner-deterministic-milkyway-toDot.dot", 'w') as f:
     f.write(dot)
 
 dot = B.toDot(B.trace(9))
-with open("/tmp/milner-nondeterministic-milkyway.dot", 'w') as f:
+with open("/tmp/milner-nondeterministic-milkyway-toDot.dot", 'w') as f:
     f.write(dot)
+
+# highlight the way to milk chocolate (toTex)
+tex = G.toTex(G.trace(4))
+with open("/tmp/milner-deterministic-milkyway-toTex.tex", 'w') as f:
+    f.write(tex)
+
+tex = B.toTex(B.trace(9))
+with open("/tmp/milner-nondeterministic-milkyway-toTex.tex", 'w') as f:
+    f.write(tex)

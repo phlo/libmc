@@ -52,7 +52,7 @@ def printRelation (relation, A, B):
             ) + " |"
         )
 
-def fa2dot (S, I, Σ, T, F, highlight = []):
+def fa2dot (S, I, Σ, T, F, highlight=[]):
     """
     Returns graphical representation of given automaton (using `Graphviz
     <https://www.graphviz.org/>`_).
@@ -63,7 +63,7 @@ def fa2dot (S, I, Σ, T, F, highlight = []):
         Σ: input alphabet
         T: transition relation T ⊆ SxΣxS
         F: set of final states F ⊆ S
-        highlight (list of transitions lists - optional): highlight the given
+        highlight (list of transition lists - optional): highlight the given
             paths
 
     Returns:
@@ -103,4 +103,61 @@ digraph FSM {
         )
 
     tex += "}"
+    return tex
+
+def fa2tex (S, I, Σ, T, F, highlight=[]):
+    """
+    Returns graphical representation of given automaton (pure TikZ).
+
+    Args:
+        S: set of states
+        I: set of initial states I ⊆ S
+        Σ: input alphabet
+        T: transition relation T ⊆ SxΣxS
+        F: set of final states F ⊆ S
+        highlight (list of transition lists - optional): highlight the given
+            paths
+
+    Returns:
+        string: .tex file (tikzpicture)
+
+    Note:
+        Requires manual positioning!
+    """
+    tex = """\
+% requires following LaTex preamble:
+% \\usepackage{pgf}
+% \\usepackage{tikz}
+% \\usetikzlibrary{arrows,automata}
+\\begin{tikzpicture}[shorten >=1pt,node distance=2cm,auto,initial text=]
+
+"""
+    # generate nodes
+    tex += "  % manual positioning required!\n"
+    for s in S:
+        tex += "  {:<30}{:<29}{};\n".format(
+            "\\node[state" + \
+                (",initial" if s in I else ",accepting" if s in F else "") + \
+                (",draw=red" if any(
+                    s == t[0] or s == t[2] for trace in highlight for t in trace
+                ) else "") + \
+                "]",
+            "({})".format(s),
+            "{{${}$}}".format(formatState(s)))
+
+    tex += "\n"
+
+    # generate paths
+    for t in T:
+        tex += "  {:<19}{:<6}{:<20}{:<14}{:<6}{};\n".format(
+            "\\path[->{}]".format(
+                ",draw=red" if any(t in trace for trace in highlight) else ""
+            ),
+            "({})".format(t[0]),
+            "edge",
+            "node",
+            "{{${}$}}".format(t[1]),
+            "({})".format(t[2]))
+
+    tex += "\\end{tikzpicture}"
     return tex

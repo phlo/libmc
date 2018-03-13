@@ -16,6 +16,10 @@ Labelled transition systems are created using the :class:`libmc.LTS` class:
 .. literalinclude:: ../../examples/lts.py
   :lines: 5-28
 
+.. note::
+  Due to limitations of sets in python (hashability), automata components are
+  lists instead of sets.
+
 .. _fa:
 
 Finite Automata
@@ -76,10 +80,6 @@ Power automata are created with the :func:`~libmc.LTS.power` method:
 .. literalinclude:: ../../examples/lts.py
   :lines: 57-76
 
-.. note::
-  Due to limitations of sets in python (hashability), power automata states
-  are lists instead of sets.
-
 Complement
 ==========
 
@@ -95,8 +95,8 @@ The complement of a :class:`libmc.FA` is created with the
 Traces
 ======
 
-The :func:`~libmc.LTS.trace` method offers a way to find all paths from one
-state to another:
+The :func:`~libmc.LTS.trace` method offers a way to find all paths (list of
+transitions) from one state to another:
 
 .. literalinclude:: ../../examples/trace.py
   :lines: 17-18
@@ -122,7 +122,7 @@ the :func:`~libmc.FA.conforms` method:
 Simulation
 ==========
 
-:func:`~libmc.LTS.simulates` can be used to check if a :class:`libmc.LTS` simulates another.
+:func:`~libmc.LTS.simulates` can be used to check if a :class:`libmc.LTS` simulates another:
 
 .. literalinclude:: ../../examples/simulation-strong.py
   :lines: 51-53
@@ -229,9 +229,15 @@ of the components used for local expansion:
 Visualization
 =============
 
-Last but not least, :func:`~libmc.LTS.toDot` offers a way to generate a
-graphical representation of the given automaton using `Graphviz`_ in combination
-with `dot2tex`_.
+Last but not least, automata may be visualized in two ways: either using the
+`DOT`_ language or as a customizable `TikZ`_ based LaTeX figure.
+
+DOT
+---
+
+:func:`~libmc.LTS.toDot` offers an easy way to generate a graphical
+representation of the given automaton using `Graphviz`_ in combination with
+`dot2tex`_:
 
 .. literalinclude:: ../../examples/lts.py
   :lines: 79-81
@@ -239,27 +245,28 @@ with `dot2tex`_.
 .. literalinclude:: ../../examples/lts.py
   :lines: 83-85
 
-After generating the DOT language string, use `dot2tex`_ to convert it into a
+After generating the `DOT`_ language string, use `dot2tex`_ to convert it into a
 `TikZ`_ based LaTeX figure:
 
 .. code-block:: shell
 
-  $ dot2tex --template=dot2tex-template.tex /tmp/milner-deterministic.dot > /tmp/milner-deterministic.tex
-  $ dot2tex --template=dot2tex-template.tex /tmp/milner-nondeterministic.dot > /tmp/milner-nondeterministic.tex
+  $ dot2tex --template=dot2tex-template.tex /tmp/milner-deterministic-toDot.dot > /tmp/milner-deterministic-toDot.tex
+  $ dot2tex --template=dot2tex-template.tex /tmp/milner-nondeterministic-toDot.dot > /tmp/milner-nondeterministic-toDot.tex
 
 Using this minimal
 :download:`dot2tex latex template<../../examples/dot2tex-template.tex>` results
 in the following graphs:
 
-.. image:: img/milner-deterministic.png
+.. image:: img/milner-deterministic-toDot.png
 
-.. image:: img/milner-nondeterministic.png
+.. image:: img/milner-nondeterministic-toDot.png
   :align: right
 
-Highlighting Paths
-------------------
+TikZ
+----
 
-Additionally, :func:`~libmc.LTS.toDot` is able to highlight specific paths:
+:func:`~libmc.LTS.toTex` generates a customizable `TikZ`_ based LaTeX figure
+(tikzpicture):
 
 .. literalinclude:: ../../examples/lts.py
   :lines: 88-90
@@ -267,11 +274,95 @@ Additionally, :func:`~libmc.LTS.toDot` is able to highlight specific paths:
 .. literalinclude:: ../../examples/lts.py
   :lines: 92-94
 
-.. image:: img/milner-deterministic-milkyway.png
+In case of the deterministic version of Milner's vending machine it returns:
 
-.. image:: img/milner-nondeterministic-milkyway.png
+.. code-block:: latex
+
+  % requires following LaTex preamble:
+  % \usepackage{tikz}
+  % \usetikzlibrary{arrows,automata}
+  \begin{tikzpicture}[shorten >=1pt,node distance=2cm,auto,initial text=]
+
+    % manual positioning required!
+    \node[state,initial]          (1)                          {$1$};
+    \node[state]                  (2)                          {$2$};
+    \node[state]                  (3)                          {$3$};
+    \node[state]                  (4)                          {$4$};
+
+    \path[->]          (1)   edge                node          {$p$} (2);
+    \path[->]          (2)   edge                node          {$d$} (3);
+    \path[->]          (2)   edge                node          {$m$} (4);
+  \end{tikzpicture}
+
+Since no automatic layouting is performed, nodes need to be placed manually.
+This might be beneficial if the `DOT`_ file's layout is suboptimal.
+To do so, just add the usual `TikZ`_ directives:
+
+.. code-block:: latex
+  :emphasize-lines: 8-10
+
+  % requires following LaTex preamble:
+  % \usepackage{tikz}
+  % \usetikzlibrary{arrows,automata}
+  \begin{tikzpicture}[shorten >=1pt,node distance=2cm,auto,initial text=]
+
+    % manual positioning required!
+    \node[state,initial]          (1)                          {$1$};
+    \node[state]                  (2) [below of=1]             {$2$};
+    \node[state]                  (3) [below left of=2]        {$3$};
+    \node[state]                  (4) [below right of=2]       {$4$};
+
+    \path[->]          (1)   edge                node          {$p$} (2);
+    \path[->]          (2)   edge                node          {$d$} (3);
+    \path[->]          (2)   edge                node          {$m$} (4);
+  \end{tikzpicture}
+
+The resulting graphs are shown below:
+
+.. image:: img/milner-deterministic-toTex.png
+
+.. image:: img/milner-nondeterministic-toTex.png
   :align: right
 
+Highlighting Paths
+------------------
+
+Additionally, :func:`~libmc.LTS.toDot` and :func:`~libmc.LTS.toTex` are able to
+highlight specific paths by passing a list of traces.
+
+.. topic:: Using :func:`~libmc.LTS.toDot`
+
+  .. literalinclude:: ../../examples/lts.py
+    :lines: 97
+
+  .. literalinclude:: ../../examples/lts.py
+    :lines: 101
+
+  .. image:: img/milner-deterministic-milkyway-toDot.png
+
+  .. image:: img/milner-nondeterministic-milkyway-toDot.png
+    :align: right
+
+  |
+  |
+
+.. topic:: Using :func:`~libmc.LTS.toTex`
+
+  .. literalinclude:: ../../examples/lts.py
+    :lines: 106
+
+  .. literalinclude:: ../../examples/lts.py
+    :lines: 110
+
+  .. image:: img/milner-deterministic-milkyway-toTex.png
+
+  .. image:: img/milner-nondeterministic-milkyway-toTex.png
+    :align: right
+
+  |
+  |
+
 .. _Graphviz: https://www.graphviz.org
+.. _DOT: https://graphviz.gitlab.io/_pages/pdf/dotguide.pdf
 .. _TikZ: http://mirror.kumi.systems/ctan/graphics/pgf/base/doc/pgfmanual.pdf
 .. _dot2tex: https://dot2tex.readthedocs.io

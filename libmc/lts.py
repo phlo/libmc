@@ -1,7 +1,7 @@
 from functools import reduce
 from itertools import chain, combinations, product
 
-from .printing import fa2dot
+from .printing import fa2dot, fa2tex
 from .traversal import dfs
 
 def powerset (s):
@@ -44,13 +44,29 @@ class LTS:
         string.
 
         Args:
-            highlight (list of transitions lists - optional): highlight the
+            highlight (list of transition lists - optional): highlight the
                 given paths
 
         Returns:
             string: .dot file tweaked for dot2tex
         """
         return fa2dot(self.S, self.I, self.Σ, self.T, [], highlight)
+
+    def toTex (self, highlight=[]):
+        """
+        Return LTS as TikZ based LaTeX figure (tikzpicture).
+
+        Args:
+            highlight (list of transition lists - optional): highlight the
+                given paths
+
+        Returns:
+            string: .tex file (tikzpicture)
+
+        Note:
+            Requires manual positioning!
+        """
+        return fa2tex(self.S, self.I, self.Σ, self.T, [], highlight)
 
     def isComplete (self):
         """Completeness (p21): True if LTS is complete."""
