@@ -60,13 +60,13 @@ def tarjan (nodes, edges):
             return i
 
         # generate the node's SCC
-        child = None
-        while child != node:
+        def add2scc (node):
             child = stack.pop()
-
             scc.setdefault(node, []).append(child)
-
             mrdfsi[child] = inf
+            return child
+
+        while add2scc(node) != node: pass
 
         return i
 
@@ -78,12 +78,5 @@ def tarjan (nodes, edges):
     return [
         sorted(scc[node])
         for node in nodes
-        if
-            node in scc
-            and
-            (
-                len(scc[node]) > 1
-                or
-                (node, node) in edges
-            )
+        if node in scc and (len(scc[node]) > 1 or (node, node) in edges)
     ]

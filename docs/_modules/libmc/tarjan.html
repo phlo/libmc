@@ -221,13 +221,13 @@
             <span class="k">return</span> <span class="n">i</span>
 
         <span class="c1"># generate the node&#39;s SCC</span>
-        <span class="n">child</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">while</span> <span class="n">child</span> <span class="o">!=</span> <span class="n">node</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">add2scc</span> <span class="p">(</span><span class="n">node</span><span class="p">):</span>
             <span class="n">child</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-
             <span class="n">scc</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
-
             <span class="n">mrdfsi</span><span class="p">[</span><span class="n">child</span><span class="p">]</span> <span class="o">=</span> <span class="n">inf</span>
+            <span class="k">return</span> <span class="n">child</span>
+
+        <span class="k">while</span> <span class="n">add2scc</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">!=</span> <span class="n">node</span><span class="p">:</span> <span class="k">pass</span>
 
         <span class="k">return</span> <span class="n">i</span>
 
@@ -239,14 +239,7 @@
     <span class="k">return</span> <span class="p">[</span>
         <span class="nb">sorted</span><span class="p">(</span><span class="n">scc</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span>
-        <span class="k">if</span>
-            <span class="n">node</span> <span class="ow">in</span> <span class="n">scc</span>
-            <span class="ow">and</span>
-            <span class="p">(</span>
-                <span class="nb">len</span><span class="p">(</span><span class="n">scc</span><span class="p">[</span><span class="n">node</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span>
-                <span class="ow">or</span>
-                <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="ow">in</span> <span class="n">edges</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">scc</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scc</span><span class="p">[</span><span class="n">node</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">)</span>
     <span class="p">]</span></div>
 </pre></div>
 
