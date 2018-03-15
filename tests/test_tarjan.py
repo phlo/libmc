@@ -7,8 +7,13 @@ class TestTarjan (unittest.TestCase):
     # example from lecture slides (p108)
     #
     # SCC
+    # * [1]
+    # * [2]
     # * [3, 7, 8]
-    # * [6]
+    # * [4]
+    # * [5]
+    # * [6] lasso
+    # * [9]
     # * [10, 11, 12]
     def test_1 (self):
         states = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -35,7 +40,7 @@ class TestTarjan (unittest.TestCase):
 
         self.assertEqual(
             tarjan(states, edges),
-            [[3, 7, 8], [6], [10, 11, 12]]
+            [[1], [2], [3, 7, 8], [4], [5], [6], [9], [10, 11, 12]]
         )
 
     # example from wikipedia
@@ -84,5 +89,5 @@ class TestTarjan (unittest.TestCase):
 
         self.assertEqual(
             tarjan(states, edges),
-            [['A', 'B', 'D', 'E', 'H', 'I'], ['C', 'F', 'G', 'J']]
+            [['A', 'B', 'D', 'E', 'H', 'I'], ['C', 'F', 'G', 'J'], ['K']]
         )
