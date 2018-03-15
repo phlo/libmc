@@ -367,8 +367,8 @@ def asynchronousComposition (*lts, partialOrderReduction=None):
     """
     S = set(product(*[ l.I for l in lts ]))
     I = sorted(S)
-    Σ = set.union(*[ set(l.Σ) for l in lts ])
-    T = set()
+    Σ = { a for l in lts for a in l.Σ }
+    T = []
 
     # set of component indices
     components = range(len(lts))
@@ -386,33 +386,55 @@ def asynchronousComposition (*lts, partialOrderReduction=None):
     # map of symbols to the set of components knowing that symbol
     Ψ = { a: { i for i in components if a in lts[i].Σ } for a in Σ }
 
+    # optimize successor lookup (component -> symbol -> state -> successors)
+    componentTransitions = {}
+    for i in components:
+        for s, a, t in [ t for t in lts[i].T ]:
+            componentTransitions \
+                .setdefault(i, {}) \
+                .setdefault(a, {}) \
+                .setdefault(s, []) \
+                .append(t)
+
     # initialize dfs stack
-    stack = list(I)
+    stack = [ (i, [i]) for i in I ]
+
+    # current path during dfs (to detect back edges)
+    path = None
 
     # on-the-fly generation of reachable states (dfs)
-    def enqueue (successor): stack.append(successor[2])
+    def enqueue (successor): stack.append((successor, path + [successor]))
 
-    def cache (successor):
-        S.add(successor[2])
-        T.add(successor)
+    def cache (successor): S.add(successor)
 
-    def cached (successor): return successor in T
+    def cached (successor): return successor in S
 
-    def successors (fromState):
+    def successors (current):
+        nonlocal path
+        fromState, path = current
+
         # dictionary containing successors per symbol and component state
         nextStates = {}
-
         for i in components:
-            for (s, a, t) in [ t for t in lts[i].T if t[0] == fromState[i] ]:
-                nextStates.setdefault(a, {}).setdefault(i, []).append(t)
+            for a in componentTransitions[i]:
+                for s in componentTransitions[i][a]:
+                    if s == fromState[i]:
+                        nextStates \
+                            .setdefault(a, {}) \
+                            .setdefault(i, componentTransitions[i][a][s])
+
+        # generates all successors of a given symbol
+        def toStates (a):
+            return product(*[
+                nextStates[a].get(i, [fromState[i]]) for i in components
+            ])
 
         # perform partial order reduction
         if partialOrderReduction:
 
             # index of components with local states
             local = [
-                i
-                for i in components
+                i for i in components
                 if
                     # component i has a successor
                     any(i in nextStates[a] for a in nextStates)
@@ -425,27 +447,39 @@ def asynchronousComposition (*lts, partialOrderReduction=None):
                     )
             ]
 
-            # partial expansion
+            # current state is local
             if local:
+
+                # select component for partial expansion
                 local = partialOrderReduction(local)
 
-                # unset successors of skipped components
-                for a in nextStates:
-                    for i in { i for i in components if i not in local }:
-                        if i in nextStates[a]:
-                            del nextStates[a][i]
+                # fully expand cycles with only partial expansion
+                expandCycle = any(
+                    any(s in path for s in toStates(a))
+                    for i in local
+                    for a in Λ[i]
+                    if a in nextStates
+                )
+
+                # partial expansion - unset successors of skipped components
+                if not expandCycle:
+                    for a in nextStates:
+                        for i in [ i for i in components if i not in local ]:
+                            if i in nextStates[a]:
+                                del nextStates[a][i]
+
+        transitions = [
+            (fromState, a, toState)
+            for a in sorted(nextStates.keys(), reverse=True)
+            if Ψ[a] == nextStates[a].keys()
+            for toState in toStates(a)
+        ]
+
+        # add transitions
+        T.extend(transitions)
 
         # return expansion
-        return [
-            (fromState, a, toState)
-            for a in nextStates
-            if Ψ[a] == nextStates[a].keys()
-            for toState in
-                product(*[
-                    nextStates[a].setdefault(i, [fromState[i]])
-                    for i in components
-                ])
-        ]
+        return [ t for _, _, t in transitions ]
 
     dfs(stack, successors, enqueue=enqueue, cache=cache, cached=cached)
 

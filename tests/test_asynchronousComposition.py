@@ -4,6 +4,9 @@ from libmc import asynchronousComposition, LTS
 
 class TestAsynchronousComposition (unittest.TestCase):
 
+    def setUp (self):
+        self.maxDiff = None
+
     # simple example presented in the lecture (p89)
     def test_VO (self):
         A = LTS (
@@ -247,13 +250,23 @@ class TestAsynchronousComposition (unittest.TestCase):
         self.assertEqual(
             composition.T,
             [
-                ((1, 'A', 5), 'c', (1, 'A', 6)), ((1, 'A', 6), 'b', (1, 'B', 6)),
-                ((1, 'B', 6), 'a', (2, 'B', 6)), ((1, 'B', 6), 'c', (1, 'B', 7)),
-                ((1, 'B', 6), 't', (1, 'B', 6)), ((1, 'B', 7), 'a', (2, 'B', 7)),
-                ((2, 'B', 6), 'a', (3, 'B', 6)), ((2, 'B', 7), 'a', (3, 'B', 7)),
-                ((3, 'B', 6), 'c', (3, 'B', 7)), ((3, 'B', 6), 's', (4, 'C', 6)),
-                ((3, 'B', 7), 's', (4, 'C', 7)), ((4, 'C', 6), 'b', (4, 'D', 6)),
-                ((4, 'C', 7), 'b', (4, 'D', 7)), ((4, 'D', 6), 'b', (4, 'C', 6)),
+                ((1, 'A', 5), 'c', (1, 'A', 6)),
+                ((1, 'A', 6), 'b', (1, 'B', 6)),
+                ((1, 'B', 6), 'a', (2, 'B', 6)),
+                ((1, 'B', 6), 'c', (1, 'B', 7)),
+                ((1, 'B', 6), 't', (1, 'B', 6)),
+                ((1, 'B', 7), 'a', (2, 'B', 7)),
+                ((2, 'B', 6), 'a', (3, 'B', 6)),
+                ((2, 'B', 7), 'a', (3, 'B', 7)),
+                ((3, 'B', 6), 'c', (3, 'B', 7)),
+                ((3, 'B', 6), 's', (4, 'C', 6)),
+                ((3, 'B', 7), 's', (4, 'C', 7)),
+                ((4, 'C', 6), 'b', (4, 'D', 6)),
+                ((4, 'C', 7), 'b', (4, 'D', 7)),
+                ((4, 'D', 6), 'a', (4, 'D', 6)),
+                ((4, 'D', 6), 'b', (4, 'C', 6)),
+                ((4, 'D', 6), 'c', (4, 'D', 7)),
+                ((4, 'D', 7), 'a', (4, 'D', 7)),
                 ((4, 'D', 7), 'b', (4, 'C', 7))
             ],
             "partialOrderReduction: transitions"
