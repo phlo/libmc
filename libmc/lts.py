@@ -386,16 +386,6 @@ def asynchronousComposition (*lts, partialOrderReduction=None):
     # map of symbols to the set of components knowing that symbol
     Ψ = { a: { i for i in components if a in lts[i].Σ } for a in Σ }
 
-    # optimize successor lookup (component -> symbol -> state -> successors)
-    componentTransitions = {}
-    for i in components:
-        for s, a, t in [ t for t in lts[i].T ]:
-            componentTransitions \
-                .setdefault(i, {}) \
-                .setdefault(a, {}) \
-                .setdefault(s, []) \
-                .append(t)
-
     # initialize dfs stack
     stack = [ (i, [i]) for i in I ]
 
@@ -413,15 +403,11 @@ def asynchronousComposition (*lts, partialOrderReduction=None):
         nonlocal path
         fromState, path = current
 
-        # dictionary containing successors per symbol and component state
+        # dictionary containing successors per symbol and component
         nextStates = {}
         for i in components:
-            for a in componentTransitions[i]:
-                for s in componentTransitions[i][a]:
-                    if s == fromState[i]:
-                        nextStates \
-                            .setdefault(a, {}) \
-                            .setdefault(i, componentTransitions[i][a][s])
+            for (s, a, t) in [ t for t in lts[i].T if t[0] == fromState[i] ]:
+                nextStates.setdefault(a, {}).setdefault(i, []).append(t)
 
         # generates all successors of a given symbol
         def toStates (a):
@@ -432,7 +418,7 @@ def asynchronousComposition (*lts, partialOrderReduction=None):
         # perform partial order reduction
         if partialOrderReduction:
 
-            # index of components with local states
+            # indices of local components
             local = [
                 i for i in components
                 if
@@ -461,13 +447,14 @@ def asynchronousComposition (*lts, partialOrderReduction=None):
                     if a in nextStates
                 )
 
-                # partial expansion - unset successors of skipped components
+                # partial expansion - remove successors of skipped components
                 if not expandCycle:
                     for a in nextStates:
-                        for i in [ i for i in components if i not in local ]:
+                        for i in filter(lambda x: x not in local, components):
                             if i in nextStates[a]:
                                 del nextStates[a][i]
 
+        # build expansion
         transitions = [
             (fromState, a, toState)
             for a in sorted(nextStates.keys(), reverse=True)
