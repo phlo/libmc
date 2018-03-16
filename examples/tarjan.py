@@ -22,5 +22,6 @@ scc = tarjan(nodes, edges)
 
 assert scc == [
     ['A', 'B', 'D', 'E', 'H', 'I'],
-    ['C', 'F', 'G', 'J']
+    ['C', 'F', 'G', 'J'],
+    ['K']
 ]
