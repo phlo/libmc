@@ -10,6 +10,7 @@ def run (cmd, **kwargs):
         cmd (string): shell command to be executed
 
     Keyword Args:
+        stdin (string): write the given string to stdin
         toFile (string): write output to the given file name
 
     Returns:
