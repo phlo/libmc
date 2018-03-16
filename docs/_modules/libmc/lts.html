@@ -283,7 +283,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            other (LTS): another LTS</span>
-<span class="sd">            full (bool - optional): create full product automaton if True, else</span>
+<span class="sd">            full (bool - optional): create full automaton if True, else</span>
 <span class="sd">                only reachable states are included (default)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">S</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">S</span><span class="p">))</span>
@@ -306,7 +306,7 @@
 <span class="sd">        Create power automaton (p22).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            full (bool - optional): create full product automaton if True, else</span>
+<span class="sd">            full (bool - optional): create full automaton if True, else</span>
 <span class="sd">                only reachable states are included (default)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">S</span> <span class="o">=</span> <span class="n">powerset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
@@ -484,7 +484,7 @@
 <span class="sd">    Can also be used to minimize a deterministic automaton by constructing</span>
 <span class="sd">    the state equivalence relation using::</span>
 
-<span class="sd">        maximumSimulation(A, A, (A.FxA.F)∪((A.S\A.F)x(A.S\A.F)))</span>
+<span class="sd">        maximumBisimulation(A, A, (A.FxA.F)∪((A.S\A.F)x(A.S\A.F)))</span>
 
 <span class="sd">    To get the *full* maximum bisimulation between two LTS A1 and A2 build</span>
 <span class="sd">    the union of all possible permutations::</span>
@@ -528,8 +528,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">S</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span> <span class="n">l</span><span class="o">.</span><span class="n">I</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lts</span> <span class="p">]))</span>
     <span class="n">I</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
-    <span class="n">Σ</span> <span class="o">=</span> <span class="nb">set</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="p">[</span> <span class="nb">set</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">Σ</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lts</span> <span class="p">])</span>
-    <span class="n">T</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">Σ</span> <span class="o">=</span> <span class="p">{</span> <span class="n">a</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lts</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">l</span><span class="o">.</span><span class="n">Σ</span> <span class="p">}</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># set of component indices</span>
     <span class="n">components</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lts</span><span class="p">))</span>
@@ -548,32 +548,40 @@
     <span class="n">Ψ</span> <span class="o">=</span> <span class="p">{</span> <span class="n">a</span><span class="p">:</span> <span class="p">{</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">lts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">Σ</span> <span class="p">}</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">Σ</span> <span class="p">}</span>
 
     <span class="c1"># initialize dfs stack</span>
-    <span class="n">stack</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+    <span class="n">stack</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">I</span> <span class="p">]</span>
+
+    <span class="c1"># current path during dfs (to detect back edges)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># on-the-fly generation of reachable states (dfs)</span>
-    <span class="k">def</span> <span class="nf">enqueue</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">successor</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">enqueue</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">successor</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="p">[</span><span class="n">successor</span><span class="p">]))</span>
 
-    <span class="k">def</span> <span class="nf">cache</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span>
-        <span class="n">S</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">successor</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">successor</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">cache</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="n">S</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">successor</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">cached</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="k">return</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">T</span>
+    <span class="k">def</span> <span class="nf">cached</span> <span class="p">(</span><span class="n">successor</span><span class="p">):</span> <span class="k">return</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">S</span>
 
-    <span class="k">def</span> <span class="nf">successors</span> <span class="p">(</span><span class="n">fromState</span><span class="p">):</span>
-        <span class="c1"># dictionary containing successors per symbol and component state</span>
+    <span class="k">def</span> <span class="nf">successors</span> <span class="p">(</span><span class="n">current</span><span class="p">):</span>
+        <span class="k">nonlocal</span> <span class="n">path</span>
+        <span class="n">fromState</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">current</span>
+
+        <span class="c1"># dictionary containing successors per symbol and component</span>
         <span class="n">nextStates</span> <span class="o">=</span> <span class="p">{}</span>
-
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">lts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">fromState</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">]:</span>
                 <span class="n">nextStates</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 
+        <span class="c1"># generates all successors of a given symbol</span>
+        <span class="k">def</span> <span class="nf">toStates</span> <span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span>
+                <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">[</span><span class="n">fromState</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span>
+            <span class="p">])</span>
+
         <span class="c1"># perform partial order reduction</span>
         <span class="k">if</span> <span class="n">partialOrderReduction</span><span class="p">:</span>
 
-            <span class="c1"># index of components with local states</span>
+            <span class="c1"># indices of local components</span>
             <span class="n">local</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">i</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span>
+                <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span>
                 <span class="k">if</span>
                     <span class="c1"># component i has a successor</span>
                     <span class="nb">any</span><span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">nextStates</span><span class="p">)</span>
@@ -586,27 +594,40 @@
                     <span class="p">)</span>
             <span class="p">]</span>
 
-            <span class="c1"># partial expansion</span>
+            <span class="c1"># current state is local</span>
             <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
+
+                <span class="c1"># select component for partial expansion</span>
                 <span class="n">local</span> <span class="o">=</span> <span class="n">partialOrderReduction</span><span class="p">(</span><span class="n">local</span><span class="p">)</span>
 
-                <span class="c1"># unset successors of skipped components</span>
-                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">nextStates</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">{</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">local</span> <span class="p">}:</span>
-                        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">]:</span>
-                            <span class="k">del</span> <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="c1"># fully expand cycles with only partial expansion</span>
+                <span class="n">expandCycle</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+                    <span class="nb">any</span><span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="n">path</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">toStates</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">local</span>
+                    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">Λ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">nextStates</span>
+                <span class="p">)</span>
+
+                <span class="c1"># partial expansion - remove successors of skipped components</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">expandCycle</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">nextStates</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">local</span><span class="p">,</span> <span class="n">components</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">]:</span>
+                                <span class="k">del</span> <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># build expansion</span>
+        <span class="n">transitions</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">fromState</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">toState</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nextStates</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">Ψ</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">==</span> <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">toState</span> <span class="ow">in</span> <span class="n">toStates</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="c1"># add transitions</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">transitions</span><span class="p">)</span>
 
         <span class="c1"># return expansion</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">fromState</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">toState</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">nextStates</span>
-            <span class="k">if</span> <span class="n">Ψ</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">==</span> <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">toState</span> <span class="ow">in</span>
-                <span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span>
-                    <span class="n">nextStates</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">[</span><span class="n">fromState</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
-                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">components</span>
-                <span class="p">])</span>
-        <span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span> <span class="n">t</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transitions</span> <span class="p">]</span>
 
     <span class="n">dfs</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">successors</span><span class="p">,</span> <span class="n">enqueue</span><span class="o">=</span><span class="n">enqueue</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">cached</span><span class="o">=</span><span class="n">cached</span><span class="p">)</span>
 

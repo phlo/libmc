@@ -122,7 +122,7 @@ class LTS:
 
         Args:
             other (LTS): another LTS
-            full (bool - optional): create full product automaton if True, else
+            full (bool - optional): create full automaton if True, else
                 only reachable states are included (default)
         """
         S = sorted(product(self.S, other.S))
@@ -145,7 +145,7 @@ class LTS:
         Create power automaton (p22).
 
         Args:
-            full (bool - optional): create full product automaton if True, else
+            full (bool - optional): create full automaton if True, else
                 only reachable states are included (default)
         """
         S = powerset(self.S)
@@ -323,7 +323,7 @@ def maximumBisimulation (A1, A2, R0, τ=[]):
     Can also be used to minimize a deterministic automaton by constructing
     the state equivalence relation using::
 
-        maximumSimulation(A, A, (A.FxA.F)∪((A.S\A.F)x(A.S\A.F)))
+        maximumBisimulation(A, A, (A.FxA.F)∪((A.S\A.F)x(A.S\A.F)))
 
     To get the *full* maximum bisimulation between two LTS A1 and A2 build
     the union of all possible permutations::

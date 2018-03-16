@@ -228,7 +228,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            other (FA): another FA</span>
-<span class="sd">            full (bool - optional): create full product automaton if True, else</span>
+<span class="sd">            full (bool - optional): create full automaton if True, else</span>
 <span class="sd">                only reachable states are included (default)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lts</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">FA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">full</span><span class="p">)</span>
@@ -241,7 +241,7 @@
 <span class="sd">        Create power automaton (p22).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            full (bool - optional): create full product automaton if True, else</span>
+<span class="sd">            full (bool - optional): create full automaton if True, else</span>
 <span class="sd">                only reachable states are included (default)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lts</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">FA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">full</span><span class="p">)</span>
@@ -291,6 +291,8 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            other (FA): the other FA to conform to</span>
+<span class="sd">            full (bool - optional): create full automaton if True, else</span>
+<span class="sd">                only reachable states are included (default)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (bool, FA, list): a triple containing:</span>

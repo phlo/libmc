@@ -537,16 +537,24 @@ the search should stop with the given object</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference internal" href="#libmc.FA" title="libmc.FA"><em>FA</em></a>) – the other FA to conform to</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>other</strong> (<a class="reference internal" href="#libmc.FA" title="libmc.FA"><em>FA</em></a>) – the other FA to conform to</li>
+<li><strong>full</strong> (<em>bool - optional</em>) – create full automaton if True, else
+only reachable states are included (default)</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a triple containing:<ul class="simple">
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>a triple containing:</p>
+<ul class="simple">
 <li>the result of the conformance test</li>
 <li>the generated checker automaton self × C(P(other))</li>
 <li>all traces from initial to final states</li>
 </ul>
+</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(bool, <a class="reference internal" href="#libmc.FA" title="libmc.FA">FA</a>, list)</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(bool, <a class="reference internal" href="#libmc.FA" title="libmc.FA">FA</a>, list)</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -578,7 +586,7 @@ the search should stop with the given object</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>full</strong> (<em>bool - optional</em>) – create full product automaton if True, else
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>full</strong> (<em>bool - optional</em>) – create full automaton if True, else
 only reachable states are included (default)</td>
 </tr>
 </tbody>
@@ -595,7 +603,7 @@ only reachable states are included (default)</td>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>other</strong> (<a class="reference internal" href="#libmc.FA" title="libmc.FA"><em>FA</em></a>) – another FA</li>
-<li><strong>full</strong> (<em>bool - optional</em>) – create full product automaton if True, else
+<li><strong>full</strong> (<em>bool - optional</em>) – create full automaton if True, else
 only reachable states are included (default)</li>
 </ul>
 </td>
@@ -774,7 +782,7 @@ list if it is unreachable</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>full</strong> (<em>bool - optional</em>) – create full product automaton if True, else
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>full</strong> (<em>bool - optional</em>) – create full automaton if True, else
 only reachable states are included (default)</td>
 </tr>
 </tbody>
@@ -791,7 +799,7 @@ only reachable states are included (default)</td>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>other</strong> (<a class="reference internal" href="#libmc.LTS" title="libmc.LTS"><em>LTS</em></a>) – another LTS</li>
-<li><strong>full</strong> (<em>bool - optional</em>) – create full product automaton if True, else
+<li><strong>full</strong> (<em>bool - optional</em>) – create full automaton if True, else
 only reachable states are included (default)</li>
 </ul>
 </td>
@@ -937,7 +945,7 @@ the union of all possible permutations:</p>
 <dd><p>Constructs the maximum bisimulation relation A1 ≈ A2 (p43).</p>
 <p>Can also be used to minimize a deterministic automaton by constructing
 the state equivalence relation using:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>maximumSimulation(A, A, (A.FxA.F)∪((A.S\A.F)x(A.S\A.F)))
+<div class="highlight-default"><div class="highlight"><pre><span></span>maximumBisimulation(A, A, (A.FxA.F)∪((A.S\A.F)x(A.S\A.F)))
 </pre></div>
 </div>
 <p>To get the <em>full</em> maximum bisimulation between two LTS A1 and A2 build

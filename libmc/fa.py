@@ -67,7 +67,7 @@ class FA (LTS):
 
         Args:
             other (FA): another FA
-            full (bool - optional): create full product automaton if True, else
+            full (bool - optional): create full automaton if True, else
                 only reachable states are included (default)
         """
         lts = super(FA, self).product(other, full)
@@ -80,7 +80,7 @@ class FA (LTS):
         Create power automaton (p22).
 
         Args:
-            full (bool - optional): create full product automaton if True, else
+            full (bool - optional): create full automaton if True, else
                 only reachable states are included (default)
         """
         lts = super(FA, self).power(full)
@@ -130,6 +130,8 @@ class FA (LTS):
 
         Args:
             other (FA): the other FA to conform to
+            full (bool - optional): create full automaton if True, else
+                only reachable states are included (default)
 
         Returns:
             (bool, FA, list): a triple containing:
