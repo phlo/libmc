@@ -517,14 +517,14 @@
 
 <span class="sd">    * performs on-the-fly generation of reachable states</span>
 <span class="sd">    * Partial Order Reduction can be applied by supplying a function</span>
-<span class="sd">      **partialOrderReduction**, selecting the component to expand</span>
+<span class="sd">      **partialOrderReduction**, selecting the components to expand</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        *lts (variable argument list(LTS)): list of LTS to interleave</span>
 
 <span class="sd">    Keyword Args:</span>
-<span class="sd">        partialOrderReduction (optional): function ``f: list(index) -&gt; index``</span>
-<span class="sd">            selecting the local component to expand</span>
+<span class="sd">        partialOrderReduction (optional): function ``f: list(index) -&gt;</span>
+<span class="sd">            list(index)`` selecting the local components to expand</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">S</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span> <span class="n">l</span><span class="o">.</span><span class="n">I</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lts</span> <span class="p">]))</span>
     <span class="n">I</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>

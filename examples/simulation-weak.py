@@ -29,7 +29,7 @@ A2 = LTS(
         ]
 )
 
-# internal event
+# internal events
 τ = ['τ']
 
 # full simulation relation

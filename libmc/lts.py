@@ -356,14 +356,14 @@ def asynchronousComposition (*lts, partialOrderReduction=None):
 
     * performs on-the-fly generation of reachable states
     * Partial Order Reduction can be applied by supplying a function
-      **partialOrderReduction**, selecting the component to expand
+      **partialOrderReduction**, selecting the components to expand
 
     Args:
         *lts (variable argument list(LTS)): list of LTS to interleave
 
     Keyword Args:
-        partialOrderReduction (optional): function ``f: list(index) -> index``
-            selecting the local component to expand
+        partialOrderReduction (optional): function ``f: list(index) ->
+            list(index)`` selecting the local components to expand
     """
     S = set(product(*[ l.I for l in lts ]))
     I = sorted(S)

@@ -51,7 +51,7 @@ assert conforms
 assert not traces
 
 ################################################################################
-# implementation does not conforms specification
+# implementation does not conform to specification
 ################################################################################
 
 # automaton modelling the implementation

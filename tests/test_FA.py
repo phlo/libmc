@@ -7,7 +7,7 @@ class TestFA (unittest.TestCase):
     def setUp (self):
         self.maxDiff = None
 
-    # FA presented in assignment 1 - exercise 1
+    # FA I presented in assignment 1 - exercise 1
     I_EX1 = FA (
         S = [1, 2, 3, 4],
         I = [1],
@@ -23,7 +23,7 @@ class TestFA (unittest.TestCase):
         F = [4]
     )
 
-    # FA presented in assignment 1 - exercise 1
+    # FA S presented in assignment 1 - exercise 1
     S_EX1 = FA (
         S = ['A', 'B', 'C', 'D'],
         I = ['A'],
